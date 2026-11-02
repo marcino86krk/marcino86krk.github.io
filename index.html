@@ -408,7 +408,6 @@
         reader.readAsArrayBuffer(file);
       };
 
-      // Zapis wyłącznie słówek wpisanych ręcznie pod nazwą baza_esp_ręcznie.ods (zgodnie z wzorcem baza + odmiana)
       const handleSaveManualWordsToDisk = () => {
         const manualWords = words.filter(w => w.isManual);
         if (manualWords.length === 0) {
@@ -610,7 +609,13 @@
       const handleCheckQuiz = (e) => {
         e.preventDefault();
         if (!quizData || quizResult !== null) return;
-        const isCorrect = normalizeText(userAnswer) === normalizeText(quizData.answer);
+        
+        // Rozbijamy poprawną odpowiedź po separatorach (np. "/", ",", ";") żeby wystarczyło wpisać jedno znaczenie
+        const allowedAnswers = quizData.answer.split(/[\/,;]/).map(a => normalizeText(a));
+        const userNorm = normalizeText(userAnswer);
+
+        const isCorrect = allowedAnswers.includes(userNorm);
+
         if (isCorrect) {
           playSound('correct');
           setQuizResult('correct');
@@ -759,7 +764,7 @@
                         <input
                           ref={el => inputRefs.current['userAnswer'] = el}
                           type="text"
-                          placeholder="Wpisz tłumaczenie..."
+                          placeholder="Wpisz tłumaczenie (wystarczy jedno znaczenie)..."
                           value={userAnswer}
                           disabled={quizResult !== null}
                           onChange={(e) => setUserAnswer(e.target.value)}
@@ -771,7 +776,7 @@
                         ) : (
                           <div className="space-y-3">
                             <div className={`p-4 rounded-xl text-center text-sm font-semibold ${quizResult === 'correct' ? 'bg-emerald-950 text-emerald-300' : 'bg-red-950 text-red-300'}`}>
-                              {quizResult === 'correct' ? 'Dobrze!' : `Błędnie. Odpowiedź: ${quizData.answer}`}
+                              {quizResult === 'correct' ? 'Dobrze!' : `Błędnie. Prawidłowa odpowiedź: ${quizData.answer}`}
                             </div>
                             <button type="button" onClick={handleNextQuiz} className="w-full py-3 bg-slate-800 text-white font-semibold rounded-xl">Następne ➔</button>
                           </div>
