@@ -48,61 +48,10 @@
       ellos: 'ellos / ellas / ustedes (oni / one / Państwo)'
     };
 
-    const GRAMMAR_STRUCTURES = [
-      {
-        id: 'quero',
-        name: 'Quiero + [infinitivo]',
-        desc: 'Wyrażanie chęci: Chcę zrobić coś...',
-        type: 'verb_noun'
-      },
-      {
-        id: 'tengo_que',
-        name: 'Tengo que + [infinitivo]',
-        desc: 'Wyrażanie obowiązku: Muszę zrobić coś...',
-        type: 'verb_noun'
-      },
-      {
-        id: 'voy_a',
-        name: 'Voy a + [infinitivo]',
-        desc: 'Najbliższa przyszłość: Zamierzam / Idę zrobić coś...',
-        type: 'verb_noun'
-      },
-      {
-        id: 'gusta',
-        name: 'Me gusta + [sustantivo]',
-        desc: 'Wyrażanie upodobań: Lubię...',
-        type: 'noun_only'
-      },
-      {
-        id: 'necesito',
-        name: 'Necesito + [infinitivo/sustantivo]',
-        desc: 'Wyrażanie potrzeby: Potrzebuję...',
-        type: 'verb_noun'
-      },
-      {
-        id: 'puedo',
-        name: 'Puedo + [infinitivo]',
-        desc: 'Wyrażanie możliwości: Mogę / Potrafię...',
-        type: 'verb_noun'
-      },
-      {
-        id: 'gustaria',
-        name: 'Me gustaría + [infinitivo]',
-        desc: 'Uprzejma prośba / życzenie: Chciałbym / Chciałabym...',
-        type: 'verb_noun'
-      },
-      {
-        id: 'hay',
-        name: 'Hay + [sustantivo]',
-        desc: 'Informowanie o istnieniu: Jest / Znajduje się / Są...',
-        type: 'noun_only'
-      }
-    ];
-
-    function SpanishCharBar({ onInsertChar, className = "" }) {
+    function SpanishCharBar({ onInsertChar, className = "", isMobileView = false }) {
       return (
-        <div className={`flex flex-wrap gap-1 items-center justify-center bg-slate-900 p-1.5 rounded-xl border border-slate-800 ${className}`}>
-          <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mr-1">Znaki ES:</span>
+        <div className={`flex flex-wrap gap-1 items-center justify-center bg-slate-900 ${isMobileView ? 'p-1' : 'p-1.5'} rounded-xl border border-slate-800 ${className}`}>
+          <span className={`${isMobileView ? 'text-[9px]' : 'text-[10px]'} font-bold text-slate-400 uppercase tracking-wider mr-1`}>Znaki ES:</span>
           {SPANISH_CHARS.map(char => (
             <button
               key={char}
@@ -111,7 +60,7 @@
                 e.preventDefault();
                 onInsertChar(char);
               }}
-              className="w-7 h-7 sm:w-8 sm:h-8 flex items-center justify-center bg-slate-800 hover:bg-red-600 hover:text-white text-slate-200 font-bold text-sm rounded-lg border border-slate-700 active:scale-95 transition"
+              className={`${isMobileView ? 'w-6 h-6 text-xs' : 'w-7 h-7 sm:w-8 sm:h-8 text-sm'} flex items-center justify-center bg-slate-800 hover:bg-red-600 hover:text-white text-slate-200 font-bold rounded-lg border border-slate-700 active:scale-95 transition`}
             >
               {char}
             </button>
@@ -120,12 +69,12 @@
       );
     }
 
-    function Logo() {
+    function Logo({ isMobileView }) {
       return (
-        <div className="flex items-center gap-3">
-          <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-red-600 via-amber-500 to-yellow-400 p-0.5 shadow-lg flex items-center justify-center">
+        <div className="flex items-center gap-2.5">
+          <div className={`${isMobileView ? 'w-9 h-9' : 'w-12 h-12'} rounded-xl bg-gradient-to-br from-red-600 via-amber-500 to-yellow-400 p-0.5 shadow-lg flex items-center justify-center transition-all`}>
             <div className="w-full h-full bg-slate-950 rounded-[10px] flex items-center justify-center relative overflow-hidden">
-              <svg viewBox="0 0 100 100" className="w-9 h-9">
+              <svg viewBox="0 0 100 100" className={isMobileView ? 'w-6 h-6' : 'w-9 h-9'}>
                 <path d="M 15,30 Q 35,22 50,35 Q 65,22 85,30 L 85,75 Q 65,67 50,80 Q 35,67 15,75 Z" fill="#1e293b" stroke="#f59e0b" strokeWidth="3"/>
                 <path d="M 50,35 L 50,80" stroke="#f59e0b" strokeWidth="3"/>
                 <line x1="23" y1="42" x2="41" y2="47" stroke="#94a3b8" strokeWidth="3" strokeLinecap="round"/>
@@ -137,10 +86,10 @@
             </div>
           </div>
           <div>
-            <h1 className="text-lg font-black tracking-tight text-white flex items-center gap-1">
+            <h1 className={`${isMobileView ? 'text-sm' : 'text-lg'} font-black tracking-tight text-white flex items-center gap-1`}>
               HISZPAŃSKI <span className="text-red-500">MASTER 1.8</span>
             </h1>
-            <p className="text-[11px] text-slate-400 font-medium">Seria: Językowy Master</p>
+            <p className={`${isMobileView ? 'text-[9px]' : 'text-[11px]'} text-slate-400 font-medium`}>Seria: Językowy Master</p>
           </div>
         </div>
       );
@@ -165,6 +114,15 @@
         }
         return {};
       });
+
+      const [isMobileView, setIsMobileView] = useState(() => {
+        const saved = localStorage.getItem('hm_mobile_view');
+        return saved ? JSON.parse(saved) : false;
+      });
+
+      useEffect(() => {
+        localStorage.setItem('hm_mobile_view', JSON.stringify(isMobileView));
+      }, [isMobileView]);
 
       const [dbLastModified, setDbLastModified] = useState('Brak danych');
       const [fileLastModified, setFileLastModified] = useState('');
@@ -222,12 +180,6 @@
       const [selectedTense, setSelectedTense] = useState('presente');
       const [verbAnswers, setVerbAnswers] = useState({ yo: '', tu: '', el: '', nosotros: '', vosotros: '', ellos: '' });
       const [verbSubmitted, setVerbSubmitted] = useState(false);
-
-      // Stan dla modułu Zdania BETA
-      const [selectedStructure, setSelectedStructure] = useState(GRAMMAR_STRUCTURES[0]);
-      const [currentSentenceTask, setCurrentSentenceTask] = useState(null);
-      const [sentenceUserAnswer, setSentenceUserAnswer] = useState('');
-      const [sentenceResult, setSentenceResult] = useState(null);
 
       const inputRefs = useRef({});
       const fileInputRef = useRef(null);
@@ -838,88 +790,6 @@
         }
       };
 
-      // Generowanie zadania ze zdań BETA z obsługą typów struktur
-      const generateSentenceTask = (struct = selectedStructure) => {
-        const verbs = words.filter(w => w.isVerb);
-        const nonVerbs = words.filter(w => !w.isVerb);
-
-        if (struct.type === 'verb_noun' && (verbs.length === 0 || nonVerbs.length === 0)) {
-          setCurrentSentenceTask(null);
-          return;
-        }
-        if (struct.type === 'noun_only' && nonVerbs.length === 0) {
-          setCurrentSentenceTask(null);
-          return;
-        }
-
-        const randomVerb = struct.type === 'verb_noun' ? verbs[Math.floor(Math.random() * verbs.length)] : null;
-        const randomNoun = nonVerbs[Math.floor(Math.random() * nonVerbs.length)];
-
-        let correctEs = '';
-        let correctPl = '';
-
-        const verbEsClean = randomVerb ? randomVerb.es.trim() : '';
-        const verbPlClean = randomVerb ? randomVerb.pl.split('/')[0].trim() : '';
-        const nounEsClean = randomNoun.es.trim();
-        const nounPlClean = randomNoun.pl.split('/')[0].trim();
-
-        if (struct.id === 'quero') {
-          correctEs = `quiero ${verbEsClean} ${nounEsClean}`;
-          correctPl = `chcę ${verbPlClean} ${nounPlClean}`;
-        } else if (struct.id === 'tengo_que') {
-          correctEs = `tengo que ${verbEsClean} ${nounEsClean}`;
-          correctPl = `muszę ${verbPlClean} ${nounPlClean}`;
-        } else if (struct.id === 'voy_a') {
-          correctEs = `voy a ${verbEsClean} ${nounEsClean}`;
-          correctPl = `zamierzam ${verbPlClean} ${nounPlClean}`;
-        } else if (struct.id === 'gusta') {
-          correctEs = `me gusta ${nounEsClean}`;
-          correctPl = `lubię ${nounPlClean}`;
-        } else if (struct.id === 'necesito') {
-          correctEs = `necesito ${verbEsClean} ${nounEsClean}`;
-          correctPl = `potrzebuję ${verbPlClean} ${nounPlClean}`;
-        } else if (struct.id === 'puedo') {
-          correctEs = `puedo ${verbEsClean} ${nounEsClean}`;
-          correctPl = `mogę ${verbPlClean} ${nounPlClean}`;
-        } else if (struct.id === 'gustaria') {
-          correctEs = `me gustaría ${verbEsClean} ${nounEsClean}`;
-          correctPl = `chciałbym ${verbPlClean} ${nounPlClean}`;
-        } else if (struct.id === 'hay') {
-          correctEs = `hay ${nounEsClean}`;
-          correctPl = `jest ${nounPlClean}`;
-        }
-
-        setCurrentSentenceTask({
-          structure: struct,
-          verb: randomVerb,
-          noun: randomNoun,
-          correctEs,
-          correctPl
-        });
-        setSentenceUserAnswer('');
-        setSentenceResult(null);
-      };
-
-      useEffect(() => {
-        if (words.length > 0) {
-          generateSentenceTask(selectedStructure);
-        }
-      }, [selectedStructure, words]);
-
-      const handleCheckSentence = (e) => {
-        e.preventDefault();
-        if (!currentSentenceTask || sentenceResult !== null) return;
-
-        const evaluation = evaluateAnswer(sentenceUserAnswer, [currentSentenceTask.correctEs]);
-        if (evaluation.status === 'correct' || evaluation.status === 'typo') {
-          playSound('correct');
-          setSentenceResult('correct');
-        } else {
-          playSound('incorrect');
-          setSentenceResult('incorrect');
-        }
-      };
-
       useEffect(() => {
         const source = fcOnlyVerbs ? words.filter(w => w.isVerb) : words;
         if (source.length > 0) {
@@ -1079,11 +949,21 @@
       };
 
       return (
-        <div className="min-h-[100dvh] w-full bg-slate-950 flex flex-col items-center justify-between p-2 sm:p-4 text-slate-100">
-          <header className="w-full max-w-5xl bg-slate-900 rounded-2xl shadow-xl border border-slate-800 p-4 mb-4 flex justify-between items-center">
-            <Logo />
-            <div className="text-xs text-slate-400 text-right">
-              <div>Słówek w bazie: <span className="text-red-400 font-bold">{words.length}</span></div>
+        <div className={`min-h-[100dvh] w-full bg-slate-950 flex flex-col items-center justify-between ${isMobileView ? 'p-1.5 max-w-sm mx-auto text-xs' : 'p-2 sm:p-4'} text-slate-100 transition-all`}>
+          <header className={`w-full ${isMobileView ? 'max-w-sm p-2.5' : 'max-w-5xl p-4'} bg-slate-900 rounded-2xl shadow-xl border border-slate-800 mb-3 flex justify-between items-center transition-all`}>
+            <Logo isMobileView={isMobileView} />
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => setIsMobileView(!isMobileView)}
+                title={isMobileView ? "Wyłącz tryb mobilny" : "Włącz tryb mobilny (kompaktowy)"}
+                className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl border text-xs font-bold transition ${isMobileView ? 'bg-red-600 text-white border-red-500' : 'bg-slate-800 text-slate-300 border-slate-700 hover:bg-slate-700'}`}
+              >
+                <i data-lucide={isMobileView ? "smartphone" : "monitor"} className="w-3.5 h-3.5"></i>
+                <span className="hidden sm:inline">{isMobileView ? "Tryb Tel. ON" : "Tryb Tel."}</span>
+              </button>
+              <div className={`${isMobileView ? 'text-[10px]' : 'text-xs'} text-slate-400 text-right`}>
+                <div>Słówek: <span className="text-red-400 font-bold">{words.length}</span></div>
+              </div>
             </div>
           </header>
 
@@ -1113,71 +993,67 @@
             </div>
           )}
 
-          <div className="w-full max-w-5xl flex-1 flex flex-col">
-            <div className="bg-slate-900 p-3 sm:p-5 rounded-2xl shadow-xl border border-slate-800 flex-1 w-full flex flex-col mb-2">
+          <div className={`w-full ${isMobileView ? 'max-w-sm' : 'max-w-5xl'} flex-1 flex flex-col transition-all`}>
+            <div className={`bg-slate-900 ${isMobileView ? 'p-2.5' : 'p-3 sm:p-5'} rounded-2xl shadow-xl border border-slate-800 flex-1 w-full flex flex-col mb-2 transition-all`}>
               
-              <nav className="grid grid-cols-3 sm:grid-cols-6 gap-1.5 sm:gap-2 mb-6 bg-slate-950 p-1.5 rounded-xl text-[11px] sm:text-sm font-medium border border-slate-800/80">
-                <button onClick={() => { setActiveTab('flashcards'); }} className={`py-2 rounded-lg flex flex-col sm:flex-row items-center justify-center gap-1 ${activeTab === 'flashcards' ? 'bg-slate-800 text-red-400 font-bold border border-slate-700' : 'text-slate-400'}`}>
-                  <i data-lucide="layers" className="w-4 h-4"></i><span>Fiszki</span>
+              <nav className={`grid grid-cols-5 ${isMobileView ? 'gap-1 mb-3 p-1 text-[10px]' : 'gap-1.5 sm:gap-2 mb-6 p-1.5 text-[11px] sm:text-sm'} bg-slate-950 rounded-xl font-medium border border-slate-800/80 transition-all`}>
+                <button onClick={() => { setActiveTab('flashcards'); }} className={`py-1.5 sm:py-2 rounded-lg flex flex-col sm:flex-row items-center justify-center gap-0.5 sm:gap-1 ${activeTab === 'flashcards' ? 'bg-slate-800 text-red-400 font-bold border border-slate-700' : 'text-slate-400'}`}>
+                  <i data-lucide="layers" className={`${isMobileView ? 'w-3 h-3' : 'w-4 h-4'}`}></i><span>Fiszki</span>
                 </button>
-                <button onClick={() => { setActiveTab('quiz'); }} className={`py-2 rounded-lg flex flex-col sm:flex-row items-center justify-center gap-1 ${activeTab === 'quiz' ? 'bg-slate-800 text-red-400 font-bold border border-slate-700' : 'text-slate-400'}`}>
-                  <i data-lucide="help-circle" className="w-4 h-4"></i><span>Quiz</span>
+                <button onClick={() => { setActiveTab('quiz'); }} className={`py-1.5 sm:py-2 rounded-lg flex flex-col sm:flex-row items-center justify-center gap-0.5 sm:gap-1 ${activeTab === 'quiz' ? 'bg-slate-800 text-red-400 font-bold border border-slate-700' : 'text-slate-400'}`}>
+                  <i data-lucide="help-circle" className={`${isMobileView ? 'w-3 h-3' : 'w-4 h-4'}`}></i><span>Quiz</span>
                 </button>
-                <button onClick={() => { setActiveTab('speedtest'); startSpeedTest(); }} className={`py-2 rounded-lg flex flex-col sm:flex-row items-center justify-center gap-1 ${activeTab === 'speedtest' ? 'bg-slate-800 text-red-400 font-bold border border-slate-700' : 'text-slate-400'}`}>
-                  <i data-lucide="zap" className="w-4 h-4"></i><span>Szybki Test</span>
+                <button onClick={() => { setActiveTab('speedtest'); startSpeedTest(); }} className={`py-1.5 sm:py-2 rounded-lg flex flex-col sm:flex-row items-center justify-center gap-0.5 sm:gap-1 ${activeTab === 'speedtest' ? 'bg-slate-800 text-red-400 font-bold border border-slate-700' : 'text-slate-400'}`}>
+                  <i data-lucide="zap" className={`${isMobileView ? 'w-3 h-3' : 'w-4 h-4'}`}></i><span>Szybki</span>
                 </button>
-                <button onClick={() => { setActiveTab('verbs'); }} className={`py-2 rounded-lg flex flex-col sm:flex-row items-center justify-center gap-1 ${activeTab === 'verbs' ? 'bg-slate-800 text-red-400 font-bold border border-slate-700' : 'text-slate-400'}`}>
-                  <i data-lucide="book-open" className="w-4 h-4"></i><span>Czasowniki</span>
+                <button onClick={() => { setActiveTab('verbs'); }} className={`py-1.5 sm:py-2 rounded-lg flex flex-col sm:flex-row items-center justify-center gap-0.5 sm:gap-1 ${activeTab === 'verbs' ? 'bg-slate-800 text-red-400 font-bold border border-slate-700' : 'text-slate-400'}`}>
+                  <i data-lucide="book-open" className={`${isMobileView ? 'w-3 h-3' : 'w-4 h-4'}`}></i><span>Czas.</span>
                 </button>
-                <button onClick={() => { setActiveTab('sentences'); }} className={`py-2 rounded-lg flex flex-col sm:flex-row items-center justify-center gap-1 relative ${activeTab === 'sentences' ? 'bg-slate-800 text-red-400 font-bold border border-slate-700' : 'text-slate-400'}`}>
-                  <i data-lucide="message-square" className="w-4 h-4"></i>
-                  <span>Zdania (BETA)</span>
-                </button>
-                <button onClick={() => { setActiveTab('admin'); }} className={`py-2 rounded-lg flex flex-col sm:flex-row items-center justify-center gap-1 ${activeTab === 'admin' ? 'bg-slate-800 text-red-400 font-bold border border-slate-700' : 'text-slate-400'}`}>
-                  <i data-lucide="settings" className="w-4 h-4"></i><span>Admin</span>
+                <button onClick={() => { setActiveTab('admin'); }} className={`py-1.5 sm:py-2 rounded-lg flex flex-col sm:flex-row items-center justify-center gap-0.5 sm:gap-1 ${activeTab === 'admin' ? 'bg-slate-800 text-red-400 font-bold border border-slate-700' : 'text-slate-400'}`}>
+                  <i data-lucide="settings" className={`${isMobileView ? 'w-3 h-3' : 'w-4 h-4'}`}></i><span>Admin</span>
                 </button>
               </nav>
 
               {loadMessage && (
-                <div className="mb-4 p-3 bg-blue-950/80 border border-blue-800 text-blue-300 text-xs rounded-xl">{loadMessage}</div>
+                <div className="mb-3 p-2.5 bg-blue-950/80 border border-blue-800 text-blue-300 text-xs rounded-xl">{loadMessage}</div>
               )}
 
               {/* 1. FISZKI */}
               {activeTab === 'flashcards' && (
-                <div className="flex-1 flex flex-col items-center justify-between space-y-6">
-                  <div className="flex flex-wrap items-center justify-center gap-3">
-                    <div className="flex items-center gap-2 bg-slate-950 p-1 rounded-xl text-xs font-medium border border-slate-800">
-                      <button onClick={() => setDirection('es-pl')} className={`px-3 py-1.5 rounded-lg ${direction === 'es-pl' ? 'bg-slate-800 text-red-400' : 'text-slate-400'}`}>ES ➔ PL</button>
-                      <button onClick={() => setDirection('pl-es')} className={`px-3 py-1.5 rounded-lg ${direction === 'pl-es' ? 'bg-slate-800 text-red-400' : 'text-slate-400'}`}>PL ➔ ES</button>
-                      <button onClick={() => setDirection('random')} className={`px-3 py-1.5 rounded-lg ${direction === 'random' ? 'bg-slate-800 text-red-400' : 'text-slate-400'}`}>Losowo</button>
+                <div className="flex-1 flex flex-col items-center justify-between space-y-4">
+                  <div className="flex flex-wrap items-center justify-center gap-2">
+                    <div className="flex items-center gap-1 bg-slate-950 p-1 rounded-xl text-xs font-medium border border-slate-800">
+                      <button onClick={() => setDirection('es-pl')} className={`px-2.5 py-1 rounded-lg ${direction === 'es-pl' ? 'bg-slate-800 text-red-400' : 'text-slate-400'}`}>ES ➔ PL</button>
+                      <button onClick={() => setDirection('pl-es')} className={`px-2.5 py-1 rounded-lg ${direction === 'pl-es' ? 'bg-slate-800 text-red-400' : 'text-slate-400'}`}>PL ➔ ES</button>
+                      <button onClick={() => setDirection('random')} className={`px-2.5 py-1 rounded-lg ${direction === 'random' ? 'bg-slate-800 text-red-400' : 'text-slate-400'}`}>Losowo</button>
                     </div>
-                    <label className="flex items-center gap-2 bg-slate-950 px-3 py-2 rounded-xl text-xs font-medium border border-slate-800 text-slate-300 cursor-pointer">
+                    <label className="flex items-center gap-1.5 bg-slate-950 px-2.5 py-1.5 rounded-xl text-xs font-medium border border-slate-800 text-slate-300 cursor-pointer">
                       <input type="checkbox" checked={fcOnlyVerbs} onChange={(e) => setFcOnlyVerbs(e.target.checked)} className="accent-red-600" />
                       <span className="text-amber-400 font-bold">Tylko czasowniki</span>
                     </label>
                   </div>
 
                   {shuffledCards.length > 0 && fcData ? (
-                    <div className="w-full max-w-md flex-1 flex flex-col items-center justify-center my-4">
-                      <div onClick={() => setIsFlipped(!isFlipped)} className={`w-full min-h-[260px] p-8 rounded-3xl bg-gradient-to-br ${isFlipped ? 'from-slate-950 to-slate-900 border border-slate-800 text-white' : 'from-red-600 to-amber-600 text-white'} shadow-2xl flex flex-col items-center justify-between cursor-pointer text-center`}>
+                    <div className="w-full max-w-md flex-1 flex flex-col items-center justify-center my-2">
+                      <div onClick={() => setIsFlipped(!isFlipped)} className={`w-full ${isMobileView ? 'min-h-[190px] p-5' : 'min-h-[260px] p-8'} rounded-3xl bg-gradient-to-br ${isFlipped ? 'from-slate-950 to-slate-900 border border-slate-800 text-white' : 'from-red-600 to-amber-600 text-white'} shadow-2xl flex flex-col items-center justify-between cursor-pointer text-center transition-all`}>
                         <div className="w-full flex justify-between items-center text-xs opacity-80">
                           <span>{isFlipped ? 'Tłumaczenie' : 'Fiszka'}</span>
                           <span>{(fcIndex % shuffledCards.length) + 1} z {shuffledCards.length}</span>
                         </div>
-                        <div className="my-auto space-y-2">
-                          <h2 className="text-3xl font-extrabold">{isFlipped ? fcData.answer : fcData.question}</h2>
-                          <p className="text-xs opacity-75">Kliknij, aby odwrócić</p>
+                        <div className="my-auto space-y-1.5">
+                          <h2 className={`${isMobileView ? 'text-2xl' : 'text-3xl'} font-extrabold`}>{isFlipped ? fcData.answer : fcData.question}</h2>
+                          <p className="text-[11px] opacity-75">Kliknij, aby odwrócić</p>
                         </div>
                         <button onClick={(e) => { 
                           e.stopPropagation(); 
                           speakText(isFlipped ? fcData.answer : fcData.question, isFlipped ? fcData.answerLang : fcData.questionLang); 
-                        }} className="p-3 bg-black/30 rounded-full text-white hover:bg-black/50 transition">
-                          <i data-lucide="volume-2" className="w-5 h-5"></i>
+                        }} className="p-2.5 bg-black/30 rounded-full text-white hover:bg-black/50 transition">
+                          <i data-lucide="volume-2" className="w-4 h-4"></i>
                         </button>
                       </div>
-                      <div className="flex items-center gap-4 mt-6">
-                        <button onClick={() => { setIsFlipped(false); setFcIndex(prev => Math.max(0, prev - 1)); }} className="p-3 bg-slate-800 text-slate-200 rounded-xl"><i data-lucide="chevron-left" className="w-5 h-5"></i></button>
-                        <button onClick={() => { setIsFlipped(false); setFcIndex(prev => prev + 1); }} className="px-6 py-3 bg-red-600 text-white rounded-xl font-semibold">Następna ➔</button>
+                      <div className="flex items-center gap-3 mt-4">
+                        <button onClick={() => { setIsFlipped(false); setFcIndex(prev => Math.max(0, prev - 1)); }} className="p-2.5 bg-slate-800 text-slate-200 rounded-xl"><i data-lucide="chevron-left" className="w-4 h-4"></i></button>
+                        <button onClick={() => { setIsFlipped(false); setFcIndex(prev => prev + 1); }} className="px-5 py-2.5 bg-red-600 text-white rounded-xl font-semibold text-xs sm:text-sm">Następna ➔</button>
                       </div>
                     </div>
                   ) : <div className="text-slate-500 text-sm my-auto">Brak słówek spełniających kryteria.</div>}
@@ -1186,34 +1062,34 @@
 
               {/* 2. QUIZ */}
               {activeTab === 'quiz' && (
-                <div className="flex-1 flex flex-col items-center justify-between space-y-6">
+                <div className="flex-1 flex flex-col items-center justify-between space-y-4">
                   <div className="w-full flex flex-wrap justify-between items-center gap-2">
-                    <div className="flex items-center gap-1.5 bg-slate-950 p-1 rounded-xl text-xs font-medium border border-slate-800">
-                      <button onClick={() => setQuizDirection('es-pl')} className={`px-2.5 py-1 rounded-lg ${quizDirection === 'es-pl' ? 'bg-slate-800 text-red-400' : 'text-slate-400'}`}>ES ➔ PL</button>
-                      <button onClick={() => setQuizDirection('pl-es')} className={`px-2.5 py-1 rounded-lg ${quizDirection === 'pl-es' ? 'bg-slate-800 text-red-400' : 'text-slate-400'}`}>PL ➔ ES</button>
-                      <button onClick={() => setQuizDirection('random')} className={`px-2.5 py-1 rounded-lg ${quizDirection === 'random' ? 'bg-slate-800 text-red-400' : 'text-slate-400'}`}>Losowo</button>
+                    <div className="flex items-center gap-1 bg-slate-950 p-1 rounded-xl text-xs font-medium border border-slate-800">
+                      <button onClick={() => setQuizDirection('es-pl')} className={`px-2 py-1 rounded-lg ${quizDirection === 'es-pl' ? 'bg-slate-800 text-red-400' : 'text-slate-400'}`}>ES ➔ PL</button>
+                      <button onClick={() => setQuizDirection('pl-es')} className={`px-2 py-1 rounded-lg ${quizDirection === 'pl-es' ? 'bg-slate-800 text-red-400' : 'text-slate-400'}`}>PL ➔ ES</button>
+                      <button onClick={() => setQuizDirection('random')} className={`px-2 py-1 rounded-lg ${quizDirection === 'random' ? 'bg-slate-800 text-red-400' : 'text-slate-400'}`}>Losowo</button>
                     </div>
-                    <div className="flex items-center gap-3">
-                      <label className="flex items-center gap-2 bg-slate-950 px-3 py-1.5 rounded-xl text-xs font-medium border border-slate-800 text-slate-300 cursor-pointer">
+                    <div className="flex items-center gap-2">
+                      <label className="flex items-center gap-1.5 bg-slate-950 px-2.5 py-1 rounded-xl text-xs font-medium border border-slate-800 text-slate-300 cursor-pointer">
                         <input type="checkbox" checked={quizOnlyVerbs} onChange={(e) => setQuizOnlyVerbs(e.target.checked)} className="accent-red-600" />
-                        <span className="text-amber-400 font-bold">Tylko czasowniki</span>
+                        <span className="text-amber-400 font-bold">Czasowniki</span>
                       </label>
-                      <div className="text-xs font-bold text-slate-300 bg-slate-950 px-3 py-1.5 rounded-lg border border-slate-800">Wynik: <span className="text-red-400">{score}</span></div>
+                      <div className="text-xs font-bold text-slate-300 bg-slate-950 px-2.5 py-1 rounded-lg border border-slate-800">Wynik: <span className="text-red-400">{score}</span></div>
                     </div>
                   </div>
 
                   {shuffledQuiz.length > 0 && quizData ? (
-                    <div className="w-full max-w-md my-auto space-y-4">
-                      <div className="bg-slate-950/80 p-6 rounded-2xl border border-slate-800 text-center space-y-2 relative">
-                        <div className="text-xs text-slate-400 uppercase font-bold">{quizIsEsToPl ? 'Przetłumacz na polski:' : 'Przetłumacz na hiszpański:'}</div>
-                        <h2 className="text-2xl font-bold text-slate-100 flex items-center justify-center gap-2">
+                    <div className="w-full max-w-md my-auto space-y-3">
+                      <div className="bg-slate-950/80 p-4 rounded-2xl border border-slate-800 text-center space-y-1.5 relative">
+                        <div className="text-[11px] text-slate-400 uppercase font-bold">{quizIsEsToPl ? 'Przetłumacz na polski:' : 'Przetłumacz na hiszpański:'}</div>
+                        <h2 className="text-xl sm:text-2xl font-bold text-slate-100 flex items-center justify-center gap-2">
                           <span>{quizData.question}</span>
                           <button onClick={() => speakText(quizData.question, quizIsEsToPl ? 'es' : 'pl')} className="text-slate-400 hover:text-red-400">
-                            <i data-lucide="volume-2" className="w-5 h-5"></i>
+                            <i data-lucide="volume-2" className="w-4 h-4"></i>
                           </button>
                         </h2>
                       </div>
-                      <form onSubmit={handleCheckQuiz} className="space-y-4">
+                      <form onSubmit={handleCheckQuiz} className="space-y-3">
                         <input
                           ref={el => inputRefs.current['userAnswer'] = el}
                           type="text"
@@ -1221,33 +1097,33 @@
                           value={userAnswer}
                           disabled={quizResult !== null}
                           onChange={(e) => setUserAnswer(e.target.value)}
-                          className="w-full px-4 py-3 bg-slate-800 border border-slate-700 text-white rounded-xl text-center text-lg font-medium"
+                          className="w-full px-3 py-2.5 bg-slate-800 border border-slate-700 text-white rounded-xl text-center text-base font-medium"
                         />
-                        {quizResult === null && <SpanishCharBar onInsertChar={(c) => insertCharToRef('userAnswer', c, setUserAnswer, userAnswer)} />}
+                        {quizResult === null && <SpanishCharBar onInsertChar={(c) => insertCharToRef('userAnswer', c, setUserAnswer, userAnswer)} isMobileView={isMobileView} />}
                         {quizResult === null ? (
-                          <button type="submit" className="w-full py-3 bg-red-600 text-white font-semibold rounded-xl">Sprawdź</button>
+                          <button type="submit" className="w-full py-2.5 bg-red-600 text-white font-semibold rounded-xl text-sm">Sprawdź</button>
                         ) : (
-                          <div className="space-y-3">
+                          <div className="space-y-2.5">
                             {quizResult === 'correct' && (
-                              <div className="p-4 rounded-xl text-center text-sm font-semibold bg-emerald-950 text-emerald-300">
+                              <div className="p-3 rounded-xl text-center text-xs font-semibold bg-emerald-950 text-emerald-300">
                                 Dobrze!
                               </div>
                             )}
                             {quizResult === 'typo' && (
-                              <div className="p-4 rounded-xl text-center text-sm font-semibold bg-amber-950/90 text-amber-300 border border-amber-700/60 space-y-1">
+                              <div className="p-3 rounded-xl text-center text-xs font-semibold bg-amber-950/90 text-amber-300 border border-amber-700/60 space-y-0.5">
                                 <div>Zaliczone z drobną literówką!</div>
-                                <div className="text-xs text-slate-200">Poprawna wersja: <span className="font-bold">{quizMatchedWord}</span></div>
+                                <div className="text-[11px] text-slate-200">Poprawna wersja: <span className="font-bold">{quizMatchedWord}</span></div>
                               </div>
                             )}
                             {quizResult === 'incorrect' && (
-                              <div className="p-4 rounded-xl text-center text-sm font-semibold flex items-center justify-center gap-2 bg-red-950 text-red-300">
-                                <span>Błędnie. Prawidłowa odpowiedź: {quizMatchedWord}</span>
+                              <div className="p-3 rounded-xl text-center text-xs font-semibold flex items-center justify-center gap-2 bg-red-950 text-red-300">
+                                <span>Błędnie. Odpowiedź: {quizMatchedWord}</span>
                                 <button type="button" onClick={() => speakText(quizMatchedWord, quizIsEsToPl ? 'pl' : 'es')} className="hover:opacity-80">
-                                  <i data-lucide="volume-2" className="w-4 h-4"></i>
+                                  <i data-lucide="volume-2" className="w-3.5 h-3.5"></i>
                                 </button>
                               </div>
                             )}
-                            <button type="button" onClick={handleNextQuiz} className="w-full py-3 bg-slate-800 text-white font-semibold rounded-xl">Następne ➔</button>
+                            <button type="button" onClick={handleNextQuiz} className="w-full py-2.5 bg-slate-800 text-white font-semibold rounded-xl text-sm">Następne ➔</button>
                           </div>
                         )}
                       </form>
@@ -1258,23 +1134,23 @@
 
               {/* SZYBKI TEST (20 słówek) */}
               {activeTab === 'speedtest' && (
-                <div className="flex-1 flex flex-col items-center justify-between space-y-6">
+                <div className="flex-1 flex flex-col items-center justify-between space-y-4">
                   {speedTestQueue.length > 0 && speedTestIndex < speedTestQueue.length ? (
-                    <div className="w-full max-w-md my-auto space-y-4">
+                    <div className="w-full max-w-md my-auto space-y-3">
                       <div className="flex justify-between items-center text-xs text-slate-400 font-semibold px-1">
-                        <span>{speedTestIsReview ? 'Powtórka błędnych słówek' : 'Szybki Test (20 słówek)'}</span>
-                        <span>Pytanie {speedTestIndex + 1} z {speedTestQueue.length}</span>
+                        <span>{speedTestIsReview ? 'Powtórka błędnych' : 'Szybki Test (20 słówek)'}</span>
+                        <span>{speedTestIndex + 1} / {speedTestQueue.length}</span>
                       </div>
-                      <div className="bg-slate-950/80 p-6 rounded-2xl border border-slate-800 text-center space-y-2">
-                        <div className="text-xs text-amber-400 uppercase font-bold">Przetłumacz na polski:</div>
-                        <h2 className="text-2xl font-bold text-slate-100 flex items-center justify-center gap-2">
+                      <div className="bg-slate-950/80 p-4 rounded-2xl border border-slate-800 text-center space-y-1.5">
+                        <div className="text-[11px] text-amber-400 uppercase font-bold">Przetłumacz na polski:</div>
+                        <h2 className="text-xl sm:text-2xl font-bold text-slate-100 flex items-center justify-center gap-2">
                           <span>{speedTestQueue[speedTestIndex].es}</span>
                           <button onClick={() => speakText(speedTestQueue[speedTestIndex].es, 'es')} className="text-slate-400 hover:text-red-400">
-                            <i data-lucide="volume-2" className="w-5 h-5"></i>
+                            <i data-lucide="volume-2" className="w-4 h-4"></i>
                           </button>
                         </h2>
                       </div>
-                      <form onSubmit={handleCheckSpeedTest} className="space-y-4">
+                      <form onSubmit={handleCheckSpeedTest} className="space-y-3">
                         <input
                           ref={el => inputRefs.current['speedAnswer'] = el}
                           type="text"
@@ -1282,63 +1158,63 @@
                           value={speedTestAnswer}
                           disabled={speedTestResult !== null}
                           onChange={(e) => setSpeedTestAnswer(e.target.value)}
-                          className="w-full px-4 py-3 bg-slate-800 border border-slate-700 text-white rounded-xl text-center text-lg font-medium"
+                          className="w-full px-3 py-2.5 bg-slate-800 border border-slate-700 text-white rounded-xl text-center text-base font-medium"
                         />
-                        {speedTestResult === null && <SpanishCharBar onInsertChar={(c) => insertCharToRef('speedAnswer', c, setSpeedTestAnswer, speedTestAnswer)} />}
+                        {speedTestResult === null && <SpanishCharBar onInsertChar={(c) => insertCharToRef('speedAnswer', c, setSpeedTestAnswer, speedTestAnswer)} isMobileView={isMobileView} />}
                         {speedTestResult === null ? (
-                          <button type="submit" className="w-full py-3 bg-red-600 text-white font-semibold rounded-xl">Sprawdź</button>
+                          <button type="submit" className="w-full py-2.5 bg-red-600 text-white font-semibold rounded-xl text-sm">Sprawdź</button>
                         ) : (
-                          <div className="space-y-3">
+                          <div className="space-y-2.5">
                             {speedTestResult === 'correct' && (
-                              <div className="p-4 rounded-xl text-center text-sm font-semibold bg-emerald-950 text-emerald-300">
+                              <div className="p-3 rounded-xl text-center text-xs font-semibold bg-emerald-950 text-emerald-300">
                                 Dobrze!
                               </div>
                             )}
                             {speedTestResult === 'typo' && (
-                              <div className="p-4 rounded-xl text-center text-sm font-semibold bg-amber-950/90 text-amber-300 border border-amber-700/60 space-y-1">
+                              <div className="p-3 rounded-xl text-center text-xs font-semibold bg-amber-950/90 text-amber-300 border border-amber-700/60 space-y-0.5">
                                 <div>Zaliczone z drobną literówką!</div>
-                                <div className="text-xs text-slate-200">Poprawna wersja: <span className="font-bold">{speedTestMatchedWord}</span></div>
+                                <div className="text-[11px] text-slate-200">Poprawna wersja: <span className="font-bold">{speedTestMatchedWord}</span></div>
                               </div>
                             )}
                             {speedTestResult === 'incorrect' && (
-                              <div className="p-4 rounded-xl text-center text-sm font-semibold flex items-center justify-center gap-2 bg-red-950 text-red-300">
-                                <span>Błędnie. Prawidłowa odpowiedź: {speedTestMatchedWord}</span>
+                              <div className="p-3 rounded-xl text-center text-xs font-semibold flex items-center justify-center gap-2 bg-red-950 text-red-300">
+                                <span>Błędnie. Odpowiedź: {speedTestMatchedWord}</span>
                                 <button type="button" onClick={() => speakText(speedTestMatchedWord, 'pl')} className="hover:opacity-80">
-                                  <i data-lucide="volume-2" className="w-4 h-4"></i>
+                                  <i data-lucide="volume-2" className="w-3.5 h-3.5"></i>
                                 </button>
                               </div>
                             )}
-                            <button type="button" onClick={handleNextSpeedTest} className="w-full py-3 bg-slate-800 text-white font-semibold rounded-xl">Następne ➔</button>
+                            <button type="button" onClick={handleNextSpeedTest} className="w-full py-2.5 bg-slate-800 text-white font-semibold rounded-xl text-sm">Następne ➔</button>
                           </div>
                         )}
                       </form>
                     </div>
                   ) : (
-                    <div className="w-full max-w-md my-auto space-y-6 text-center bg-slate-950/80 p-8 rounded-2xl border border-slate-800">
-                      <h2 className="text-2xl font-black text-white">Wynik testu</h2>
-                      <p className="text-sm text-slate-300">
-                        Twój wynik: <span className="text-red-400 font-bold text-lg">{speedTestScore}</span> z <span className="font-bold text-lg">{speedTestQueue.length}</span>
+                    <div className="w-full max-w-md my-auto space-y-4 text-center bg-slate-950/80 p-6 rounded-2xl border border-slate-800">
+                      <h2 className="text-xl font-black text-white">Wynik testu</h2>
+                      <p className="text-xs text-slate-300">
+                        Twój wynik: <span className="text-red-400 font-bold text-base">{speedTestScore}</span> z <span className="font-bold text-base">{speedTestQueue.length}</span>
                       </p>
                       
                       {speedTestWrongItems.length > 0 ? (
-                        <div className="space-y-3">
-                          <p className="text-xs text-amber-400 font-semibold">Masz {speedTestWrongItems.length} błędnych odpowiedzi do powtórzenia.</p>
+                        <div className="space-y-2.5">
+                          <p className="text-[11px] text-amber-400 font-semibold">Masz {speedTestWrongItems.length} błędnych odpowiedzi do powtórzenia.</p>
                           <button 
                             onClick={() => startSpeedTest(shuffleArray(speedTestWrongItems))} 
-                            className="w-full py-3 bg-amber-600 hover:bg-amber-500 text-white font-semibold rounded-xl shadow transition"
+                            className="w-full py-2.5 bg-amber-600 hover:bg-amber-500 text-white font-semibold rounded-xl text-xs shadow transition"
                           >
                             Powtórz błędne słówka
                           </button>
                         </div>
                       ) : (
-                        <div className="p-3 bg-emerald-950/80 text-emerald-300 border border-emerald-800 rounded-xl text-xs font-bold">
+                        <div className="p-2.5 bg-emerald-950/80 text-emerald-300 border border-emerald-800 rounded-xl text-[11px] font-bold">
                           Gratulacje! Wszystkie odpowiedzi były poprawne!
                         </div>
                       )}
 
                       <button 
                         onClick={() => startSpeedTest()} 
-                        className="w-full py-3 bg-red-600 hover:bg-red-500 text-white font-semibold rounded-xl shadow transition"
+                        className="w-full py-2.5 bg-red-600 hover:bg-red-500 text-white font-semibold rounded-xl text-xs shadow transition"
                       >
                         Rozpocznij nowy test
                       </button>
@@ -1349,32 +1225,32 @@
 
               {/* 3. CZASOWNIKI */}
               {activeTab === 'verbs' && (
-                <div className="flex-1 flex flex-col space-y-6">
+                <div className="flex-1 flex flex-col space-y-4">
                   {currentVerb && currentVerbData ? (
-                    <div className="flex-1 flex flex-col justify-between max-w-xl mx-auto w-full space-y-4">
-                      <div className="text-center space-y-2">
-                        <h3 className="text-lg font-bold text-slate-100 capitalize flex items-center justify-center gap-2">
+                    <div className="flex-1 flex flex-col justify-between max-w-xl mx-auto w-full space-y-3">
+                      <div className="text-center space-y-1.5">
+                        <h3 className="text-base font-bold text-slate-100 capitalize flex items-center justify-center gap-2">
                           <span>Czasownik: <span className="text-red-400">{currentVerb.es}</span> ({currentVerb.pl})</span>
                           <button onClick={() => speakText(currentVerb.es, 'es')} className="text-slate-400 hover:text-red-400">
-                            <i data-lucide="volume-2" className="w-5 h-5"></i>
+                            <i data-lucide="volume-2" className="w-4 h-4"></i>
                           </button>
                         </h3>
-                        <div className="flex flex-wrap justify-center gap-1.5">
+                        <div className="flex flex-wrap justify-center gap-1">
                           {['presente', 'pasado', 'imperfecto', 'futuro'].map(t => (
-                            <button key={t} onClick={() => setSelectedTense(t)} className={`px-3 py-1 text-xs rounded-lg uppercase font-semibold ${selectedTense === t ? 'bg-red-600 text-white' : 'bg-slate-800 text-slate-400'}`}>
+                            <button key={t} onClick={() => setSelectedTense(t)} className={`px-2.5 py-1 text-[11px] rounded-lg uppercase font-semibold ${selectedTense === t ? 'bg-red-600 text-white' : 'bg-slate-800 text-slate-400'}`}>
                               {t}
                             </button>
                           ))}
                         </div>
                       </div>
 
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
                         {['yo', 'tu', 'el', 'nosotros', 'vosotros', 'ellos'].map((p) => {
                           const isFieldCorrect = verbSubmitted && normalizeText(verbAnswers[p]) === normalizeText(currentVerbData[p]);
                           return (
-                            <div key={p} className={`bg-slate-950 p-3 rounded-xl border ${verbSubmitted ? (isFieldCorrect ? 'border-emerald-700' : 'border-red-800') : 'border-slate-800'}`}>
+                            <div key={p} className={`bg-slate-950 p-2.5 rounded-xl border ${verbSubmitted ? (isFieldCorrect ? 'border-emerald-700' : 'border-red-800') : 'border-slate-800'}`}>
                               <div className="flex justify-between items-center mb-1">
-                                <label className="text-xs font-bold text-slate-300">{PERSON_LABELS[p] || p}</label>
+                                <label className="text-[11px] font-bold text-slate-300">{PERSON_LABELS[p] || p}</label>
                                 {verbSubmitted && (
                                   <button onClick={() => speakText(currentVerbData[p], 'es')} className="text-slate-400 hover:text-red-400">
                                     <i data-lucide="volume-2" className="w-3.5 h-3.5"></i>
@@ -1389,14 +1265,14 @@
                                 onFocus={() => setActiveVerbField(p)}
                                 onChange={(e) => setVerbAnswers({ ...verbAnswers, [p]: e.target.value })}
                                 placeholder={verbSubmitted ? currentVerbData[p] : '...'}
-                                className={`w-full px-3 py-1.5 text-sm rounded-lg border bg-slate-800 text-white ${
+                                className={`w-full px-2.5 py-1 text-xs rounded-lg border bg-slate-800 text-white ${
                                   verbSubmitted 
                                     ? (isFieldCorrect ? 'border-emerald-500 text-emerald-300' : 'border-red-500 text-red-300')
                                     : 'border-slate-700'
                                 }`}
                               />
                               {verbSubmitted && !isFieldCorrect && (
-                                <div className="mt-1 text-[11px] text-red-400 font-medium">
+                                <div className="mt-0.5 text-[10px] text-red-400 font-medium">
                                   Poprawnie: <span className="font-bold">{currentVerbData[p]}</span>
                                 </div>
                               )}
@@ -1406,14 +1282,14 @@
                       </div>
 
                       {!verbSubmitted && (
-                        <SpanishCharBar onInsertChar={(c) => insertCharToRef(`verb_${activeVerbField}`, c, (val) => setVerbAnswers({...verbAnswers, [activeVerbField]: val}), verbAnswers[activeVerbField])} />
+                        <SpanishCharBar onInsertChar={(c) => insertCharToRef(`verb_${activeVerbField}`, c, (val) => setVerbAnswers({...verbAnswers, [activeVerbField]: val}), verbAnswers[activeVerbField])} isMobileView={isMobileView} />
                       )}
 
-                      <div className="flex gap-3">
+                      <div className="flex gap-2.5">
                         {!verbSubmitted ? (
-                          <button onClick={handleCheckVerbs} className="flex-1 py-2.5 bg-red-600 text-white font-semibold rounded-xl">Sprawdź</button>
+                          <button onClick={handleCheckVerbs} className="flex-1 py-2 bg-red-600 text-white font-semibold rounded-xl text-xs">Sprawdź</button>
                         ) : (
-                          <button onClick={handleNextVerb} className="flex-1 py-2.5 bg-slate-800 text-white font-semibold rounded-xl">Następny ➔</button>
+                          <button onClick={handleNextVerb} className="flex-1 py-2 bg-slate-800 text-white font-semibold rounded-xl text-xs">Następny ➔</button>
                         )}
                       </div>
                     </div>
@@ -1421,130 +1297,34 @@
                 </div>
               )}
 
-              {/* 4. ZDANIA (BETA) */}
-              {activeTab === 'sentences' && (
-                <div className="flex-1 flex flex-col space-y-4 max-w-xl mx-auto w-full my-auto">
-                  <div className="text-center space-y-1">
-                    <h3 className="text-lg font-bold text-white">Zdania (BETA)</h3>
-                    <p className="text-xs text-slate-400">Wybierz strukturę gramatyczną i buduj zdania ze słownictwa z bazy.</p>
-                  </div>
-
-                  <div className="flex flex-wrap justify-center gap-1.5 max-h-[140px] overflow-y-auto p-1 custom-scrollbar">
-                    {GRAMMAR_STRUCTURES.map(st => (
-                      <button
-                        key={st.id}
-                        onClick={() => {
-                          setSelectedStructure(st);
-                          generateSentenceTask(st);
-                        }}
-                        className={`px-3 py-1.5 text-xs rounded-xl font-semibold border transition ${
-                          selectedStructure.id === st.id
-                            ? 'bg-red-600 border-red-500 text-white shadow'
-                            : 'bg-slate-950 border-slate-800 text-slate-400 hover:text-white'
-                        }`}
-                      >
-                        {st.name}
-                      </button>
-                    ))}
-                  </div>
-
-                  {currentSentenceTask ? (
-                    <div className="bg-slate-950 p-5 rounded-2xl border border-slate-800 space-y-4 shadow-xl">
-                      <div className="text-center space-y-2">
-                        <span className="text-xs text-slate-400 font-semibold">{currentSentenceTask.structure.desc}</span>
-                        <div className="bg-slate-900 p-3.5 rounded-xl border border-slate-800 space-y-1">
-                          <div className="text-xs text-slate-400 uppercase font-bold">Przetłumacz na hiszpański:</div>
-                          <div className="text-lg font-extrabold text-amber-400">
-                            {currentSentenceTask.correctPl}
-                          </div>
-                          <div className="text-[11px] text-slate-500">
-                            (Użyte słówka: {currentSentenceTask.verb ? <span className="text-slate-300 font-semibold">{currentSentenceTask.verb.es} / </span> : ''}<span className="text-slate-300 font-semibold">{currentSentenceTask.noun.es}</span>)
-                          </div>
-                        </div>
-                      </div>
-
-                      <form onSubmit={handleCheckSentence} className="space-y-3">
-                        <input
-                          ref={el => inputRefs.current['sentenceInput'] = el}
-                          type="text"
-                          placeholder="Wpisz zdanie po hiszpańsku..."
-                          value={sentenceUserAnswer}
-                          disabled={sentenceResult !== null}
-                          onChange={(e) => setSentenceUserAnswer(e.target.value)}
-                          className="w-full px-4 py-3 bg-slate-900 border border-slate-700 text-white rounded-xl text-center text-lg font-medium"
-                        />
-                        {sentenceResult === null && <SpanishCharBar onInsertChar={(c) => insertCharToRef('sentenceInput', c, setSentenceUserAnswer, sentenceUserAnswer)} />}
-
-                        {sentenceResult === null ? (
-                          <button type="submit" className="w-full py-3 bg-red-600 hover:bg-red-500 text-white font-semibold rounded-xl transition">
-                            Sprawdź zdanie
-                          </button>
-                        ) : (
-                          <div className="space-y-3">
-                            {sentenceResult === 'correct' ? (
-                              <div className="p-4 bg-emerald-950 text-emerald-300 border border-emerald-800 rounded-xl text-center text-sm font-bold flex items-center justify-center gap-2">
-                                <span>Świetnie! Zdanie jest poprawne.</span>
-                                <button type="button" onClick={() => speakText(currentSentenceTask.correctEs, 'es')} className="hover:opacity-80">
-                                  <i data-lucide="volume-2" className="w-4 h-4"></i>
-                                </button>
-                              </div>
-                            ) : (
-                              <div className="p-4 bg-red-950 text-red-300 border border-red-800 rounded-xl text-center text-sm font-semibold space-y-1">
-                                <div>Błędnie. Poprawna wersja:</div>
-                                <div className="text-base font-bold text-white flex items-center justify-center gap-2">
-                                  <span>{currentSentenceTask.correctEs}</span>
-                                  <button type="button" onClick={() => speakText(currentSentenceTask.correctEs, 'es')} className="hover:opacity-80">
-                                    <i data-lucide="volume-2" className="w-4 h-4"></i>
-                                  </button>
-                                </div>
-                              </div>
-                            )}
-
-                            <button
-                              type="button"
-                              onClick={() => generateSentenceTask()}
-                              className="w-full py-3 bg-slate-800 hover:bg-slate-700 text-white font-semibold rounded-xl transition"
-                            >
-                              Następne zdanie ➔
-                            </button>
-                          </div>
-                        )}
-                      </form>
-                    </div>
-                  ) : (
-                    <div className="text-center text-slate-500 text-sm py-12">Za mało słówek w bazie do generowania zdań.</div>
-                  )}
-                </div>
-              )}
-
-              {/* 5. ADMIN */}
+              {/* 4. ADMIN */}
               {activeTab === 'admin' && (
-                <div className="space-y-6 flex-1 flex flex-col max-w-xl mx-auto w-full">
-                  <div className="bg-slate-950 p-4 rounded-xl border border-slate-800 space-y-3">
-                    <h3 className="text-sm font-bold text-white">Pobierz i zamontuj bazę z serwera</h3>
-                    <button onClick={handleDownloadAndSaveDatabase} disabled={loading} className="px-4 py-2 bg-blue-600 text-white rounded-xl text-xs font-semibold shadow">
+                <div className="space-y-4 flex-1 flex flex-col max-w-xl mx-auto w-full text-xs">
+                  <div className="bg-slate-950 p-3 rounded-xl border border-slate-800 space-y-2">
+                    <h3 className="font-bold text-white">Pobierz i zamontuj bazę z serwera</h3>
+                    <button onClick={handleDownloadAndSaveDatabase} disabled={loading} className="px-3 py-1.5 bg-blue-600 text-white rounded-lg font-semibold shadow">
                       {loading ? 'Pobieranie...' : 'Pobierz bazę'}
                     </button>
                   </div>
 
-                  <div className="bg-slate-950 p-4 rounded-xl border border-slate-800 space-y-3">
-                    <h3 className="text-sm font-bold text-white">Wybierz plik z dysku (.ods)</h3>
+                  <div className="bg-slate-950 p-3 rounded-xl border border-slate-800 space-y-2">
+                    <h3 className="font-bold text-white">Wybierz plik z dysku (.ods)</h3>
                     <input ref={fileInputRef} type="file" accept=".ods, .xlsx" onChange={handleLoadLocalDatabase} className="hidden" />
-                    <button onClick={() => fileInputRef.current && fileInputRef.current.click()} className="px-4 py-2 bg-amber-600 text-white rounded-xl text-xs font-semibold shadow">
+                    <button onClick={() => fileInputRef.current && fileInputRef.current.click()} className="px-3 py-1.5 bg-amber-600 text-white rounded-lg font-semibold shadow">
                       Wybierz plik
                     </button>
                   </div>
 
-                  <div className="bg-slate-950 p-4 rounded-xl border border-slate-800 space-y-3">
-                    <h3 className="text-sm font-bold text-white">Zapisz wpisane słówka do pliku baza_esp_ręcznie.ods</h3>
-                    <button onClick={handleSaveManualWordsToDisk} className="px-4 py-2 bg-emerald-600 text-white rounded-xl text-xs font-semibold shadow">
+                  <div className="bg-slate-950 p-3 rounded-xl border border-slate-800 space-y-2">
+                    <h3 className="font-bold text-white">Zapisz wpisane słówka do pliku baza_esp_ręcznie.ods</h3>
+                    <button onClick={handleSaveManualWordsToDisk} className="px-3 py-1.5 bg-emerald-600 text-white rounded-lg font-semibold shadow">
                       Zapisz jako baza_esp_ręcznie.ods
                     </button>
                   </div>
 
-                  <div className="bg-slate-950 p-4 rounded-xl border border-slate-800 space-y-3">
-                    <h3 className="text-sm font-bold text-white flex items-center gap-2">
-                      <i data-lucide="book" className="w-4 h-4 text-red-500"></i>
+                  <div className="bg-slate-950 p-3 rounded-xl border border-slate-800 space-y-2">
+                    <h3 className="font-bold text-white flex items-center gap-1.5">
+                      <i data-lucide="book" className="w-3.5 h-3.5 text-red-500"></i>
                       <span>Słownik bazy ({words.length} słówek)</span>
                     </h3>
                     <input
@@ -1552,9 +1332,9 @@
                       placeholder="Szukaj w słowniku..."
                       value={searchTerm}
                       onChange={(e) => setSearchTerm(e.target.value)}
-                      className="w-full px-3 py-2 bg-slate-900 border border-slate-700 text-white rounded-lg text-sm"
+                      className="w-full px-2.5 py-1.5 bg-slate-900 border border-slate-700 text-white rounded-lg text-xs"
                     />
-                    <div className="max-h-[220px] overflow-y-auto border border-slate-800 rounded-lg bg-slate-900/50">
+                    <div className="max-h-[180px] overflow-y-auto border border-slate-800 rounded-lg bg-slate-900/50">
                       <table className="w-full text-left text-xs">
                         <thead className="bg-slate-900 border-b border-slate-800 sticky top-0 text-slate-400 uppercase">
                           <tr>
@@ -1567,34 +1347,34 @@
                         <tbody className="divide-y divide-slate-800">
                           {filteredWords.map((item) => (
                             <tr key={item.id} className="hover:bg-slate-800/40">
-                              <td className="p-2 font-semibold text-slate-100 flex items-center gap-1.5">
+                              <td className="p-2 font-semibold text-slate-100 flex items-center gap-1">
                                 <span>{item.es}</span>
                                 <button onClick={() => speakText(item.es, 'es')} className="text-slate-500 hover:text-red-400">
-                                  <i data-lucide="volume-2" className="w-3.5 h-3.5"></i>
+                                  <i data-lucide="volume-2" className="w-3 h-3"></i>
                                 </button>
                               </td>
                               <td className="p-2 text-slate-300">
-                                <div className="flex items-center gap-1.5">
+                                <div className="flex items-center gap-1">
                                   <span>{item.pl}</span>
                                   <button onClick={() => speakText(item.pl, 'pl')} className="text-slate-500 hover:text-red-400">
-                                    <i data-lucide="volume-2" className="w-3.5 h-3.5"></i>
+                                    <i data-lucide="volume-2" className="w-3 h-3"></i>
                                   </button>
                                 </div>
                               </td>
                               <td className="p-2 text-center">
                                 <div className="flex items-center justify-center gap-1">
-                                  {item.isVerb && <span className="px-1.5 py-0.5 bg-amber-950 text-amber-400 border border-amber-800 text-[9px] font-bold rounded">CZAS.</span>}
-                                  {item.isManual && <span className="px-1.5 py-0.5 bg-purple-950 text-purple-300 border border-purple-800 text-[9px] font-bold rounded">RĘCZNE</span>}
+                                  {item.isVerb && <span className="px-1 py-0.5 bg-amber-950 text-amber-400 border border-amber-800 text-[8px] font-bold rounded">CZAS.</span>}
+                                  {item.isManual && <span className="px-1 py-0.5 bg-purple-950 text-purple-300 border border-purple-800 text-[8px] font-bold rounded">RĘCZNE</span>}
                                 </div>
                               </td>
                               <td className="p-2 text-right">
                                 {item.isManual ? (
                                   <div className="flex items-center justify-end gap-1">
-                                    <button onClick={() => handleEditManualWord(item)} className="px-2 py-1 bg-blue-900/60 hover:bg-blue-800 text-blue-200 rounded text-[10px] font-semibold">Edytuj</button>
-                                    <button onClick={() => handleDeleteManualWord(item.id)} className="px-2 py-1 bg-red-900/60 hover:bg-red-800 text-red-200 rounded text-[10px] font-semibold">Usuń</button>
+                                    <button onClick={() => handleEditManualWord(item)} className="px-2 py-0.5 bg-blue-900/60 hover:bg-blue-800 text-blue-200 rounded text-[9px] font-semibold">Edytuj</button>
+                                    <button onClick={() => handleDeleteManualWord(item.id)} className="px-2 py-0.5 bg-red-900/60 hover:bg-red-800 text-red-200 rounded text-[9px] font-semibold">Usuń</button>
                                   </div>
                                 ) : (
-                                  <span className="text-[10px] text-slate-600 italic">baza</span>
+                                  <span className="text-[9px] text-slate-600 italic">baza</span>
                                 )}
                               </td>
                             </tr>
@@ -1604,14 +1384,14 @@
                     </div>
                   </div>
 
-                  <form onSubmit={handleSaveWordForm} className="bg-slate-950 p-4 rounded-xl border border-slate-800 space-y-3">
-                    <h3 className="text-sm font-bold text-white">
+                  <form onSubmit={handleSaveWordForm} className="bg-slate-950 p-3 rounded-xl border border-slate-800 space-y-2.5">
+                    <h3 className="font-bold text-white">
                       {editingId ? 'Edytuj słówko / czasownik' : 'Dodaj słówko / czasownik'}
                     </h3>
-                    <input type="text" placeholder="Hiszpański" value={newEs} onChange={(e) => setNewEs(e.target.value)} className="w-full px-3 py-2 bg-slate-900 border border-slate-700 rounded-lg text-sm text-white" />
-                    <input type="text" placeholder="Polski" value={newPl} onChange={(e) => setNewPl(e.target.value)} className="w-full px-3 py-2 bg-slate-900 border border-slate-700 rounded-lg text-sm text-white" />
+                    <input type="text" placeholder="Hiszpański" value={newEs} onChange={(e) => setNewEs(e.target.value)} className="w-full px-2.5 py-1.5 bg-slate-900 border border-slate-700 rounded-lg text-xs text-white" />
+                    <input type="text" placeholder="Polski" value={newPl} onChange={(e) => setNewPl(e.target.value)} className="w-full px-2.5 py-1.5 bg-slate-900 border border-slate-700 rounded-lg text-xs text-white" />
                     
-                    <div className="space-y-2 pt-1">
+                    <div className="space-y-1 pt-0.5">
                       <label className="flex items-center gap-2 text-xs text-slate-300">
                         <input type="checkbox" checked={newIsVerb} onChange={(e) => setNewIsVerb(e.target.checked)} />
                         <span className="font-bold text-amber-400">Czasownik (udostępnia odmianę dla 4 czasów)</span>
@@ -1619,24 +1399,24 @@
                     </div>
 
                     {newIsVerb && (
-                      <div className="space-y-3 p-3 bg-slate-900 rounded-xl border border-slate-800 mt-2">
-                        <div className="text-xs font-bold text-slate-300">Odmiana dla 4 czasów:</div>
+                      <div className="space-y-2 p-2.5 bg-slate-900 rounded-xl border border-slate-800 mt-2">
+                        <div className="font-bold text-slate-300 text-[11px]">Odmiana dla 4 czasów:</div>
                         <div className="flex gap-1">
                           {['presente', 'pasado', 'imperfecto', 'futuro'].map(t => (
                             <button
                               key={t}
                               type="button"
                               onClick={() => setActiveManualTense(t)}
-                              className={`px-2.5 py-1 text-[11px] rounded uppercase font-semibold ${activeManualTense === t ? 'bg-red-600 text-white' : 'bg-slate-800 text-slate-400'}`}
+                              className={`px-2 py-0.5 text-[10px] rounded uppercase font-semibold ${activeManualTense === t ? 'bg-red-600 text-white' : 'bg-slate-800 text-slate-400'}`}
                             >
                               {t}
                             </button>
                           ))}
                         </div>
-                        <div className="grid grid-cols-2 gap-2 pt-2">
+                        <div className="grid grid-cols-2 gap-1.5 pt-1">
                           {['yo', 'tu', 'el', 'nosotros', 'vosotros', 'ellos'].map(p => (
                             <div key={p}>
-                              <label className="text-[10px] text-slate-400 uppercase block mb-0.5">{p}</label>
+                              <label className="text-[9px] text-slate-400 uppercase block mb-0.5">{p}</label>
                               <input
                                 type="text"
                                 placeholder={`Forma dla ${p}`}
@@ -1659,19 +1439,19 @@
                       </div>
                     )}
 
-                    <div className="flex justify-end gap-2 pt-2">
+                    <div className="flex justify-end gap-2 pt-1">
                       {editingId && (
-                        <button type="button" onClick={() => { setEditingId(null); setNewEs(''); setNewPl(''); setNewIsVerb(false); }} className="px-4 py-2 bg-slate-800 text-white text-xs font-semibold rounded-lg">Anuluj</button>
+                        <button type="button" onClick={() => { setEditingId(null); setNewEs(''); setNewPl(''); setNewIsVerb(false); }} className="px-3 py-1.5 bg-slate-800 text-white font-semibold rounded-lg text-xs">Anuluj</button>
                       )}
-                      <button type="submit" className="px-4 py-2 bg-red-600 text-white text-xs font-semibold rounded-lg">
+                      <button type="submit" className="px-3 py-1.5 bg-red-600 text-white font-semibold rounded-lg text-xs">
                         {editingId ? 'Zapisz zmiany' : 'Dodaj'}
                       </button>
                     </div>
                   </form>
 
-                  <div className="bg-slate-950 p-4 rounded-xl border border-red-950 space-y-3">
-                    <h3 className="text-sm font-bold text-red-400">Usuń całą bazę</h3>
-                    <button onClick={() => setEraseModalOpen(true)} className="px-4 py-2 bg-red-900 text-white rounded-xl text-xs font-semibold">Usuń bazę</button>
+                  <div className="bg-slate-950 p-3 rounded-xl border border-red-950 space-y-2">
+                    <h3 className="font-bold text-red-400">Usuń całą bazę</h3>
+                    <button onClick={() => setEraseModalOpen(true)} className="px-3 py-1.5 bg-red-900 text-white rounded-lg font-semibold text-xs">Usuń bazę</button>
                   </div>
                 </div>
               )}
@@ -1679,7 +1459,7 @@
             </div>
           </div>
 
-          <footer className="w-full max-w-5xl text-center py-2 text-[10px] text-slate-500 font-medium space-y-0.5">
+          <footer className={`w-full ${isMobileView ? 'max-w-sm' : 'max-w-5xl'} text-center py-1.5 text-[9px] text-slate-500 font-medium space-y-0.5 transition-all`}>
             <div>Ostatnia aktualizacja kodu (plik): <span className="text-slate-400 font-semibold">{fileLastModified}</span></div>
             <div>Ostatnia aktualizacja bazy (baza_esp.ods): <span className="text-slate-400 font-semibold">{dbLastModified}</span></div>
           </footer>
