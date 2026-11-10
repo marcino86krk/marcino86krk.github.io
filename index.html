@@ -39,6 +39,66 @@
       { id: '5', es: 'gracias', pl: 'dziękuję', isVerb: false, isManual: false }
     ];
 
+    const PERSON_LABELS = {
+      yo: 'yo (ja)',
+      tu: 'tú (ty)',
+      el: 'él / ella / usted (on / ona / Pan, Pani)',
+      nosotros: 'nosotros / nosotras (my)',
+      vosotros: 'vosotros / vosotras (wy)',
+      ellos: 'ellos / ellas / ustedes (oni / one / Państwo)'
+    };
+
+    const GRAMMAR_STRUCTURES = [
+      {
+        id: 'quero',
+        name: 'Quiero + [infinitivo]',
+        desc: 'Wyrażanie chęci: Chcę zrobić coś...',
+        type: 'verb_noun'
+      },
+      {
+        id: 'tengo_que',
+        name: 'Tengo que + [infinitivo]',
+        desc: 'Wyrażanie obowiązku: Muszę zrobić coś...',
+        type: 'verb_noun'
+      },
+      {
+        id: 'voy_a',
+        name: 'Voy a + [infinitivo]',
+        desc: 'Najbliższa przyszłość: Zamierzam / Idę zrobić coś...',
+        type: 'verb_noun'
+      },
+      {
+        id: 'gusta',
+        name: 'Me gusta + [sustantivo]',
+        desc: 'Wyrażanie upodobań: Lubię...',
+        type: 'noun_only'
+      },
+      {
+        id: 'necesito',
+        name: 'Necesito + [infinitivo/sustantivo]',
+        desc: 'Wyrażanie potrzeby: Potrzebuję...',
+        type: 'verb_noun'
+      },
+      {
+        id: 'puedo',
+        name: 'Puedo + [infinitivo]',
+        desc: 'Wyrażanie możliwości: Mogę / Potrafię...',
+        type: 'verb_noun'
+      },
+      {
+        id: 'gustaria',
+        name: 'Me gustaría + [infinitivo]',
+        desc: 'Uprzejma prośba / życzenie: Chciałbym / Chciałabym...',
+        type: 'verb_noun'
+      },
+      {
+        id: 'hay',
+        name: 'Hay + [sustantivo]',
+        desc: 'Informowanie o istnieniu: Jest / Znajduje się / Są...',
+        type: 'noun_only'
+      }
+    ];
+
     function SpanishCharBar({ onInsertChar, className = "" }) {
       return (
         <div className={`flex flex-wrap gap-1 items-center justify-center bg-slate-900 p-1.5 rounded-xl border border-slate-800 ${className}`}>
@@ -107,6 +167,7 @@
       });
 
       const [dbLastModified, setDbLastModified] = useState('Brak danych');
+      const [fileLastModified, setFileLastModified] = useState('');
       const [loading, setLoading] = useState(false);
       const [loadMessage, setLoadMessage] = useState(null);
       const [activeTab, setActiveTab] = useState('flashcards');
@@ -144,6 +205,7 @@
       const [qIndex, setQIndex] = useState(0);
       const [userAnswer, setUserAnswer] = useState('');
       const [quizResult, setQuizResult] = useState(null);
+      const [quizMatchedWord, setQuizMatchedWord] = useState('');
       const [score, setScore] = useState(0);
       const [quizIsEsToPl, setQuizIsEsToPl] = useState(true);
 
@@ -152,6 +214,7 @@
       const [speedTestWrongItems, setSpeedTestWrongItems] = useState([]);
       const [speedTestAnswer, setSpeedTestAnswer] = useState('');
       const [speedTestResult, setSpeedTestResult] = useState(null);
+      const [speedTestMatchedWord, setSpeedTestMatchedWord] = useState('');
       const [speedTestScore, setSpeedTestScore] = useState(0);
       const [speedTestIsReview, setSpeedTestIsReview] = useState(false);
 
@@ -160,9 +223,41 @@
       const [verbAnswers, setVerbAnswers] = useState({ yo: '', tu: '', el: '', nosotros: '', vosotros: '', ellos: '' });
       const [verbSubmitted, setVerbSubmitted] = useState(false);
 
+      // Stan dla modułu Zdania BETA
+      const [selectedStructure, setSelectedStructure] = useState(GRAMMAR_STRUCTURES[0]);
+      const [currentSentenceTask, setCurrentSentenceTask] = useState(null);
+      const [sentenceUserAnswer, setSentenceUserAnswer] = useState('');
+      const [sentenceResult, setSentenceResult] = useState(null);
+
       const inputRefs = useRef({});
       const fileInputRef = useRef(null);
       const audioCtxRef = useRef(null);
+      const voicesRef = useRef([]);
+
+      useEffect(() => {
+        try {
+          if (document.lastModified) {
+            const modDate = new Date(document.lastModified);
+            if (!isNaN(modDate)) {
+              setFileLastModified(modDate.toLocaleString('pl-PL', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' }));
+            } else {
+              setFileLastModified(document.lastModified);
+            }
+          }
+        } catch(e) {
+          setFileLastModified('Brak danych');
+        }
+
+        const loadVoices = () => {
+          if ('speechSynthesis' in window) {
+            voicesRef.current = window.speechSynthesis.getVoices();
+          }
+        };
+        loadVoices();
+        if ('speechSynthesis' in window) {
+          window.speechSynthesis.onvoiceschanged = loadVoices;
+        }
+      }, []);
 
       const normalizeText = (text) => {
         return (text || '')
@@ -170,6 +265,48 @@
           .trim()
           .normalize("NFD")
           .replace(/[̀-ͯ]/g, "");
+      };
+
+      const getLevenshteinDistance = (a, b) => {
+        if (a.length === 0) return b.length;
+        if (b.length === 0) return a.length;
+        const matrix = [];
+        for (let i = 0; i <= b.length; i++) { matrix[i] = [i]; }
+        for (let j = 0; j <= a.length; j++) { matrix[0][j] = j; }
+        for (let i = 1; i <= b.length; i++) {
+          for (let j = 1; j <= a.length; j++) {
+            if (b.charAt(i - 1) === a.charAt(j - 1)) {
+              matrix[i][j] = matrix[i - 1][j - 1];
+            } else {
+              matrix[i][j] = Math.min(
+                matrix[i - 1][j - 1] + 1,
+                Math.min(matrix[i][j - 1] + 1, matrix[i - 1][j] + 1)
+              );
+            }
+          }
+        }
+        return matrix[b.length][a.length];
+      };
+
+      const evaluateAnswer = (userText, allowedAnswersList) => {
+        const userNorm = normalizeText(userText);
+        if (!userNorm) return { status: 'incorrect', matched: '' };
+
+        for (const ans of allowedAnswersList) {
+          if (userNorm === ans) {
+            return { status: 'correct', matched: ans };
+          }
+        }
+
+        for (const ans of allowedAnswersList) {
+          const maxAllowedDist = ans.length <= 5 ? 1 : 2;
+          const dist = getLevenshteinDistance(userNorm, ans);
+          if (dist <= maxAllowedDist) {
+            return { status: 'typo', matched: ans };
+          }
+        }
+
+        return { status: 'incorrect', matched: allowedAnswersList[0] || '' };
       };
 
       const getQuizAllowedAnswers = (item, isEsToPl) => {
@@ -195,6 +332,42 @@
           [copy[i], copy[j]] = [copy[j], copy[i]];
         }
         return copy;
+      };
+
+      const speakText = (text, forcedLang = null) => {
+        if (!text) return;
+        const cleanText = text.split(/[\/,;]/)[0].trim();
+        let targetLang = forcedLang;
+        if (!targetLang) {
+          const hasSpanishChars = /[áéíóúñü¿¡]/i.test(cleanText);
+          targetLang = hasSpanishChars ? 'es' : 'pl';
+        } else {
+          targetLang = targetLang.slice(0, 2);
+        }
+
+        try {
+          const ttsUrl = `https://translate.google.com/translate_tts?ie=UTF-8&q=${encodeURIComponent(cleanText)}&tl=${targetLang}&client=tw-ob`;
+          const audio = new Audio(ttsUrl);
+          audio.play().catch(() => {
+            fallbackSpeak(cleanText, targetLang === 'es' ? 'es-ES' : 'pl-PL');
+          });
+        } catch (e) {
+          fallbackSpeak(cleanText, targetLang === 'es' ? 'es-ES' : 'pl-PL');
+        }
+      };
+
+      const fallbackSpeak = (text, lang) => {
+        if (!('speechSynthesis' in window)) return;
+        window.speechSynthesis.cancel();
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.lang = lang;
+        utterance.rate = 0.92;
+        const voices = voicesRef.current.length > 0 ? voicesRef.current : window.speechSynthesis.getVoices();
+        const matchingVoices = voices.filter(v => v.lang.toLowerCase().includes(lang.slice(0, 2).toLowerCase()));
+        if (matchingVoices.length > 0) {
+          utterance.voice = matchingVoices[0];
+        }
+        window.speechSynthesis.speak(utterance);
       };
 
       const playSound = (type) => {
@@ -232,6 +405,22 @@
             osc2.start(now);
             osc1.stop(now + 0.5);
             osc2.stop(now + 0.5);
+          } else if (type === 'typo') {
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+
+            osc.type = 'triangle';
+            osc.frequency.setValueAtTime(350, now);
+            osc.frequency.setValueAtTime(440, now + 0.15);
+
+            gain.gain.setValueAtTime(0.2, now);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + 0.4);
+
+            osc.connect(gain);
+            gain.connect(ctx.destination);
+
+            osc.start(now);
+            osc.stop(now + 0.4);
           } else if (type === 'incorrect') {
             const osc = ctx.createOscillator();
             const gain = ctx.createGain();
@@ -609,6 +798,7 @@
         setSpeedTestScore(0);
         setSpeedTestAnswer('');
         setSpeedTestResult(null);
+        setSpeedTestMatchedWord('');
         setSpeedTestIsReview(customQueue !== null);
       };
 
@@ -618,16 +808,21 @@
 
         const currentItem = speedTestQueue[speedTestIndex];
         const allowed = currentItem.pl.split(/[\/,;]/).map(a => normalizeText(a));
-        const userNorm = normalizeText(speedTestAnswer);
-        const isCorrect = allowed.includes(userNorm);
+        const evaluation = evaluateAnswer(speedTestAnswer, allowed);
 
-        if (isCorrect) {
+        if (evaluation.status === 'correct') {
           playSound('correct');
           setSpeedTestResult('correct');
+          setSpeedTestScore(prev => prev + 1);
+        } else if (evaluation.status === 'typo') {
+          playSound('typo');
+          setSpeedTestResult('typo');
+          setSpeedTestMatchedWord(evaluation.matched);
           setSpeedTestScore(prev => prev + 1);
         } else {
           playSound('incorrect');
           setSpeedTestResult('incorrect');
+          setSpeedTestMatchedWord(allowed[0] || currentItem.pl);
           setSpeedTestWrongItems(prev => [...prev, currentItem]);
         }
       };
@@ -635,10 +830,93 @@
       const handleNextSpeedTest = () => {
         setSpeedTestAnswer('');
         setSpeedTestResult(null);
+        setSpeedTestMatchedWord('');
         if (speedTestIndex + 1 < speedTestQueue.length) {
           setSpeedTestIndex(prev => prev + 1);
         } else {
           setSpeedTestIndex(speedTestQueue.length);
+        }
+      };
+
+      // Generowanie zadania ze zdań BETA z obsługą typów struktur
+      const generateSentenceTask = (struct = selectedStructure) => {
+        const verbs = words.filter(w => w.isVerb);
+        const nonVerbs = words.filter(w => !w.isVerb);
+
+        if (struct.type === 'verb_noun' && (verbs.length === 0 || nonVerbs.length === 0)) {
+          setCurrentSentenceTask(null);
+          return;
+        }
+        if (struct.type === 'noun_only' && nonVerbs.length === 0) {
+          setCurrentSentenceTask(null);
+          return;
+        }
+
+        const randomVerb = struct.type === 'verb_noun' ? verbs[Math.floor(Math.random() * verbs.length)] : null;
+        const randomNoun = nonVerbs[Math.floor(Math.random() * nonVerbs.length)];
+
+        let correctEs = '';
+        let correctPl = '';
+
+        const verbEsClean = randomVerb ? randomVerb.es.trim() : '';
+        const verbPlClean = randomVerb ? randomVerb.pl.split('/')[0].trim() : '';
+        const nounEsClean = randomNoun.es.trim();
+        const nounPlClean = randomNoun.pl.split('/')[0].trim();
+
+        if (struct.id === 'quero') {
+          correctEs = `quiero ${verbEsClean} ${nounEsClean}`;
+          correctPl = `chcę ${verbPlClean} ${nounPlClean}`;
+        } else if (struct.id === 'tengo_que') {
+          correctEs = `tengo que ${verbEsClean} ${nounEsClean}`;
+          correctPl = `muszę ${verbPlClean} ${nounPlClean}`;
+        } else if (struct.id === 'voy_a') {
+          correctEs = `voy a ${verbEsClean} ${nounEsClean}`;
+          correctPl = `zamierzam ${verbPlClean} ${nounPlClean}`;
+        } else if (struct.id === 'gusta') {
+          correctEs = `me gusta ${nounEsClean}`;
+          correctPl = `lubię ${nounPlClean}`;
+        } else if (struct.id === 'necesito') {
+          correctEs = `necesito ${verbEsClean} ${nounEsClean}`;
+          correctPl = `potrzebuję ${verbPlClean} ${nounPlClean}`;
+        } else if (struct.id === 'puedo') {
+          correctEs = `puedo ${verbEsClean} ${nounEsClean}`;
+          correctPl = `mogę ${verbPlClean} ${nounPlClean}`;
+        } else if (struct.id === 'gustaria') {
+          correctEs = `me gustaría ${verbEsClean} ${nounEsClean}`;
+          correctPl = `chciałbym ${verbPlClean} ${nounPlClean}`;
+        } else if (struct.id === 'hay') {
+          correctEs = `hay ${nounEsClean}`;
+          correctPl = `jest ${nounPlClean}`;
+        }
+
+        setCurrentSentenceTask({
+          structure: struct,
+          verb: randomVerb,
+          noun: randomNoun,
+          correctEs,
+          correctPl
+        });
+        setSentenceUserAnswer('');
+        setSentenceResult(null);
+      };
+
+      useEffect(() => {
+        if (words.length > 0) {
+          generateSentenceTask(selectedStructure);
+        }
+      }, [selectedStructure, words]);
+
+      const handleCheckSentence = (e) => {
+        e.preventDefault();
+        if (!currentSentenceTask || sentenceResult !== null) return;
+
+        const evaluation = evaluateAnswer(sentenceUserAnswer, [currentSentenceTask.correctEs]);
+        if (evaluation.status === 'correct' || evaluation.status === 'typo') {
+          playSound('correct');
+          setSentenceResult('correct');
+        } else {
+          playSound('incorrect');
+          setSentenceResult('incorrect');
         }
       };
 
@@ -677,14 +955,6 @@
         else if (quizDirection === 'pl-es') setQuizIsEsToPl(false);
         else setQuizIsEsToPl(Math.random() < 0.5);
       }, [qIndex, quizDirection]);
-
-      const speakText = (text, lang = 'es-ES') => {
-        if (!('speechSynthesis' in window)) return;
-        window.speechSynthesis.cancel();
-        const utterance = new SpeechSynthesisUtterance(text);
-        utterance.lang = lang;
-        window.speechSynthesis.speak(utterance);
-      };
 
       const insertCharToRef = (refKey, char, setter, currentValue) => {
         const el = inputRefs.current[refKey];
@@ -749,7 +1019,9 @@
 
       const fcData = currentCard ? {
         question: fcIsEsToPl ? currentCard.es : currentCard.pl,
-        answer: fcIsEsToPl ? currentCard.pl : currentCard.es
+        answer: fcIsEsToPl ? currentCard.pl : currentCard.es,
+        questionLang: fcIsEsToPl ? 'es' : 'pl',
+        answerLang: fcIsEsToPl ? 'pl' : 'es'
       } : null;
 
       const quizData = quizItem ? {
@@ -762,16 +1034,21 @@
         e.preventDefault();
         if (!quizData || quizResult !== null) return;
         
-        const userNorm = normalizeText(userAnswer);
-        const isCorrect = quizData.allowedAnswers.includes(userNorm);
+        const evaluation = evaluateAnswer(userAnswer, quizData.allowedAnswers);
 
-        if (isCorrect) {
+        if (evaluation.status === 'correct') {
           playSound('correct');
           setQuizResult('correct');
+          setScore(prev => prev + 1);
+        } else if (evaluation.status === 'typo') {
+          playSound('typo');
+          setQuizResult('typo');
+          setQuizMatchedWord(quizItem.pl);
           setScore(prev => prev + 1);
         } else {
           playSound('incorrect');
           setQuizResult('incorrect');
+          setQuizMatchedWord(quizItem.pl);
         }
       };
 
@@ -791,6 +1068,7 @@
       const handleNextQuiz = () => {
         setUserAnswer('');
         setQuizResult(null);
+        setQuizMatchedWord('');
         setQIndex(prev => prev + 1);
       };
 
@@ -838,7 +1116,7 @@
           <div className="w-full max-w-5xl flex-1 flex flex-col">
             <div className="bg-slate-900 p-3 sm:p-5 rounded-2xl shadow-xl border border-slate-800 flex-1 w-full flex flex-col mb-2">
               
-              <nav className="grid grid-cols-5 gap-1.5 sm:gap-2 mb-6 bg-slate-950 p-1.5 rounded-xl text-[11px] sm:text-sm font-medium border border-slate-800/80">
+              <nav className="grid grid-cols-3 sm:grid-cols-6 gap-1.5 sm:gap-2 mb-6 bg-slate-950 p-1.5 rounded-xl text-[11px] sm:text-sm font-medium border border-slate-800/80">
                 <button onClick={() => { setActiveTab('flashcards'); }} className={`py-2 rounded-lg flex flex-col sm:flex-row items-center justify-center gap-1 ${activeTab === 'flashcards' ? 'bg-slate-800 text-red-400 font-bold border border-slate-700' : 'text-slate-400'}`}>
                   <i data-lucide="layers" className="w-4 h-4"></i><span>Fiszki</span>
                 </button>
@@ -850,6 +1128,10 @@
                 </button>
                 <button onClick={() => { setActiveTab('verbs'); }} className={`py-2 rounded-lg flex flex-col sm:flex-row items-center justify-center gap-1 ${activeTab === 'verbs' ? 'bg-slate-800 text-red-400 font-bold border border-slate-700' : 'text-slate-400'}`}>
                   <i data-lucide="book-open" className="w-4 h-4"></i><span>Czasowniki</span>
+                </button>
+                <button onClick={() => { setActiveTab('sentences'); }} className={`py-2 rounded-lg flex flex-col sm:flex-row items-center justify-center gap-1 relative ${activeTab === 'sentences' ? 'bg-slate-800 text-red-400 font-bold border border-slate-700' : 'text-slate-400'}`}>
+                  <i data-lucide="message-square" className="w-4 h-4"></i>
+                  <span>Zdania (BETA)</span>
                 </button>
                 <button onClick={() => { setActiveTab('admin'); }} className={`py-2 rounded-lg flex flex-col sm:flex-row items-center justify-center gap-1 ${activeTab === 'admin' ? 'bg-slate-800 text-red-400 font-bold border border-slate-700' : 'text-slate-400'}`}>
                   <i data-lucide="settings" className="w-4 h-4"></i><span>Admin</span>
@@ -886,7 +1168,10 @@
                           <h2 className="text-3xl font-extrabold">{isFlipped ? fcData.answer : fcData.question}</h2>
                           <p className="text-xs opacity-75">Kliknij, aby odwrócić</p>
                         </div>
-                        <button onClick={(e) => { e.stopPropagation(); speakText(isFlipped ? fcData.answer : fcData.question); }} className="p-3 bg-black/30 rounded-full text-white">
+                        <button onClick={(e) => { 
+                          e.stopPropagation(); 
+                          speakText(isFlipped ? fcData.answer : fcData.question, isFlipped ? fcData.answerLang : fcData.questionLang); 
+                        }} className="p-3 bg-black/30 rounded-full text-white hover:bg-black/50 transition">
                           <i data-lucide="volume-2" className="w-5 h-5"></i>
                         </button>
                       </div>
@@ -919,15 +1204,20 @@
 
                   {shuffledQuiz.length > 0 && quizData ? (
                     <div className="w-full max-w-md my-auto space-y-4">
-                      <div className="bg-slate-950/80 p-6 rounded-2xl border border-slate-800 text-center space-y-2">
+                      <div className="bg-slate-950/80 p-6 rounded-2xl border border-slate-800 text-center space-y-2 relative">
                         <div className="text-xs text-slate-400 uppercase font-bold">{quizIsEsToPl ? 'Przetłumacz na polski:' : 'Przetłumacz na hiszpański:'}</div>
-                        <h2 className="text-2xl font-bold text-slate-100">{quizData.question}</h2>
+                        <h2 className="text-2xl font-bold text-slate-100 flex items-center justify-center gap-2">
+                          <span>{quizData.question}</span>
+                          <button onClick={() => speakText(quizData.question, quizIsEsToPl ? 'es' : 'pl')} className="text-slate-400 hover:text-red-400">
+                            <i data-lucide="volume-2" className="w-5 h-5"></i>
+                          </button>
+                        </h2>
                       </div>
                       <form onSubmit={handleCheckQuiz} className="space-y-4">
                         <input
                           ref={el => inputRefs.current['userAnswer'] = el}
                           type="text"
-                          placeholder="Wpisz tłumaczenie (wystarczy jedno znaczenie)..."
+                          placeholder="Wpisz tłumaczenie..."
                           value={userAnswer}
                           disabled={quizResult !== null}
                           onChange={(e) => setUserAnswer(e.target.value)}
@@ -938,9 +1228,25 @@
                           <button type="submit" className="w-full py-3 bg-red-600 text-white font-semibold rounded-xl">Sprawdź</button>
                         ) : (
                           <div className="space-y-3">
-                            <div className={`p-4 rounded-xl text-center text-sm font-semibold ${quizResult === 'correct' ? 'bg-emerald-950 text-emerald-300' : 'bg-red-950 text-red-300'}`}>
-                              {quizResult === 'correct' ? 'Dobrze!' : `Błędnie. Prawidłowa odpowiedź: ${quizData.answer}`}
-                            </div>
+                            {quizResult === 'correct' && (
+                              <div className="p-4 rounded-xl text-center text-sm font-semibold bg-emerald-950 text-emerald-300">
+                                Dobrze!
+                              </div>
+                            )}
+                            {quizResult === 'typo' && (
+                              <div className="p-4 rounded-xl text-center text-sm font-semibold bg-amber-950/90 text-amber-300 border border-amber-700/60 space-y-1">
+                                <div>Zaliczone z drobną literówką!</div>
+                                <div className="text-xs text-slate-200">Poprawna wersja: <span className="font-bold">{quizMatchedWord}</span></div>
+                              </div>
+                            )}
+                            {quizResult === 'incorrect' && (
+                              <div className="p-4 rounded-xl text-center text-sm font-semibold flex items-center justify-center gap-2 bg-red-950 text-red-300">
+                                <span>Błędnie. Prawidłowa odpowiedź: {quizMatchedWord}</span>
+                                <button type="button" onClick={() => speakText(quizMatchedWord, quizIsEsToPl ? 'pl' : 'es')} className="hover:opacity-80">
+                                  <i data-lucide="volume-2" className="w-4 h-4"></i>
+                                </button>
+                              </div>
+                            )}
                             <button type="button" onClick={handleNextQuiz} className="w-full py-3 bg-slate-800 text-white font-semibold rounded-xl">Następne ➔</button>
                           </div>
                         )}
@@ -961,7 +1267,12 @@
                       </div>
                       <div className="bg-slate-950/80 p-6 rounded-2xl border border-slate-800 text-center space-y-2">
                         <div className="text-xs text-amber-400 uppercase font-bold">Przetłumacz na polski:</div>
-                        <h2 className="text-2xl font-bold text-slate-100">{speedTestQueue[speedTestIndex].es}</h2>
+                        <h2 className="text-2xl font-bold text-slate-100 flex items-center justify-center gap-2">
+                          <span>{speedTestQueue[speedTestIndex].es}</span>
+                          <button onClick={() => speakText(speedTestQueue[speedTestIndex].es, 'es')} className="text-slate-400 hover:text-red-400">
+                            <i data-lucide="volume-2" className="w-5 h-5"></i>
+                          </button>
+                        </h2>
                       </div>
                       <form onSubmit={handleCheckSpeedTest} className="space-y-4">
                         <input
@@ -978,9 +1289,25 @@
                           <button type="submit" className="w-full py-3 bg-red-600 text-white font-semibold rounded-xl">Sprawdź</button>
                         ) : (
                           <div className="space-y-3">
-                            <div className={`p-4 rounded-xl text-center text-sm font-semibold ${speedTestResult === 'correct' ? 'bg-emerald-950 text-emerald-300' : 'bg-red-950 text-red-300'}`}>
-                              {speedTestResult === 'correct' ? 'Dobrze!' : `Błędnie. Prawidłowa odpowiedź: ${speedTestQueue[speedTestIndex].pl}`}
-                            </div>
+                            {speedTestResult === 'correct' && (
+                              <div className="p-4 rounded-xl text-center text-sm font-semibold bg-emerald-950 text-emerald-300">
+                                Dobrze!
+                              </div>
+                            )}
+                            {speedTestResult === 'typo' && (
+                              <div className="p-4 rounded-xl text-center text-sm font-semibold bg-amber-950/90 text-amber-300 border border-amber-700/60 space-y-1">
+                                <div>Zaliczone z drobną literówką!</div>
+                                <div className="text-xs text-slate-200">Poprawna wersja: <span className="font-bold">{speedTestMatchedWord}</span></div>
+                              </div>
+                            )}
+                            {speedTestResult === 'incorrect' && (
+                              <div className="p-4 rounded-xl text-center text-sm font-semibold flex items-center justify-center gap-2 bg-red-950 text-red-300">
+                                <span>Błędnie. Prawidłowa odpowiedź: {speedTestMatchedWord}</span>
+                                <button type="button" onClick={() => speakText(speedTestMatchedWord, 'pl')} className="hover:opacity-80">
+                                  <i data-lucide="volume-2" className="w-4 h-4"></i>
+                                </button>
+                              </div>
+                            )}
                             <button type="button" onClick={handleNextSpeedTest} className="w-full py-3 bg-slate-800 text-white font-semibold rounded-xl">Następne ➔</button>
                           </div>
                         )}
@@ -1026,8 +1353,11 @@
                   {currentVerb && currentVerbData ? (
                     <div className="flex-1 flex flex-col justify-between max-w-xl mx-auto w-full space-y-4">
                       <div className="text-center space-y-2">
-                        <h3 className="text-lg font-bold text-slate-100 capitalize">
-                          Czasownik: <span className="text-red-400">{currentVerb.es}</span> ({currentVerb.pl})
+                        <h3 className="text-lg font-bold text-slate-100 capitalize flex items-center justify-center gap-2">
+                          <span>Czasownik: <span className="text-red-400">{currentVerb.es}</span> ({currentVerb.pl})</span>
+                          <button onClick={() => speakText(currentVerb.es, 'es')} className="text-slate-400 hover:text-red-400">
+                            <i data-lucide="volume-2" className="w-5 h-5"></i>
+                          </button>
                         </h3>
                         <div className="flex flex-wrap justify-center gap-1.5">
                           {['presente', 'pasado', 'imperfecto', 'futuro'].map(t => (
@@ -1043,7 +1373,14 @@
                           const isFieldCorrect = verbSubmitted && normalizeText(verbAnswers[p]) === normalizeText(currentVerbData[p]);
                           return (
                             <div key={p} className={`bg-slate-950 p-3 rounded-xl border ${verbSubmitted ? (isFieldCorrect ? 'border-emerald-700' : 'border-red-800') : 'border-slate-800'}`}>
-                              <label className="text-xs font-bold text-slate-300 block mb-1 uppercase">{p}</label>
+                              <div className="flex justify-between items-center mb-1">
+                                <label className="text-xs font-bold text-slate-300">{PERSON_LABELS[p] || p}</label>
+                                {verbSubmitted && (
+                                  <button onClick={() => speakText(currentVerbData[p], 'es')} className="text-slate-400 hover:text-red-400">
+                                    <i data-lucide="volume-2" className="w-3.5 h-3.5"></i>
+                                  </button>
+                                )}
+                              </div>
                               <input
                                 ref={el => inputRefs.current[`verb_${p}`] = el}
                                 type="text"
@@ -1052,8 +1389,17 @@
                                 onFocus={() => setActiveVerbField(p)}
                                 onChange={(e) => setVerbAnswers({ ...verbAnswers, [p]: e.target.value })}
                                 placeholder={verbSubmitted ? currentVerbData[p] : '...'}
-                                className="w-full px-3 py-1.5 text-sm rounded-lg border border-slate-700 bg-slate-800 text-white"
+                                className={`w-full px-3 py-1.5 text-sm rounded-lg border bg-slate-800 text-white ${
+                                  verbSubmitted 
+                                    ? (isFieldCorrect ? 'border-emerald-500 text-emerald-300' : 'border-red-500 text-red-300')
+                                    : 'border-slate-700'
+                                }`}
                               />
+                              {verbSubmitted && !isFieldCorrect && (
+                                <div className="mt-1 text-[11px] text-red-400 font-medium">
+                                  Poprawnie: <span className="font-bold">{currentVerbData[p]}</span>
+                                </div>
+                              )}
                             </div>
                           );
                         })}
@@ -1075,7 +1421,103 @@
                 </div>
               )}
 
-              {/* 4. ADMIN */}
+              {/* 4. ZDANIA (BETA) */}
+              {activeTab === 'sentences' && (
+                <div className="flex-1 flex flex-col space-y-4 max-w-xl mx-auto w-full my-auto">
+                  <div className="text-center space-y-1">
+                    <h3 className="text-lg font-bold text-white">Zdania (BETA)</h3>
+                    <p className="text-xs text-slate-400">Wybierz strukturę gramatyczną i buduj zdania ze słownictwa z bazy.</p>
+                  </div>
+
+                  <div className="flex flex-wrap justify-center gap-1.5 max-h-[140px] overflow-y-auto p-1 custom-scrollbar">
+                    {GRAMMAR_STRUCTURES.map(st => (
+                      <button
+                        key={st.id}
+                        onClick={() => {
+                          setSelectedStructure(st);
+                          generateSentenceTask(st);
+                        }}
+                        className={`px-3 py-1.5 text-xs rounded-xl font-semibold border transition ${
+                          selectedStructure.id === st.id
+                            ? 'bg-red-600 border-red-500 text-white shadow'
+                            : 'bg-slate-950 border-slate-800 text-slate-400 hover:text-white'
+                        }`}
+                      >
+                        {st.name}
+                      </button>
+                    ))}
+                  </div>
+
+                  {currentSentenceTask ? (
+                    <div className="bg-slate-950 p-5 rounded-2xl border border-slate-800 space-y-4 shadow-xl">
+                      <div className="text-center space-y-2">
+                        <span className="text-xs text-slate-400 font-semibold">{currentSentenceTask.structure.desc}</span>
+                        <div className="bg-slate-900 p-3.5 rounded-xl border border-slate-800 space-y-1">
+                          <div className="text-xs text-slate-400 uppercase font-bold">Przetłumacz na hiszpański:</div>
+                          <div className="text-lg font-extrabold text-amber-400">
+                            {currentSentenceTask.correctPl}
+                          </div>
+                          <div className="text-[11px] text-slate-500">
+                            (Użyte słówka: {currentSentenceTask.verb ? <span className="text-slate-300 font-semibold">{currentSentenceTask.verb.es} / </span> : ''}<span className="text-slate-300 font-semibold">{currentSentenceTask.noun.es}</span>)
+                          </div>
+                        </div>
+                      </div>
+
+                      <form onSubmit={handleCheckSentence} className="space-y-3">
+                        <input
+                          ref={el => inputRefs.current['sentenceInput'] = el}
+                          type="text"
+                          placeholder="Wpisz zdanie po hiszpańsku..."
+                          value={sentenceUserAnswer}
+                          disabled={sentenceResult !== null}
+                          onChange={(e) => setSentenceUserAnswer(e.target.value)}
+                          className="w-full px-4 py-3 bg-slate-900 border border-slate-700 text-white rounded-xl text-center text-lg font-medium"
+                        />
+                        {sentenceResult === null && <SpanishCharBar onInsertChar={(c) => insertCharToRef('sentenceInput', c, setSentenceUserAnswer, sentenceUserAnswer)} />}
+
+                        {sentenceResult === null ? (
+                          <button type="submit" className="w-full py-3 bg-red-600 hover:bg-red-500 text-white font-semibold rounded-xl transition">
+                            Sprawdź zdanie
+                          </button>
+                        ) : (
+                          <div className="space-y-3">
+                            {sentenceResult === 'correct' ? (
+                              <div className="p-4 bg-emerald-950 text-emerald-300 border border-emerald-800 rounded-xl text-center text-sm font-bold flex items-center justify-center gap-2">
+                                <span>Świetnie! Zdanie jest poprawne.</span>
+                                <button type="button" onClick={() => speakText(currentSentenceTask.correctEs, 'es')} className="hover:opacity-80">
+                                  <i data-lucide="volume-2" className="w-4 h-4"></i>
+                                </button>
+                              </div>
+                            ) : (
+                              <div className="p-4 bg-red-950 text-red-300 border border-red-800 rounded-xl text-center text-sm font-semibold space-y-1">
+                                <div>Błędnie. Poprawna wersja:</div>
+                                <div className="text-base font-bold text-white flex items-center justify-center gap-2">
+                                  <span>{currentSentenceTask.correctEs}</span>
+                                  <button type="button" onClick={() => speakText(currentSentenceTask.correctEs, 'es')} className="hover:opacity-80">
+                                    <i data-lucide="volume-2" className="w-4 h-4"></i>
+                                  </button>
+                                </div>
+                              </div>
+                            )}
+
+                            <button
+                              type="button"
+                              onClick={() => generateSentenceTask()}
+                              className="w-full py-3 bg-slate-800 hover:bg-slate-700 text-white font-semibold rounded-xl transition"
+                            >
+                              Następne zdanie ➔
+                            </button>
+                          </div>
+                        )}
+                      </form>
+                    </div>
+                  ) : (
+                    <div className="text-center text-slate-500 text-sm py-12">Za mało słówek w bazie do generowania zdań.</div>
+                  )}
+                </div>
+              )}
+
+              {/* 5. ADMIN */}
               {activeTab === 'admin' && (
                 <div className="space-y-6 flex-1 flex flex-col max-w-xl mx-auto w-full">
                   <div className="bg-slate-950 p-4 rounded-xl border border-slate-800 space-y-3">
@@ -1127,9 +1569,18 @@
                             <tr key={item.id} className="hover:bg-slate-800/40">
                               <td className="p-2 font-semibold text-slate-100 flex items-center gap-1.5">
                                 <span>{item.es}</span>
-                                <button onClick={() => speakText(item.es)} className="text-slate-500 hover:text-red-400"><i data-lucide="volume-2" className="w-3.5 h-3.5"></i></button>
+                                <button onClick={() => speakText(item.es, 'es')} className="text-slate-500 hover:text-red-400">
+                                  <i data-lucide="volume-2" className="w-3.5 h-3.5"></i>
+                                </button>
                               </td>
-                              <td className="p-2 text-slate-300">{item.pl}</td>
+                              <td className="p-2 text-slate-300">
+                                <div className="flex items-center gap-1.5">
+                                  <span>{item.pl}</span>
+                                  <button onClick={() => speakText(item.pl, 'pl')} className="text-slate-500 hover:text-red-400">
+                                    <i data-lucide="volume-2" className="w-3.5 h-3.5"></i>
+                                  </button>
+                                </div>
+                              </td>
                               <td className="p-2 text-center">
                                 <div className="flex items-center justify-center gap-1">
                                   {item.isVerb && <span className="px-1.5 py-0.5 bg-amber-950 text-amber-400 border border-amber-800 text-[9px] font-bold rounded">CZAS.</span>}
@@ -1228,9 +1679,8 @@
             </div>
           </div>
 
-          {/* Dwu-liniowa stopka z datami aktualizacji */}
           <footer className="w-full max-w-5xl text-center py-2 text-[10px] text-slate-500 font-medium space-y-0.5">
-            <div>Ostatnia aktualizacja kodu: <span className="text-slate-400 font-semibold">06.11.2026, 14:46</span></div>
+            <div>Ostatnia aktualizacja kodu (plik): <span className="text-slate-400 font-semibold">{fileLastModified}</span></div>
             <div>Ostatnia aktualizacja bazy (baza_esp.ods): <span className="text-slate-400 font-semibold">{dbLastModified}</span></div>
           </footer>
         </div>
