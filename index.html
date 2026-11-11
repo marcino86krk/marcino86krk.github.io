@@ -27,52 +27,73 @@
   <script type="text/babel">
     const { useState, useEffect } = React;
 
+    // Konfiguracja kafelków aplikacji ze spadkowymi i dynamicznymi logotypami SVG z nagłówków
     const APPS_CONFIG = [
       {
         id: 'eng',
         title: 'Angielski Master Junior',
         defaultVersion: '1.0',
         url: 'https://marcino86krk.github.io/eng_master_junior.html',
-        colorFrom: 'from-blue-600',
-        colorVia: 'via-indigo-600',
-        colorTo: 'to-red-600',
+        gradient: 'from-blue-600 via-indigo-600 to-red-600',
         borderColor: 'border-blue-500/40 hover:border-blue-500',
-        accentColor: 'text-blue-500',
         badgeBg: 'bg-blue-950/80 text-blue-300 border-blue-800',
-        fallbackSvgTag: 'EN',
         isCompact: false,
-        description: 'Ucz się słówek, zwrotów i gramatyki języka angielskiego w nowoczesnym interaktywnym środowisku.'
+        description: 'Ucz się słówek, zwrotów i gramatyki języka angielskiego w nowoczesnym interaktywnym środowisku.',
+        // Oryginalne logo SVG z nagłówka aplikacji eng_master_junior.html
+        logoSvg: (
+          <svg viewBox="0 0 100 100" className="w-full h-full p-1.5">
+            <path d="M 15,30 Q 35,22 50,35 Q 65,22 85,30 L 85,75 Q 65,67 50,80 Q 35,67 15,75 Z" fill="#1e293b" stroke="#3b82f6" strokeWidth="3"/>
+            <path d="M 50,35 L 50,80" stroke="#3b82f6" strokeWidth="3"/>
+            <line x1="23" y1="42" x2="41" y2="47" stroke="#94a3b8" strokeWidth="3" strokeLinecap="round"/>
+            <line x1="23" y1="52" x2="38" y2="57" stroke="#94a3b8" strokeWidth="3" strokeLinecap="round"/>
+            <line x1="59" y1="42" x2="77" y2="47" stroke="#ef4444" strokeWidth="3" strokeLinecap="round"/>
+            <line x1="59" y1="52" x2="74" y2="57" stroke="#94a3b8" strokeWidth="3" strokeLinecap="round"/>
+            <text x="50" y="30" fontFamily="system-ui" fontWeight="900" fontSize="22" fill="#3b82f6" textAnchor="middle">EN</text>
+          </svg>
+        )
       },
       {
         id: 'esp',
         title: 'Hiszpański Master',
         defaultVersion: '1.8',
         url: 'https://marcino86krk.github.io/esp_master.html',
-        colorFrom: 'from-red-600',
-        colorVia: 'via-amber-500',
-        colorTo: 'to-yellow-400',
+        gradient: 'from-red-600 via-amber-500 to-yellow-400',
         borderColor: 'border-red-500/40 hover:border-red-500',
-        accentColor: 'text-red-500',
         badgeBg: 'bg-red-950/80 text-red-300 border-red-800',
-        fallbackSvgTag: 'Ñ',
         isCompact: false,
-        description: 'Odkrywaj słoneczny język hiszpański! Fiszki, quizy, szybkie testy i pełna odmiana czasowników.'
+        description: 'Odkrywaj słoneczny język hiszpański! Fiszki, quizy, szybkie testy i pełna odmiana czasowników.',
+        // Oryginalne logo SVG z nagłówka aplikacji esp_master.html
+        logoSvg: (
+          <svg viewBox="0 0 100 100" className="w-full h-full p-1.5">
+            <path d="M 15,30 Q 35,22 50,35 Q 65,22 85,30 L 85,75 Q 65,67 50,80 Q 35,67 15,75 Z" fill="#1e293b" stroke="#f59e0b" strokeWidth="3"/>
+            <path d="M 50,35 L 50,80" stroke="#f59e0b" strokeWidth="3"/>
+            <line x1="23" y1="42" x2="41" y2="47" stroke="#94a3b8" strokeWidth="3" strokeLinecap="round"/>
+            <line x1="23" y1="52" x2="38" y2="57" stroke="#94a3b8" strokeWidth="3" strokeLinecap="round"/>
+            <line x1="59" y1="42" x2="77" y2="47" stroke="#ef4444" strokeWidth="3" strokeLinecap="round"/>
+            <line x1="59" y1="52" x2="74" y2="57" stroke="#94a3b8" strokeWidth="3" strokeLinecap="round"/>
+            <text x="50" y="30" fontFamily="system-ui" fontWeight="900" fontSize="24" fill="#ef4444" textAnchor="middle">Ñ</text>
+          </svg>
+        )
       },
       {
         id: 'eng_stopniowanie',
-        title: 'Angielski Master Good * Better * The Best',
+        title: 'Angielski Master: Good * Better * The Best',
         defaultVersion: '1.0',
         url: 'https://marcino86krk.github.io/eng_master_stopniowanie.html',
-        colorFrom: 'from-purple-600',
-        colorVia: 'via-indigo-600',
-        colorTo: 'to-cyan-400',
+        gradient: 'from-indigo-600 via-purple-600 to-pink-600',
         borderColor: 'border-purple-500/40 hover:border-purple-500',
-        accentColor: 'text-purple-400',
         badgeBg: 'bg-purple-950/80 text-purple-300 border-purple-800',
-        fallbackSvgTag: '★',
         isCompact: true,
         badgeTag: 'STOPNIOWANIE',
-        description: 'Praktyczny moduł treningowy ze stopniowania przymiotników i przysłówków po angielsku.'
+        description: 'Praktyczny moduł treningowy ze stopniowania przymiotników i przysłówków po angielsku.',
+        // Oryginalne logo SVG z nagłówka aplikacji eng_master.html (Good * Better * The Best)
+        logoSvg: (
+          <svg viewBox="0 0 100 100" className="w-full h-full p-1.5">
+            <path d="M 15,30 Q 35,22 50,35 Q 65,22 85,30 L 85,75 Q 65,67 50,80 Q 35,67 15,75 Z" fill="#1e293b" stroke="#a855f7" strokeWidth="3"/>
+            <path d="M 50,35 L 50,80" stroke="#a855f7" strokeWidth="3"/>
+            <text x="50" y="32" fontFamily="system-ui" fontWeight="900" fontSize="20" fill="#a855f7" textAnchor="middle">BEST</text>
+          </svg>
+        )
       }
     ];
 
@@ -106,10 +127,10 @@
         return saved ? JSON.parse(saved) : false;
       });
 
-      const [appDataState, setAppDataState] = useState({
-        eng: { version: '1.0', logoHtml: null, loading: true },
-        esp: { version: '1.8', logoHtml: null, loading: true },
-        eng_stopniowanie: { version: '1.0', logoHtml: null, loading: true }
+      const [appVersions, setAppVersions] = useState({
+        eng: '1.0',
+        esp: '1.8',
+        eng_stopniowanie: '1.0'
       });
 
       useEffect(() => {
@@ -120,70 +141,26 @@
         if (window.lucide) window.lucide.createIcons();
       });
 
-      // Dynamiczne pobieranie wersji oraz logo z zewnętrznych stron
+      // Próba odczytania numerów wersji z nagłówków stron poprzez proxy
       useEffect(() => {
         APPS_CONFIG.forEach(async (app) => {
-          const proxies = [
-            (u) => `https://api.allorigins.win/raw?url=${encodeURIComponent(u)}`,
-            (u) => `https://corsproxy.io/?${encodeURIComponent(u)}`
-          ];
-
-          let htmlContent = null;
-          for (const proxyFn of proxies) {
-            try {
-              const res = await fetch(proxyFn(app.url));
-              if (res.ok) {
-                htmlContent = await res.text();
-                if (htmlContent) break;
-              }
-            } catch (e) {}
-          }
-
-          if (htmlContent) {
-            try {
+          try {
+            const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(app.url)}`;
+            const res = await fetch(proxyUrl);
+            if (res.ok) {
+              const text = await res.text();
               const parser = new DOMParser();
-              const doc = parser.parseFromString(htmlContent, 'text/html');
-
-              // 1. Szukanie wersji w nagłówku lub tytule
-              let foundVersion = null;
-              const versionNodes = doc.querySelectorAll('h1, title, .version, span');
-              for (const node of versionNodes) {
-                const txt = node.textContent || '';
-                const match = txt.match(/(\d+\.\d+)/);
-                if (match) {
-                  foundVersion = match[1];
-                  break;
-                }
+              const doc = parser.parseFromString(text, 'text/html');
+              
+              const titleOrH1 = doc.querySelector('title')?.textContent || doc.querySelector('h1')?.textContent || '';
+              const match = titleOrH1.match(/(\d+\.\d+)/);
+              if (match) {
+                setAppVersions(prev => ({ ...prev, [app.id]: match[1] }));
               }
-
-              // 2. Szukanie logo / svg w nagłówku
-              const logoContainer = doc.querySelector('header .flex, .logo, h1 div, svg');
-              let extractedLogoHtml = null;
-              if (logoContainer) {
-                extractedLogoHtml = logoContainer.outerHTML;
-              }
-
-              setAppDataState(prev => ({
-                ...prev,
-                [app.id]: {
-                  version: foundVersion || app.defaultVersion,
-                  logoHtml: extractedLogoHtml,
-                  loading: false
-                }
-              }));
-              return;
-            } catch (err) {}
-          }
-
-          // Fallback w razie niedostępności sieci / CORS
-          setAppDataState(prev => ({
-            ...prev,
-            [app.id]: {
-              version: app.defaultVersion,
-              logoHtml: null,
-              loading: false
             }
-          }));
+          } catch (e) {
+            // W razie braku połączenia wykorzystujemy predefiniowane wersje fallbackowe
+          }
         });
       }, []);
 
@@ -205,7 +182,7 @@
             </div>
           </header>
 
-          {/* Main Hub Content */}
+          {/* Main Content */}
           <main className={`w-full ${isMobileView ? 'max-w-sm' : 'max-w-4xl'} flex-1 flex flex-col justify-center my-auto transition-all`}>
             <div className="text-center mb-6 space-y-2">
               <h2 className={`${isMobileView ? 'text-xl' : 'text-3xl sm:text-4xl'} font-black text-white tracking-tight`}>
@@ -218,111 +195,105 @@
 
             {/* Główne 2 duże kafelki */}
             <div className={`grid grid-cols-1 ${isMobileView ? 'gap-3' : 'sm:grid-cols-2 gap-5'} w-full mb-4`}>
-              {APPS_CONFIG.filter(app => !app.isCompact).map((app) => {
-                const data = appDataState[app.id];
-                return (
-                  <div 
-                    key={app.id} 
-                    className={`bg-slate-900 border ${app.borderColor} rounded-3xl ${isMobileView ? 'p-4' : 'p-6 sm:p-7'} shadow-2xl flex flex-col justify-between transition-all duration-300 group hover:-translate-y-1`}
-                  >
-                    <div>
-                      {/* Górny pasek kafelka: Logo i Wersja */}
-                      <div className="flex items-center justify-between mb-4">
-                        <div className="flex items-center gap-3">
-                          <div className={`w-11 h-11 rounded-2xl bg-gradient-to-br ${app.colorFrom} ${app.colorVia} ${app.colorTo} p-0.5 shadow-md flex items-center justify-center`}>
-                            <div className="w-full h-full bg-slate-950 rounded-[14px] flex items-center justify-center font-black text-white text-base">
-                              {app.fallbackSvgTag}
-                            </div>
-                          </div>
-                          <div>
-                            <h3 className="font-extrabold text-white text-base sm:text-lg tracking-tight group-hover:text-purple-400 transition">
-                              {app.title}
-                            </h3>
-                            <span className={`inline-block px-2 py-0.5 mt-0.5 rounded-md border text-[10px] font-bold ${app.badgeBg}`}>
-                              Wersja {data.version}
-                            </span>
+              {APPS_CONFIG.filter(app => !app.isCompact).map((app) => (
+                <div 
+                  key={app.id} 
+                  className={`bg-slate-900 border ${app.borderColor} rounded-3xl ${isMobileView ? 'p-4' : 'p-6 sm:p-7'} shadow-2xl flex flex-col justify-between transition-all duration-300 group hover:-translate-y-1`}
+                >
+                  <div>
+                    {/* Górny pasek kafelka */}
+                    <div className="flex items-center justify-between mb-4">
+                      <div className="flex items-center gap-3">
+                        <div className={`w-12 h-12 rounded-2xl bg-gradient-to-br ${app.gradient} p-0.5 shadow-lg flex items-center justify-center shrink-0`}>
+                          <div className="w-full h-full bg-slate-950 rounded-[14px] flex items-center justify-center overflow-hidden">
+                            {app.logoSvg}
                           </div>
                         </div>
-                      </div>
-
-                      {/* Opis */}
-                      <p className="text-slate-400 text-xs sm:text-sm leading-relaxed mb-6 font-medium">
-                        {app.description}
-                      </p>
-                    </div>
-
-                    {/* Przycisk przejścia */}
-                    <div className="pt-4 border-t border-slate-800/85 flex items-center justify-between">
-                      <span className="text-[11px] text-emerald-400 font-semibold flex items-center gap-1.5 bg-emerald-950/60 px-2.5 py-1 rounded-lg border border-emerald-900/60">
-                        <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-                        Aktywna
-                      </span>
-
-                      <a 
-                        href={app.url} 
-                        target="_blank" 
-                        rel="noopener noreferrer"
-                        className={`inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r ${app.colorFrom} ${app.colorTo} text-white font-bold text-xs sm:text-sm shadow-lg hover:scale-105 active:scale-95 transition-all`}
-                      >
-                        <span>Uruchom</span>
-                        <i data-lucide="external-link" className="w-4 h-4"></i>
-                      </a>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-
-            {/* Mniejszy uzupełniający kafelek dla Stopniowania */}
-            {APPS_CONFIG.filter(app => app.isCompact).map((app) => {
-              const data = appDataState[app.id];
-              return (
-                <div 
-                  key={app.id}
-                  className={`w-full bg-slate-900/90 border ${app.borderColor} rounded-2xl ${isMobileView ? 'p-3' : 'p-4 sm:p-5'} shadow-xl flex flex-col sm:flex-row items-center justify-between gap-3 transition-all duration-300 hover:bg-slate-900`}
-                >
-                  <div className="flex items-center gap-3 w-full sm:w-auto">
-                    <div className={`w-10 h-10 shrink-0 rounded-xl bg-gradient-to-br ${app.colorFrom} ${app.colorVia} ${app.colorTo} p-0.5 shadow-md flex items-center justify-center`}>
-                      <div className="w-full h-full bg-slate-950 rounded-[10px] flex items-center justify-center font-black text-amber-400 text-sm">
-                        {app.fallbackSvgTag}
+                        <div>
+                          <h3 className="font-extrabold text-white text-base sm:text-lg tracking-tight group-hover:text-purple-400 transition">
+                            {app.title}
+                          </h3>
+                          <span className={`inline-block px-2 py-0.5 mt-0.5 rounded-md border text-[10px] font-bold ${app.badgeBg}`}>
+                            Wersja {appVersions[app.id]}
+                          </span>
+                        </div>
                       </div>
                     </div>
-                    <div className="flex-1">
-                      <div className="flex items-center gap-2 flex-wrap">
-                        <h3 className="font-extrabold text-white text-sm sm:text-base tracking-tight">
-                          {app.title}
-                        </h3>
-                        <span className="px-1.5 py-0.5 rounded bg-purple-950 text-purple-300 border border-purple-800 text-[9px] font-bold">
-                          {app.badgeTag}
-                        </span>
-                        <span className={`px-1.5 py-0.5 rounded border text-[9px] font-bold ${app.badgeBg}`}>
-                          v{data.version}
-                        </span>
-                      </div>
-                      <p className="text-slate-400 text-xs font-medium mt-0.5 line-clamp-1">
-                        {app.description}
-                      </p>
-                    </div>
+
+                    {/* Opis */}
+                    <p className="text-slate-400 text-xs sm:text-sm leading-relaxed mb-6 font-medium">
+                      {app.description}
+                    </p>
                   </div>
 
-                  <div className="flex items-center gap-3 w-full sm:w-auto justify-end border-t sm:border-t-0 border-slate-800/80 pt-2 sm:pt-0">
-                    <span className="text-[10px] text-emerald-400 font-semibold flex items-center gap-1 bg-emerald-950/60 px-2 py-0.5 rounded border border-emerald-900/60">
-                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
-                      Nowość
+                  {/* Przycisk uruchomienia */}
+                  <div className="pt-4 border-t border-slate-800/85 flex items-center justify-between">
+                    <span className="text-[11px] text-emerald-400 font-semibold flex items-center gap-1.5 bg-emerald-950/60 px-2.5 py-1 rounded-lg border border-emerald-900/60">
+                      <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                      Aktywna
                     </span>
+
                     <a 
                       href={app.url} 
                       target="_blank" 
                       rel="noopener noreferrer"
-                      className={`inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-gradient-to-r ${app.colorFrom} ${app.colorTo} text-white font-bold text-xs shadow-md hover:scale-105 active:scale-95 transition-all`}
+                      className={`inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r ${app.gradient} text-white font-bold text-xs sm:text-sm shadow-lg hover:scale-105 active:scale-95 transition-all`}
                     >
-                      <span>Otwórz</span>
-                      <i data-lucide="external-link" className="w-3.5 h-3.5"></i>
+                      <span>Uruchom</span>
+                      <i data-lucide="external-link" className="w-4 h-4"></i>
                     </a>
                   </div>
                 </div>
-              );
-            })}
+              ))}
+            </div>
+
+            {/* Mniejszy 3. kafelek dla Stopniowania */}
+            {APPS_CONFIG.filter(app => app.isCompact).map((app) => (
+              <div 
+                key={app.id}
+                className={`w-full bg-slate-900/90 border ${app.borderColor} rounded-2xl ${isMobileView ? 'p-3' : 'p-4 sm:p-5'} shadow-xl flex flex-col sm:flex-row items-center justify-between gap-3 transition-all duration-300 hover:bg-slate-900`}
+              >
+                <div className="flex items-center gap-3 w-full sm:w-auto">
+                  <div className={`w-11 h-11 shrink-0 rounded-xl bg-gradient-to-br ${app.gradient} p-0.5 shadow-md flex items-center justify-center`}>
+                    <div className="w-full h-full bg-slate-950 rounded-[10px] flex items-center justify-center overflow-hidden">
+                      {app.logoSvg}
+                    </div>
+                  </div>
+                  <div className="flex-1">
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <h3 className="font-extrabold text-white text-sm sm:text-base tracking-tight">
+                        {app.title}
+                      </h3>
+                      <span className="px-1.5 py-0.5 rounded bg-purple-950 text-purple-300 border border-purple-800 text-[9px] font-bold">
+                        {app.badgeTag}
+                      </span>
+                      <span className={`px-1.5 py-0.5 rounded border text-[9px] font-bold ${app.badgeBg}`}>
+                        v{appVersions[app.id]}
+                      </span>
+                    </div>
+                    <p className="text-slate-400 text-xs font-medium mt-0.5 line-clamp-1">
+                      {app.description}
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-3 w-full sm:w-auto justify-end border-t sm:border-t-0 border-slate-800/80 pt-2 sm:pt-0">
+                  <span className="text-[10px] text-emerald-400 font-semibold flex items-center gap-1 bg-emerald-950/60 px-2 py-0.5 rounded border border-emerald-900/60">
+                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                    Nowość
+                  </span>
+                  <a 
+                    href={app.url} 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className={`inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-gradient-to-r ${app.gradient} text-white font-bold text-xs shadow-md hover:scale-105 active:scale-95 transition-all`}
+                  >
+                    <span>Otwórz</span>
+                    <i data-lucide="external-link" className="w-3.5 h-3.5"></i>
+                  </a>
+                </div>
+              </div>
+            ))}
           </main>
 
           {/* Footer */}

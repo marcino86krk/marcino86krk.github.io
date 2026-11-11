@@ -195,13 +195,6 @@
       const [quizResult, setQuizResult] = useState(null);
       const [score, setScore] = useState(0);
 
-      // Stan dla Nowego Ćwiczenia ze Zdaniami (Coś jest ... niż coś)
-      const [sentIndex, setSentIndex] = useState(0);
-      const [shuffledSentences, setShuffledSentences] = useState([]);
-      const [userSentenceInput, setUserSentenceInput] = useState('');
-      const [sentenceResult, setSentenceResult] = useState(null);
-      const [sentenceScore, setSentenceScore] = useState(0);
-
       const voicesRef = useRef([]);
 
       useEffect(() => {
@@ -230,7 +223,7 @@
       }, []);
 
       const normalizeText = (text) => {
-        return (text || '').toLowerCase().trim().replace(/[.,!?]/g, '');
+        return (text || '').toLowerCase().trim();
       };
 
       const shuffleArray = (arr) => {
@@ -278,10 +271,8 @@
         if (words.length > 0) {
           setShuffledCards(shuffleArray(words));
           setShuffledQuiz(shuffleArray(words));
-          setShuffledSentences(shuffleArray(words));
           setFcIndex(0);
           setQuizIndex(0);
-          setSentIndex(0);
         }
       }, [words]);
 
@@ -291,20 +282,6 @@
 
       const currentCard = shuffledCards.length > 0 ? shuffledCards[fcIndex % shuffledCards.length] : null;
       const currentQuizItem = shuffledQuiz.length > 0 ? shuffledQuiz[quizIndex % shuffledQuiz.length] : null;
-      const currentSentItem = shuffledSentences.length > 0 ? shuffledSentences[sentIndex % shuffledSentences.length] : null;
-
-      // Zestaw przykładowych podmiotów do zdań porównawczych
-      const sentencePairs = [
-        { obj1: 'This car', obj2: 'that car', plObj1: 'Ten samochód', plObj2: 'tamtego samochodu' },
-        { obj1: 'Today', obj2: 'yesterday', plObj1: 'Dzisiejszy dzień', plObj2: 'wczorajszego' },
-        { obj1: 'My house', obj2: 'your house', plObj1: 'Mój dom', plObj2: 'twojego domu' },
-        { obj1: 'An elephant', obj2: 'a dog', plObj1: 'Słoń', plObj2: 'psa' },
-        { obj1: 'English', obj2: 'maths', plObj1: 'Język angielski', plObj2: 'matematyki' },
-        { obj1: 'Winter', obj2: 'summer', plObj1: 'Zima', plObj2: 'lata' }
-      ];
-
-      const currentPairIndex = sentIndex % sentencePairs.length;
-      const currentPair = sentencePairs[currentPairIndex];
 
       const handleCheckQuiz = (e) => {
         e.preventDefault();
@@ -332,27 +309,6 @@
         setUserSup('');
         setQuizResult(null);
         setQuizIndex(prev => prev + 1);
-      };
-
-      const handleCheckSentence = (e) => {
-        e.preventDefault();
-        if (!currentSentItem || sentenceResult !== null) return;
-
-        const userAns = normalizeText(userSentenceInput);
-        const correctAns = normalizeText(`${currentPair.obj1} is ${currentSentItem.comparative} than ${currentPair.obj2}`);
-
-        if (userAns === correctAns) {
-          setSentenceResult('correct');
-          setSentenceScore(prev => prev + 1);
-        } else {
-          setSentenceResult('incorrect');
-        }
-      };
-
-      const handleNextSentence = () => {
-        setUserSentenceInput('');
-        setSentenceResult(null);
-        setSentIndex(prev => prev + 1);
       };
 
       const filteredWords = words.filter(w => 
@@ -385,20 +341,17 @@
             <div className={`bg-slate-900 ${isMobileView ? 'p-2.5' : 'p-3 sm:p-5'} rounded-2xl shadow-xl border border-slate-800 flex-1 w-full flex flex-col mb-2 transition-all`}>
               
               {/* Nawigacja */}
-              <nav className={`grid grid-cols-5 ${isMobileView ? 'gap-0.5 mb-3 p-1 text-[8px]' : 'gap-1.5 sm:gap-2 mb-6 p-1.5 text-[10px] sm:text-xs'} bg-slate-950 rounded-xl font-medium border border-slate-800/80 transition-all text-center`}>
-                <button onClick={() => setActiveTab('flashcards')} className={`py-2 rounded-lg flex flex-col items-center justify-center gap-0.5 ${activeTab === 'flashcards' ? 'bg-slate-800 text-purple-400 font-bold border border-slate-700' : 'text-slate-400'}`}>
+              <nav className={`grid grid-cols-4 ${isMobileView ? 'gap-1 mb-3 p-1 text-[9px]' : 'gap-1.5 sm:gap-2 mb-6 p-1.5 text-[11px] sm:text-sm'} bg-slate-950 rounded-xl font-medium border border-slate-800/80 transition-all text-center`}>
+                <button onClick={() => setActiveTab('flashcards')} className={`py-2 rounded-lg flex flex-col sm:flex-row items-center justify-center gap-1 ${activeTab === 'flashcards' ? 'bg-slate-800 text-purple-400 font-bold border border-slate-700' : 'text-slate-400'}`}>
                   <i data-lucide="layers" className="w-3.5 h-3.5"></i><span>Fiszki</span>
                 </button>
-                <button onClick={() => setActiveTab('exercise')} className={`py-2 rounded-lg flex flex-col items-center justify-center gap-0.5 ${activeTab === 'exercise' ? 'bg-slate-800 text-purple-400 font-bold border border-slate-700' : 'text-slate-400'}`}>
-                  <i data-lucide="check-circle" className="w-3.5 h-3.5"></i><span>Stopniowanie</span>
+                <button onClick={() => setActiveTab('exercise')} className={`py-2 rounded-lg flex flex-col sm:flex-row items-center justify-center gap-1 ${activeTab === 'exercise' ? 'bg-slate-800 text-purple-400 font-bold border border-slate-700' : 'text-slate-400'}`}>
+                  <i data-lucide="check-circle" className="w-3.5 h-3.5"></i><span>Ćwiczenie</span>
                 </button>
-                <button onClick={() => setActiveTab('sentences')} className={`py-2 rounded-lg flex flex-col items-center justify-center gap-0.5 ${activeTab === 'sentences' ? 'bg-slate-800 text-purple-400 font-bold border border-slate-700' : 'text-slate-400'}`}>
-                  <i data-lucide="edit-3" className="w-3.5 h-3.5"></i><span>Zdania (...niż...)</span>
-                </button>
-                <button onClick={() => setActiveTab('rules')} className={`py-2 rounded-lg flex flex-col items-center justify-center gap-0.5 ${activeTab === 'rules' ? 'bg-slate-800 text-purple-400 font-bold border border-slate-700' : 'text-slate-400'}`}>
+                <button onClick={() => setActiveTab('rules')} className={`py-2 rounded-lg flex flex-col sm:flex-row items-center justify-center gap-1 ${activeTab === 'rules' ? 'bg-slate-800 text-purple-400 font-bold border border-slate-700' : 'text-slate-400'}`}>
                   <i data-lucide="book-open" className="w-3.5 h-3.5"></i><span>Spelling Rules</span>
                 </button>
-                <button onClick={() => setActiveTab('admin')} className={`py-2 rounded-lg flex flex-col items-center justify-center gap-0.5 ${activeTab === 'admin' ? 'bg-slate-800 text-purple-400 font-bold border border-slate-700' : 'text-slate-400'}`}>
+                <button onClick={() => setActiveTab('admin')} className={`py-2 rounded-lg flex flex-col sm:flex-row items-center justify-center gap-1 ${activeTab === 'admin' ? 'bg-slate-800 text-purple-400 font-bold border border-slate-700' : 'text-slate-400'}`}>
                   <i data-lucide="database" className="w-3.5 h-3.5"></i><span>Słownik</span>
                 </button>
               </nav>
@@ -515,66 +468,7 @@
                 </div>
               )}
 
-              {/* 3. NOWY MODUŁ: ZDANIA (Coś jest ... niż coś) */}
-              {activeTab === 'sentences' && (
-                <div className="flex-1 flex flex-col items-center justify-between space-y-4 max-w-md mx-auto w-full">
-                  <div className="w-full flex justify-between items-center text-xs text-slate-400 font-semibold px-1">
-                    <span>Zdania porównawcze (...niż...)</span>
-                    <span>Wynik: <span className="text-purple-400">{sentenceScore}</span></span>
-                  </div>
-
-                  {shuffledSentences.length > 0 && currentSentItem ? (
-                    <div className="w-full my-auto space-y-4 bg-slate-950/80 p-5 rounded-2xl border border-slate-800">
-                      <div className="text-center space-y-2">
-                        <div className="text-xs text-purple-400 font-bold uppercase tracking-wider">Przetłumacz na angielski zdanie:</div>
-                        <div className="text-sm font-bold text-white bg-slate-900 p-3 rounded-xl border border-slate-800">
-                          „{currentPair.plObj1} jest <span className="text-purple-300 underline">{currentSentItem.pl}</span> niż {currentPair.plObj2}”
-                        </div>
-                        <p className="text-[11px] text-slate-400 italic">Użyj formy: [Podmiot] is [stopień wyższy] than [drugi obiekt]</p>
-                      </div>
-
-                      <form onSubmit={handleCheckSentence} className="space-y-3 pt-1">
-                        <input
-                          type="text"
-                          placeholder={`np. ${currentPair.obj1.toLowerCase()} is ... than ...`}
-                          value={userSentenceInput}
-                          disabled={sentenceResult !== null}
-                          onChange={(e) => setUserSentenceInput(e.target.value)}
-                          className="w-full px-3 py-2.5 bg-slate-900 border border-slate-700 text-white rounded-xl text-sm font-medium text-center"
-                        />
-
-                        {sentenceResult === null ? (
-                          <button type="submit" className="w-full py-2.5 bg-purple-600 hover:bg-purple-500 text-white font-semibold rounded-xl text-sm shadow transition">Sprawdź zdanie</button>
-                        ) : (
-                          <div className="space-y-2.5 pt-1">
-                            {sentenceResult === 'correct' ? (
-                              <div className="p-3 rounded-xl text-center text-xs font-semibold bg-emerald-950 text-emerald-300 border border-emerald-800 flex items-center justify-center gap-2">
-                                <span>Super! Zdanie jest w pełni poprawne!</span>
-                                <button type="button" onClick={() => speakText(`${currentPair.obj1} is ${currentSentItem.comparative} than ${currentPair.obj2}`)} className="text-emerald-300 hover:text-white">
-                                  <i data-lucide="volume-2" className="w-4 h-4"></i>
-                                </button>
-                              </div>
-                            ) : (
-                              <div className="p-3 rounded-xl text-center text-xs font-semibold bg-red-950 text-red-300 border border-red-800 space-y-1">
-                                <div>Błędnie! Wzorcowa odpowiedź to:</div>
-                                <div className="text-slate-100 font-bold flex items-center justify-center gap-2">
-                                  <span>{currentPair.obj1} is {currentSentItem.comparative} than {currentPair.obj2}.</span>
-                                  <button type="button" onClick={() => speakText(`${currentPair.obj1} is ${currentSentItem.comparative} than ${currentPair.obj2}`)} className="text-red-200 hover:text-white">
-                                    <i data-lucide="volume-2" className="w-4 h-4"></i>
-                                  </button>
-                                </div>
-                              </div>
-                            )}
-                            <button type="button" onClick={handleNextSentence} className="w-full py-2.5 bg-slate-800 hover:bg-slate-700 text-white font-semibold rounded-xl text-sm transition">Następne zdanie ➔</button>
-                          </div>
-                        )}
-                      </form>
-                    </div>
-                  ) : <div className="text-slate-500 text-sm my-auto">Brak danych do ćwiczenia zdań.</div>}
-                </div>
-              )}
-
-              {/* 4. MODUŁ: SPELLING RULES */}
+              {/* 3. MODUŁ: SPELLING RULES */}
               {activeTab === 'rules' && (
                 <div className="flex-1 flex flex-col space-y-4 max-w-2xl mx-auto w-full text-xs custom-scrollbar overflow-y-auto max-h-[65dvh] p-1">
                   <div className="bg-slate-950 p-4 rounded-2xl border border-purple-900/50 space-y-3">
@@ -586,39 +480,39 @@
                     <div className="space-y-3 text-slate-300 leading-relaxed">
                       <div className="p-3 bg-slate-900 rounded-xl border border-slate-800 space-y-1">
                         <span className="font-bold text-white block">1. Krótkie przymiotniki regularne (Podwajanie spółgłoski)</span>
-                        <p>W krótkich przymiotnikach, które kończą się spółgłoską poprzedzoną jedną samogłoską, **podwajamy ostatnią spółgłoskę**[cite: 2].</p>
-                        <p className="text-purple-300 font-mono text-[11px]">Przykład: big ➔ bigger ➔ the biggest[cite: 2]</p>
+                        <p>W krótkich przymiotnikach, które kończą się spółgłoską poprzedzoną jedną samogłoską, **podwajamy ostatnią spółgłoskę**.</p>
+                        <p className="text-purple-300 font-mono text-[11px]">Przykład: big ➔ bigger ➔ the biggest</p>
                       </div>
 
                       <div className="p-3 bg-slate-900 rounded-xl border border-slate-800 space-y-1">
                         <span className="font-bold text-white block">2. Przymiotniki zakończone na literę -y</span>
-                        <p>W krótkich przymiotnikach, które kończą się literą **-y**, zmieniamy **-y na -i**[cite: 2] i dodajemy końcówki *-er / -est*.</p>
-                        <p className="text-purple-300 font-mono text-[11px]">Przykład: happy ➔ happier ➔ the happiest[cite: 2]</p>
+                        <p>W krótkich przymiotnikach, które kończą się literą **-y**, zmieniamy **-y na -i** i dodajemy końcówki *-er / -est*.</p>
+                        <p className="text-purple-300 font-mono text-[11px]">Przykład: happy ➔ happier ➔ the happiest</p>
                       </div>
 
                       <div className="p-3 bg-slate-900 rounded-xl border border-slate-800 space-y-1">
                         <span className="font-bold text-white block">3. Przymiotniki zakończone na literę -e</span>
-                        <p>W przymiotnikach kończących się literą **-e** dodajemy tylko **-r** w stopniu wyższym i **-st** w stopniu najwyższym[cite: 2].</p>
-                        <p className="text-purple-300 font-mono text-[11px]">Przykład: safe ➔ safer ➔ the safest[cite: 2]</p>
+                        <p>W przymiotnikach kończących się literą **-e** dodajemy tylko **-r** w stopniu wyższym i **-st** w stopniu najwyższym.</p>
+                        <p className="text-purple-300 font-mono text-[11px]">Przykład: safe ➔ safer ➔ the safest</p>
                       </div>
 
                       <div className="p-3 bg-slate-900 rounded-xl border border-slate-800 space-y-1">
                         <span className="font-bold text-white block">4. Przymiotniki długie (Long adjectives)</span>
                         <p>W przypadku dłuższych przymiotników (część dwusylabowych i trzysylabowych) stopień najwyższy tworzymy, dodając **the most** przed przymiotnikiem (a stopień wyższy przez **more**).</p>
-                        <p className="text-purple-300 font-mono text-[11px]">Przykład: expensive ➔ more expensive ➔ the most expensive[cite: 2]</p>
+                        <p className="text-purple-300 font-mono text-[11px]">Przykład: expensive ➔ more expensive ➔ the most expensive</p>
                       </div>
 
                       <div className="p-3 bg-slate-900 rounded-xl border border-slate-800 space-y-1">
                         <span className="font-bold text-white block">5. Przymiotniki nieregularne (Irregular adjectives)</span>
-                        <p>**Good** i **bad** są przymiotnikami nieregularnymi, które stopniujemy zupełnie inaczej niż pozostałe przymiotniki[cite: 2].</p>
-                        <p className="text-purple-300 font-mono text-[11px]">Przykład: good ➔ better ➔ the best[cite: 2]<br/>bad ➔ worse ➔ the worst[cite: 2]</p>
+                        <p>**Good** i **bad** są przymiotnikami nieregularnymi, które stopniujemy zupełnie inaczej niż pozostałe przymiotniki.</p>
+                        <p className="text-purple-300 font-mono text-[11px]">Przykład: good ➔ better ➔ the best<br/>bad ➔ worse ➔ the worst</p>
                       </div>
                     </div>
                   </div>
                 </div>
               )}
 
-              {/* 5. MODUŁ: SŁOWNIK / ADMIN */}
+              {/* 4. MODUŁ: SŁOWNIK / ADMIN */}
               {activeTab === 'admin' && (
                 <div className="space-y-4 flex-1 flex flex-col max-w-xl mx-auto w-full text-xs">
                   <div className="bg-slate-950 p-3 rounded-xl border border-slate-800 space-y-2">
