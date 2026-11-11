@@ -3,19 +3,18 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Hiszpański Master 1.8</title>
+  <title>Językowy Master</title>
 
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- Lucide Icons -->
   <script src="https://unpkg.com/lucide@latest"></script>
-  <!-- SheetJS (xlsx) -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
   <!-- React & ReactDOM -->
   <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
   <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
   <!-- Babel -->
   <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
   <style>
     body { background-color: #020617; color: #f8fafc; font-family: system-ui, -apple-system, sans-serif; margin: 0; padding: 0; min-height: 100dvh; overflow-x: hidden; }
     .custom-scrollbar::-webkit-scrollbar { width: 6px; }
@@ -26,1442 +25,238 @@
   <div id="root"></div>
 
   <script type="text/babel">
-    const { useState, useEffect, useRef } = React;
+    const { useState, useEffect } = React;
 
-    const SPANISH_CHARS = ['á', 'é', 'í', 'ó', 'ú', 'ñ', 'ü', '¿', '¡'];
-    const DATABASE_URL = 'https://marcino86krk.github.io/baza_esp.ods';
-
-    const INITIAL_WORDS = [
-      { id: '1', es: 'ser', pl: 'być', isVerb: true, isManual: false },
-      { id: '2', es: 'estar', pl: 'być / znajdować się', isVerb: true, isManual: false },
-      { id: '3', es: 'hablar', pl: 'mówić', isVerb: true, isManual: false },
-      { id: '4', es: 'hola', pl: 'cześć', isVerb: false, isManual: false },
-      { id: '5', es: 'gracias', pl: 'dziękuję', isVerb: false, isManual: false }
+    const APPS_CONFIG = [
+      {
+        id: 'eng',
+        title: 'Angielski Master Junior',
+        defaultVersion: '1.0',
+        url: 'https://marcino86krk.github.io/eng_master_junior.html',
+        colorFrom: 'from-blue-600',
+        colorVia: 'via-indigo-600',
+        colorTo: 'to-red-600',
+        borderColor: 'border-blue-500/40 hover:border-blue-500',
+        accentColor: 'text-blue-500',
+        badgeBg: 'bg-blue-950/80 text-blue-300 border-blue-800',
+        fallbackSvgTag: 'EN',
+        description: 'Ucz się słówek, zwrotów i gramatyki języka angielskiego w nowoczesnym interaktywnym środowisku.'
+      },
+      {
+        id: 'esp',
+        title: 'Hiszpański Master Junior',
+        defaultVersion: '1.8',
+        url: 'https://marcino86krk.github.io/esp_master.html',
+        colorFrom: 'from-red-600',
+        colorVia: 'via-amber-500',
+        colorTo: 'to-yellow-400',
+        borderColor: 'border-red-500/40 hover:border-red-500',
+        accentColor: 'text-red-500',
+        badgeBg: 'bg-red-950/80 text-red-300 border-red-800',
+        fallbackSvgTag: 'Ñ',
+        description: 'Odkrywaj słoneczny język hiszpański! Fiszki, quizy, szybkie testy i pełna odmiana czasowników.'
+      }
     ];
 
-    const PERSON_LABELS = {
-      yo: 'yo (ja)',
-      tu: 'tú (ty)',
-      el: 'él / ella / usted (on / ona / Pan, Pani)',
-      nosotros: 'nosotros / nosotras (my)',
-      vosotros: 'vosotros / vosotras (wy)',
-      ellos: 'ellos / ellas / ustedes (oni / one / Państwo)'
-    };
-
-    function SpanishCharBar({ onInsertChar, className = "", isMobileView = false }) {
-      return (
-        <div className={`flex flex-wrap gap-1 items-center justify-center bg-slate-900 ${isMobileView ? 'p-1' : 'p-1.5'} rounded-xl border border-slate-800 ${className}`}>
-          <span className={`${isMobileView ? 'text-[9px]' : 'text-[10px]'} font-bold text-slate-400 uppercase tracking-wider mr-1`}>Znaki ES:</span>
-          {SPANISH_CHARS.map(char => (
-            <button
-              key={char}
-              type="button"
-              onMouseDown={(e) => {
-                e.preventDefault();
-                onInsertChar(char);
-              }}
-              className={`${isMobileView ? 'w-6 h-6 text-xs' : 'w-7 h-7 sm:w-8 sm:h-8 text-sm'} flex items-center justify-center bg-slate-800 hover:bg-red-600 hover:text-white text-slate-200 font-bold rounded-lg border border-slate-700 active:scale-95 transition`}
-            >
-              {char}
-            </button>
-          ))}
-        </div>
-      );
-    }
-
-    function Logo({ isMobileView }) {
+    function MasterLogo({ isMobileView }) {
       return (
         <div className="flex items-center gap-2.5">
-          <div className={`${isMobileView ? 'w-9 h-9' : 'w-12 h-12'} rounded-xl bg-gradient-to-br from-red-600 via-amber-500 to-yellow-400 p-0.5 shadow-lg flex items-center justify-center transition-all`}>
+          <div className={`${isMobileView ? 'w-9 h-9' : 'w-12 h-12'} rounded-xl bg-gradient-to-br from-blue-600 via-purple-600 to-red-600 p-0.5 shadow-lg flex items-center justify-center transition-all`}>
             <div className="w-full h-full bg-slate-950 rounded-[10px] flex items-center justify-center relative overflow-hidden">
               <svg viewBox="0 0 100 100" className={isMobileView ? 'w-6 h-6' : 'w-9 h-9'}>
-                <path d="M 15,30 Q 35,22 50,35 Q 65,22 85,30 L 85,75 Q 65,67 50,80 Q 35,67 15,75 Z" fill="#1e293b" stroke="#f59e0b" strokeWidth="3"/>
-                <path d="M 50,35 L 50,80" stroke="#f59e0b" strokeWidth="3"/>
+                <path d="M 15,30 Q 35,22 50,35 Q 65,22 85,30 L 85,75 Q 65,67 50,80 Q 35,67 15,75 Z" fill="#1e293b" stroke="#a855f7" strokeWidth="3"/>
+                <path d="M 50,35 L 50,80" stroke="#a855f7" strokeWidth="3"/>
                 <line x1="23" y1="42" x2="41" y2="47" stroke="#94a3b8" strokeWidth="3" strokeLinecap="round"/>
-                <line x1="23" y1="52" x2="38" y2="57" stroke="#94a3b8" strokeWidth="3" strokeLinecap="round"/>
                 <line x1="59" y1="42" x2="77" y2="47" stroke="#ef4444" strokeWidth="3" strokeLinecap="round"/>
-                <line x1="59" y1="52" x2="74" y2="57" stroke="#94a3b8" strokeWidth="3" strokeLinecap="round"/>
-                <text x="50" y="30" fontFamily="system-ui" fontWeight="900" fontSize="24" fill="#ef4444" textAnchor="middle">Ñ</text>
+                <text x="50" y="30" fontFamily="system-ui" fontWeight="900" fontSize="22" fill="#a855f7" textAnchor="middle">JM</text>
               </svg>
             </div>
           </div>
           <div>
             <h1 className={`${isMobileView ? 'text-sm' : 'text-lg'} font-black tracking-tight text-white flex items-center gap-1`}>
-              HISZPAŃSKI <span className="text-red-500">MASTER 1.8</span>
+              JĘZYKOWY MASTER <span className="text-purple-500">HUB</span>
             </h1>
-            <p className={`${isMobileView ? 'text-[9px]' : 'text-[11px]'} text-slate-400 font-medium`}>Seria: Językowy Master</p>
+            <p className={`${isMobileView ? 'text-[9px]' : 'text-[11px]'} text-slate-400 font-medium`}>Portal Aplikacji Edukacyjnych</p>
           </div>
         </div>
       );
     }
 
     function App() {
-      const [words, setWords] = useState(() => {
-        const saved = localStorage.getItem('hm_words');
-        if (saved) {
-          try {
-            const parsed = JSON.parse(saved);
-            if (parsed && parsed.length > 0) return parsed;
-          } catch(e) {}
-        }
-        return INITIAL_WORDS;
-      });
-
-      const [conjugationTable, setConjugationTable] = useState(() => {
-        const saved = localStorage.getItem('hm_conjugations');
-        if (saved) {
-          try { return JSON.parse(saved); } catch(e) {}
-        }
-        return {};
-      });
-
       const [isMobileView, setIsMobileView] = useState(() => {
-        const saved = localStorage.getItem('hm_mobile_view');
+        const saved = localStorage.getItem('jm_hub_mobile_view');
         return saved ? JSON.parse(saved) : false;
       });
 
-      useEffect(() => {
-        localStorage.setItem('hm_mobile_view', JSON.stringify(isMobileView));
-      }, [isMobileView]);
-
-      const [dbLastModified, setDbLastModified] = useState('Brak danych');
-      const [fileLastModified, setFileLastModified] = useState('');
-      const [loading, setLoading] = useState(false);
-      const [loadMessage, setLoadMessage] = useState(null);
-      const [activeTab, setActiveTab] = useState('flashcards');
-      const [searchTerm, setSearchTerm] = useState('');
-      const [direction, setDirection] = useState('random');
-      const [quizDirection, setQuizDirection] = useState('random');
-      const [activeVerbField, setActiveVerbField] = useState('yo');
-
-      const [fcOnlyVerbs, setFcOnlyVerbs] = useState(false);
-      const [quizOnlyVerbs, setQuizOnlyVerbs] = useState(false);
-
-      const [newEs, setNewEs] = useState('');
-      const [newPl, setNewPl] = useState('');
-      const [newIsVerb, setNewIsVerb] = useState(false);
-      const [editingId, setEditingId] = useState(null);
-
-      const [newManualConjs, setNewManualConjs] = useState({
-        presente: { yo: '', tu: '', el: '', nosotros: '', vosotros: '', me: '', ellos: '' },
-        pasado: { yo: '', tu: '', el: '', nosotros: '', vosotros: '', ellos: '' },
-        imperfecto: { yo: '', tu: '', el: '', nosotros: '', vosotros: '', ellos: '' },
-        futuro: { yo: '', tu: '', el: '', nosotros: '', vosotros: '', me: '', ellos: '' }
+      const [appDataState, setAppDataState] = useState({
+        eng: { version: '1.0', logoHtml: null, loading: true },
+        esp: { version: '1.8', logoHtml: null, loading: true }
       });
-      const [activeManualTense, setActiveManualTense] = useState('presente');
-
-      const [eraseModalOpen, setEraseModalOpen] = useState(false);
-      const [erasePassword, setErasePassword] = useState('');
-      const [eraseError, setEraseError] = useState(false);
-
-      const [shuffledCards, setShuffledCards] = useState([]);
-      const [fcIndex, setFcIndex] = useState(0);
-      const [isFlipped, setIsFlipped] = useState(false);
-      const [fcIsEsToPl, setFcIsEsToPl] = useState(true);
-
-      const [shuffledQuiz, setShuffledQuiz] = useState([]);
-      const [qIndex, setQIndex] = useState(0);
-      const [userAnswer, setUserAnswer] = useState('');
-      const [quizResult, setQuizResult] = useState(null);
-      const [quizMatchedWord, setQuizMatchedWord] = useState('');
-      const [score, setScore] = useState(0);
-      const [quizIsEsToPl, setQuizIsEsToPl] = useState(true);
-
-      const [speedTestQueue, setSpeedTestQueue] = useState([]);
-      const [speedTestIndex, setSpeedTestIndex] = useState(0);
-      const [speedTestWrongItems, setSpeedTestWrongItems] = useState([]);
-      const [speedTestAnswer, setSpeedTestAnswer] = useState('');
-      const [speedTestResult, setSpeedTestResult] = useState(null);
-      const [speedTestMatchedWord, setSpeedTestMatchedWord] = useState('');
-      const [speedTestScore, setSpeedTestScore] = useState(0);
-      const [speedTestIsReview, setSpeedTestIsReview] = useState(false);
-
-      const [verbIndex, setVerbIndex] = useState(0);
-      const [selectedTense, setSelectedTense] = useState('presente');
-      const [verbAnswers, setVerbAnswers] = useState({ yo: '', tu: '', el: '', nosotros: '', vosotros: '', ellos: '' });
-      const [verbSubmitted, setVerbSubmitted] = useState(false);
-
-      const inputRefs = useRef({});
-      const fileInputRef = useRef(null);
-      const audioCtxRef = useRef(null);
-      const voicesRef = useRef([]);
 
       useEffect(() => {
-        try {
-          if (document.lastModified) {
-            const modDate = new Date(document.lastModified);
-            if (!isNaN(modDate)) {
-              setFileLastModified(modDate.toLocaleString('pl-PL', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' }));
-            } else {
-              setFileLastModified(document.lastModified);
-            }
-          }
-        } catch(e) {
-          setFileLastModified('Brak danych');
-        }
-
-        const loadVoices = () => {
-          if ('speechSynthesis' in window) {
-            voicesRef.current = window.speechSynthesis.getVoices();
-          }
-        };
-        loadVoices();
-        if ('speechSynthesis' in window) {
-          window.speechSynthesis.onvoiceschanged = loadVoices;
-        }
-      }, []);
-
-      const normalizeText = (text) => {
-        return (text || '')
-          .toLowerCase()
-          .trim()
-          .normalize("NFD")
-          .replace(/[̀-ͯ]/g, "");
-      };
-
-      const getLevenshteinDistance = (a, b) => {
-        if (a.length === 0) return b.length;
-        if (b.length === 0) return a.length;
-        const matrix = [];
-        for (let i = 0; i <= b.length; i++) { matrix[i] = [i]; }
-        for (let j = 0; j <= a.length; j++) { matrix[0][j] = j; }
-        for (let i = 1; i <= b.length; i++) {
-          for (let j = 1; j <= a.length; j++) {
-            if (b.charAt(i - 1) === a.charAt(j - 1)) {
-              matrix[i][j] = matrix[i - 1][j - 1];
-            } else {
-              matrix[i][j] = Math.min(
-                matrix[i - 1][j - 1] + 1,
-                Math.min(matrix[i][j - 1] + 1, matrix[i - 1][j] + 1)
-              );
-            }
-          }
-        }
-        return matrix[b.length][a.length];
-      };
-
-      const evaluateAnswer = (userText, allowedAnswersList) => {
-        const userNorm = normalizeText(userText);
-        if (!userNorm) return { status: 'incorrect', matched: '' };
-
-        for (const ans of allowedAnswersList) {
-          if (userNorm === ans) {
-            return { status: 'correct', matched: ans };
-          }
-        }
-
-        for (const ans of allowedAnswersList) {
-          const maxAllowedDist = ans.length <= 5 ? 1 : 2;
-          const dist = getLevenshteinDistance(userNorm, ans);
-          if (dist <= maxAllowedDist) {
-            return { status: 'typo', matched: ans };
-          }
-        }
-
-        return { status: 'incorrect', matched: allowedAnswersList[0] || '' };
-      };
-
-      const getQuizAllowedAnswers = (item, isEsToPl) => {
-        if (!item) return [];
-        if (isEsToPl) {
-          return item.pl.split(/[\/,;]/).map(a => normalizeText(a));
-        } else {
-          const currentPlNormalized = normalizeText(item.pl);
-          const synonyms = words.filter(w => normalizeText(w.pl) === currentPlNormalized || normalizeText(w.pl).includes(currentPlNormalized) || currentPlNormalized.includes(normalizeText(w.pl)));
-          const allEs = synonyms.length > 0 ? synonyms.map(w => w.es) : [item.es];
-          let expanded = [];
-          allEs.forEach(e => {
-            e.split(/[\/,;]/).forEach(sub => expanded.push(normalizeText(sub)));
-          });
-          return expanded;
-        }
-      };
-
-      const shuffleArray = (arr) => {
-        const copy = [...arr];
-        for (let i = copy.length - 1; i > 0; i--) {
-          const j = Math.floor(Math.random() * (i + 1));
-          [copy[i], copy[j]] = [copy[j], copy[i]];
-        }
-        return copy;
-      };
-
-      const speakText = (text, forcedLang = null) => {
-        if (!text) return;
-        const cleanText = text.split(/[\/,;]/)[0].trim();
-        let targetLang = forcedLang;
-        if (!targetLang) {
-          const hasSpanishChars = /[áéíóúñü¿¡]/i.test(cleanText);
-          targetLang = hasSpanishChars ? 'es' : 'pl';
-        } else {
-          targetLang = targetLang.slice(0, 2);
-        }
-
-        try {
-          const ttsUrl = `https://translate.google.com/translate_tts?ie=UTF-8&q=${encodeURIComponent(cleanText)}&tl=${targetLang}&client=tw-ob`;
-          const audio = new Audio(ttsUrl);
-          audio.play().catch(() => {
-            fallbackSpeak(cleanText, targetLang === 'es' ? 'es-ES' : 'pl-PL');
-          });
-        } catch (e) {
-          fallbackSpeak(cleanText, targetLang === 'es' ? 'es-ES' : 'pl-PL');
-        }
-      };
-
-      const fallbackSpeak = (text, lang) => {
-        if (!('speechSynthesis' in window)) return;
-        window.speechSynthesis.cancel();
-        const utterance = new SpeechSynthesisUtterance(text);
-        utterance.lang = lang;
-        utterance.rate = 0.92;
-        const voices = voicesRef.current.length > 0 ? voicesRef.current : window.speechSynthesis.getVoices();
-        const matchingVoices = voices.filter(v => v.lang.toLowerCase().includes(lang.slice(0, 2).toLowerCase()));
-        if (matchingVoices.length > 0) {
-          utterance.voice = matchingVoices[0];
-        }
-        window.speechSynthesis.speak(utterance);
-      };
-
-      const playSound = (type) => {
-        try {
-          if (!audioCtxRef.current) {
-            audioCtxRef.current = new (window.AudioContext || window.webkitAudioContext)();
-          }
-          const ctx = audioCtxRef.current;
-          if (ctx.state === 'suspended') ctx.resume();
-
-          const now = ctx.currentTime;
-          if (type === 'correct') {
-            const osc1 = ctx.createOscillator();
-            const osc2 = ctx.createOscillator();
-            const gain = ctx.createGain();
-
-            osc1.type = 'sine';
-            osc2.type = 'triangle';
-            osc1.frequency.setValueAtTime(523.25, now);
-            osc1.frequency.setValueAtTime(659.25, now + 0.1);
-            osc1.frequency.setValueAtTime(783.99, now + 0.2);
-
-            osc2.frequency.setValueAtTime(261.63, now);
-            osc2.frequency.setValueAtTime(329.63, now + 0.1);
-            osc2.frequency.setValueAtTime(392.00, now + 0.2);
-
-            gain.gain.setValueAtTime(0.2, now);
-            gain.gain.exponentialRampToValueAtTime(0.001, now + 0.5);
-
-            osc1.connect(gain);
-            osc2.connect(gain);
-            gain.connect(ctx.destination);
-
-            osc1.start(now);
-            osc2.start(now);
-            osc1.stop(now + 0.5);
-            osc2.stop(now + 0.5);
-          } else if (type === 'typo') {
-            const osc = ctx.createOscillator();
-            const gain = ctx.createGain();
-
-            osc.type = 'triangle';
-            osc.frequency.setValueAtTime(350, now);
-            osc.frequency.setValueAtTime(440, now + 0.15);
-
-            gain.gain.setValueAtTime(0.2, now);
-            gain.gain.exponentialRampToValueAtTime(0.001, now + 0.4);
-
-            osc.connect(gain);
-            gain.connect(ctx.destination);
-
-            osc.start(now);
-            osc.stop(now + 0.4);
-          } else if (type === 'incorrect') {
-            const osc = ctx.createOscillator();
-            const gain = ctx.createGain();
-
-            osc.type = 'sawtooth';
-            osc.frequency.setValueAtTime(180, now);
-            osc.frequency.setValueAtTime(130, now + 0.15);
-
-            gain.gain.setValueAtTime(0.25, now);
-            gain.gain.exponentialRampToValueAtTime(0.001, now + 0.4);
-
-            osc.connect(gain);
-            gain.connect(ctx.destination);
-
-            osc.start(now);
-            osc.stop(now + 0.4);
-          }
-        } catch (e) {}
-      };
-
-      useEffect(() => {
-        localStorage.setItem('hm_words', JSON.stringify(words));
-      }, [words]);
-
-      useEffect(() => {
-        localStorage.setItem('hm_conjugations', JSON.stringify(conjugationTable));
-      }, [conjugationTable]);
-
-      const parseWorkbookData = (workbook) => {
-        let bazaSheetName = workbook.SheetNames.find(name => normalizeText(name).includes('baza') || normalizeText(name) === 'words') || workbook.SheetNames[0];
-        const wsBaza = workbook.Sheets[bazaSheetName];
-        const rowsBaza = XLSX.utils.sheet_to_json(wsBaza, { header: 1 });
-
-        const wordMap = new Map();
-        rowsBaza.forEach(row => {
-          if (row && row[0] && row[1]) {
-            const es = String(row[0]).trim();
-            const pl = String(row[1]).trim();
-            const colC = row[2] ? String(row[2]).trim().toUpperCase() : '';
-
-            const isVerb = (colC === 'TAK' || colC === 'YES' || colC === 'TRUE' || colC === '1');
-            const key = normalizeText(es);
-
-            if (wordMap.has(key)) {
-              const item = wordMap.get(key);
-              const existingVars = item.pl.split(/[\/,;]/).map(v => normalizeText(v));
-              if (!existingVars.includes(normalizeText(pl))) {
-                item.pl = `${item.pl} / ${pl}`;
-              }
-              if (isVerb) item.isVerb = true;
-            } else {
-              wordMap.set(key, { es, pl, isVerb, isManual: false });
-            }
-          }
-        });
-
-        const newWords = [];
-        let idCounter = Date.now();
-        wordMap.forEach((val) => {
-          newWords.push({ id: (idCounter++).toString(), ...val });
-        });
-
-        let odmianaSheetName = workbook.SheetNames.find(name => normalizeText(name).includes('odmiana') || normalizeText(name).includes('conjugation'));
-        const newConjugations = {};
-
-        if (odmianaSheetName) {
-          const wsOdmiana = workbook.Sheets[odmianaSheetName];
-          const rowsOdmiana = XLSX.utils.sheet_to_json(wsOdmiana, { header: 1 });
-          
-          rowsOdmiana.forEach(row => {
-            if (row && row.length >= 8) {
-              const verb = normalizeText(row[0]);
-              const tense = normalizeText(row[1]);
-              if (verb && tense) {
-                if (!newConjugations[verb]) newConjugations[verb] = {};
-                newConjugations[verb][tense] = {
-                  yo: String(row[2] || '').trim(),
-                  tu: String(row[3] || '').trim(),
-                  el: String(row[4] || '').trim(),
-                  nosotros: String(row[5] || '').trim(),
-                  vosotros: String(row[6] || '').trim(),
-                  ellos: String(row[7] || '').trim()
-                };
-              }
-            }
-          });
-        }
-
-        return { words: newWords, conjugations: newConjugations };
-      };
-
-      useEffect(() => {
-        const autoUpdateDatabase = async () => {
-          const urlsToTry = [
-            DATABASE_URL,
-            'https://api.allorigins.win/raw?url=' + encodeURIComponent(DATABASE_URL)
-          ];
-
-          let blob = null;
-          let lastModHeader = null;
-
-          for (const url of urlsToTry) {
-            try {
-              const response = await fetch(url);
-              if (!response.ok) continue;
-              lastModHeader = response.headers.get('Last-Modified');
-              blob = await response.blob();
-              break;
-            } catch (e) {}
-          }
-
-          if (lastModHeader) {
-            try {
-              const dateObj = new Date(lastModHeader);
-              if (!isNaN(dateObj)) {
-                setDbLastModified(dateObj.toLocaleString('pl-PL', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' }));
-              }
-            } catch(e) {}
-          }
-
-          if (!blob) return;
-
-          try {
-            const arrayBuffer = await blob.arrayBuffer();
-            const workbook = XLSX.read(arrayBuffer, { type: 'array' });
-            const { words: newWords, conjugations: newConjugations } = parseWorkbookData(workbook);
-
-            if (newWords.length > 0) {
-              setWords(prev => {
-                const existingManual = prev.filter(w => w.isManual);
-                return [...existingManual, ...newWords];
-              });
-            }
-            if (Object.keys(newConjugations).length > 0) {
-              setConjugationTable(prev => ({ ...prev, ...newConjugations }));
-            }
-          } catch (err) {}
-        };
-
-        autoUpdateDatabase();
-      }, []);
-
-      const handleDownloadAndSaveDatabase = async () => {
-        setLoading(true);
-        setLoadMessage("Pobieranie pliku bazy z serwera...");
-
-        const urlsToTry = [
-          DATABASE_URL,
-          'https://api.allorigins.win/raw?url=' + encodeURIComponent(DATABASE_URL)
-        ];
-
-        let blob = null;
-        let lastModHeader = null;
-
-        for (const url of urlsToTry) {
-          try {
-            const response = await fetch(url);
-            if (!response.ok) continue;
-            lastModHeader = response.headers.get('Last-Modified');
-            blob = await response.blob();
-            break;
-          } catch (e) {}
-        }
-
-        if (lastModHeader) {
-          try {
-            const dateObj = new Date(lastModHeader);
-            if (!isNaN(dateObj)) {
-              setDbLastModified(dateObj.toLocaleString('pl-PL', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' }));
-            }
-          } catch(e) {}
-        }
-
-        if (!blob) {
-          setLoading(false);
-          setLoadMessage("Nie udało się pobrać pliku z serwera.");
-          setTimeout(() => setLoadMessage(null), 5000);
-          return;
-        }
-
-        const downloadUrl = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = downloadUrl;
-        a.download = 'baza_esp.ods';
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        URL.revokeObjectURL(downloadUrl);
-
-        try {
-          const arrayBuffer = await blob.arrayBuffer();
-          const workbook = XLSX.read(arrayBuffer, { type: 'array' });
-          const { words: newWords, conjugations: newConjugations } = parseWorkbookData(workbook);
-
-          if (newWords.length > 0) {
-            const existingManual = words.filter(w => w.isManual);
-            setWords([...existingManual, ...newWords]);
-            setLoadMessage(`Zamontowano pomyślnie ${newWords.length} słówek.`);
-          }
-          if (Object.keys(newConjugations).length > 0) {
-            setConjugationTable(prev => ({ ...prev, ...newConjugations }));
-          }
-        } catch (err) {}
-
-        setLoading(false);
-        setTimeout(() => setLoadMessage(null), 5000);
-      };
-
-      const handleLoadLocalDatabase = (e) => {
-        const file = e.target.files[0];
-        if (!file) return;
-        
-        if (file.lastModified) {
-          try {
-            const dateObj = new Date(file.lastModified);
-            if (!isNaN(dateObj)) {
-              setDbLastModified(dateObj.toLocaleString('pl-PL', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' }) + ' (lokalny)');
-            }
-          } catch(e) {}
-        }
-
-        const reader = new FileReader();
-        reader.onload = (evt) => {
-          try {
-            const data = new Uint8Array(evt.target.result);
-            const workbook = XLSX.read(data, { type: 'array' });
-            const { words: newWords, conjugations: newConjugations } = parseWorkbookData(workbook);
-
-            if (newWords.length > 0) {
-              const existingManual = words.filter(w => w.isManual);
-              setWords([...existingManual, ...newWords]);
-              setLoadMessage(`Zamontowano pomyślnie ${newWords.length} słówek z dysku lokalnego!`);
-            }
-            if (Object.keys(newConjugations).length > 0) {
-              setConjugationTable(prev => ({ ...prev, ...newConjugations }));
-            }
-          } catch (err) {}
-          setTimeout(() => setLoadMessage(null), 4000);
-        };
-        reader.readAsArrayBuffer(file);
-      };
-
-      const handleSaveManualWordsToDisk = () => {
-        const manualWords = words.filter(w => w.isManual);
-        if (manualWords.length === 0) {
-          setLoadMessage("Brak ręcznie wpisanych słówek do zapisu.");
-          setTimeout(() => setLoadMessage(null), 4000);
-          return;
-        }
-
-        const sheetDataBaza = [
-          ["Hiszpański", "Polski", "Czy czasownik (TAK/NIE)"],
-          ...manualWords.map(w => [w.es, w.pl, w.isVerb ? "TAK" : "NIE"])
-        ];
-        const wsBaza = XLSX.utils.aoa_to_sheet(sheetDataBaza);
-
-        const sheetDataOdmiana = [
-          ["Czasownik", "Czas", "Yo", "Tu", "El", "Nosotros", "Vosotros", "Ellos"]
-        ];
-        manualWords.filter(w => w.isVerb).forEach(w => {
-          const vKey = normalizeText(w.es);
-          const tenses = conjugationTable[vKey];
-          if (tenses) {
-            Object.keys(tenses).forEach(t => {
-              const conj = tenses[t];
-              sheetDataOdmiana.push([w.es, t, conj.yo, conj.tu, conj.el, conj.nosotros, conj.vosotros, conj.ellos]);
-            });
-          }
-        });
-        const wsOdmiana = XLSX.utils.aoa_to_sheet(sheetDataOdmiana);
-
-        const wb = XLSX.utils.book_new();
-        XLSX.utils.book_append_sheet(wb, wsBaza, "baza");
-        XLSX.utils.book_append_sheet(wb, wsOdmiana, "odmiana");
-        XLSX.writeFile(wb, "baza_esp_ręcznie.ods");
-        setLoadMessage("Pomyślnie zapisano wpisane słówka i odmiany do pliku baza_esp_ręcznie.ods!");
-        setTimeout(() => setLoadMessage(null), 4000);
-      };
-
-      const handleEraseDatabase = (e) => {
-        e.preventDefault();
-        if (erasePassword.trim().toLowerCase() === 'erase') {
-          setWords([]);
-          setConjugationTable({});
-          localStorage.removeItem('hm_words');
-          localStorage.removeItem('hm_conjugations');
-          setErasePassword('');
-          setEraseError(false);
-          setEraseModalOpen(false);
-          setLoadMessage("Baza została wyczyszczona.");
-          setTimeout(() => setLoadMessage(null), 3000);
-        } else {
-          setEraseError(true);
-        }
-      };
-
-      const handleSaveWordForm = (e) => {
-        e.preventDefault();
-        if (!newEs.trim() || !newPl.trim()) return;
-
-        if (editingId) {
-          setWords(words.map(w => {
-            if (w.id === editingId) {
-              return { ...w, es: newEs.trim(), pl: newPl.trim(), isVerb: newIsVerb };
-            }
-            return w;
-          }));
-          if (newIsVerb) {
-            const vKey = normalizeText(newEs);
-            setConjugationTable(prev => ({
-              ...prev,
-              [vKey]: { ...newManualConjs }
-            }));
-          }
-          setLoadMessage(`Zaktualizowano słówko: "${newEs.trim()}".`);
-        } else {
-          const newItem = {
-            id: Date.now().toString(),
-            es: newEs.trim(),
-            pl: newPl.trim(),
-            isVerb: newIsVerb,
-            isManual: true
-          };
-
-          if (newIsVerb) {
-            const vKey = normalizeText(newEs);
-            setConjugationTable(prev => ({
-              ...prev,
-              [vKey]: { ...newManualConjs }
-            }));
-          }
-
-          setWords([newItem, ...words]);
-          setLoadMessage(`Dodano nowe słówko: "${newItem.es}".`);
-        }
-
-        setNewEs('');
-        setNewPl('');
-        setNewIsVerb(false);
-        setEditingId(null);
-        setNewManualConjs({
-          presente: { yo: '', tu: '', el: '', nosotros: '', vosotros: '', me: '', ellos: '' },
-          pasado: { yo: '', tu: '', el: '', nosotros: '', vosotros: '', ellos: '' },
-          imperfecto: { yo: '', tu: '', el: '', nosotros: '', vosotros: '', ellos: '' },
-          futuro: { yo: '', tu: '', el: '', nosotros: '', vosotros: '', me: '', ellos: '' }
-        });
-        setTimeout(() => setLoadMessage(null), 3000);
-      };
-
-      const handleEditManualWord = (item) => {
-        if (!item.isManual) return;
-        setNewEs(item.es);
-        setNewPl(item.pl);
-        setNewIsVerb(item.isVerb);
-        setEditingId(item.id);
-        if (item.isVerb) {
-          const vKey = normalizeText(item.es);
-          if (conjugationTable[vKey]) {
-            setNewManualConjs(conjugationTable[vKey]);
-          }
-        }
-      };
-
-      const handleDeleteManualWord = (id) => {
-        setWords(words.filter(w => w.id !== id));
-        setLoadMessage("Usunięto słówko wpisane ręcznie.");
-        setTimeout(() => setLoadMessage(null), 3000);
-      };
-
-      const startSpeedTest = (customQueue = null) => {
-        const queue = customQueue || shuffleArray(words).slice(0, 20);
-        setSpeedTestQueue(queue);
-        setSpeedTestIndex(0);
-        setSpeedTestWrongItems([]);
-        setSpeedTestScore(0);
-        setSpeedTestAnswer('');
-        setSpeedTestResult(null);
-        setSpeedTestMatchedWord('');
-        setSpeedTestIsReview(customQueue !== null);
-      };
-
-      const handleCheckSpeedTest = (e) => {
-        e.preventDefault();
-        if (speedTestResult !== null || speedTestQueue.length === 0) return;
-
-        const currentItem = speedTestQueue[speedTestIndex];
-        const allowed = currentItem.pl.split(/[\/,;]/).map(a => normalizeText(a));
-        const evaluation = evaluateAnswer(speedTestAnswer, allowed);
-
-        if (evaluation.status === 'correct') {
-          playSound('correct');
-          setSpeedTestResult('correct');
-          setSpeedTestScore(prev => prev + 1);
-        } else if (evaluation.status === 'typo') {
-          playSound('typo');
-          setSpeedTestResult('typo');
-          setSpeedTestMatchedWord(evaluation.matched);
-          setSpeedTestScore(prev => prev + 1);
-        } else {
-          playSound('incorrect');
-          setSpeedTestResult('incorrect');
-          setSpeedTestMatchedWord(allowed[0] || currentItem.pl);
-          setSpeedTestWrongItems(prev => [...prev, currentItem]);
-        }
-      };
-
-      const handleNextSpeedTest = () => {
-        setSpeedTestAnswer('');
-        setSpeedTestResult(null);
-        setSpeedTestMatchedWord('');
-        if (speedTestIndex + 1 < speedTestQueue.length) {
-          setSpeedTestIndex(prev => prev + 1);
-        } else {
-          setSpeedTestIndex(speedTestQueue.length);
-        }
-      };
-
-      useEffect(() => {
-        const source = fcOnlyVerbs ? words.filter(w => w.isVerb) : words;
-        if (source.length > 0) {
-          setShuffledCards(shuffleArray(source));
-          setFcIndex(0);
-        } else {
-          setShuffledCards([]);
-        }
-      }, [words, fcOnlyVerbs]);
-
-      useEffect(() => {
-        const source = quizOnlyVerbs ? words.filter(w => w.isVerb) : words;
-        if (source.length > 0) {
-          setShuffledQuiz(shuffleArray(source));
-          setQIndex(0);
-        } else {
-          setShuffledQuiz([]);
-        }
-      }, [words, quizOnlyVerbs]);
+        localStorage.setItem('jm_hub_mobile_view', JSON.stringify(isMobileView));
+      }, [isMobileView]);
 
       useEffect(() => {
         if (window.lucide) window.lucide.createIcons();
       });
 
+      // Dynamiczne pobieranie wersji oraz logo z zewnętrznych stron
       useEffect(() => {
-        if (direction === 'es-pl') setFcIsEsToPl(true);
-        else if (direction === 'pl-es') setFcIsEsToPl(false);
-        else setFcIsEsToPl(Math.random() < 0.5);
-      }, [fcIndex, direction]);
+        APPS_CONFIG.forEach(async (app) => {
+          const proxies = [
+            (u) => `https://api.allorigins.win/raw?url=${encodeURIComponent(u)}`,
+            (u) => `https://corsproxy.io/?${encodeURIComponent(u)}`
+          ];
 
-      useEffect(() => {
-        if (quizDirection === 'es-pl') setQuizIsEsToPl(true);
-        else if (quizDirection === 'pl-es') setQuizIsEsToPl(false);
-        else setQuizIsEsToPl(Math.random() < 0.5);
-      }, [qIndex, quizDirection]);
-
-      const insertCharToRef = (refKey, char, setter, currentValue) => {
-        const el = inputRefs.current[refKey];
-        if (el && typeof el.selectionStart === 'number') {
-          const start = el.selectionStart;
-          const end = el.selectionEnd;
-          const updated = currentValue.slice(0, start) + char + currentValue.slice(end);
-          setter(updated);
-          setTimeout(() => {
-            el.focus();
-            el.setSelectionRange(start + 1, start + 1);
-          }, 0);
-        } else {
-          setter(currentValue + char);
-        }
-      };
-
-      const generateConjugation = (verbObj, tense) => {
-        if (!verbObj) return { yo: '', tu: '', el: '', nosotros: '', vosotros: '', ellos: '' };
-        const vKey = normalizeText(verbObj.es);
-        const tKey = normalizeText(tense);
-
-        if (conjugationTable[vKey] && conjugationTable[vKey][tKey]) {
-          return conjugationTable[vKey][tKey];
-        }
-
-        for (const key of Object.keys(conjugationTable)) {
-          if (vKey.includes(key) || key.includes(vKey)) {
-            if (conjugationTable[key][tKey]) return conjugationTable[key][tKey];
+          let htmlContent = null;
+          for (const proxyFn of proxies) {
+            try {
+              const res = await fetch(proxyFn(app.url));
+              if (res.ok) {
+                htmlContent = await res.text();
+                if (htmlContent) break;
+              }
+            } catch (e) {}
           }
-        }
 
-        let stem = verbObj.es.slice(0, -2);
-        let ending = verbObj.es.slice(-2).toLowerCase();
+          if (htmlContent) {
+            try {
+              const parser = new DOMParser();
+              const doc = parser.parseFromString(htmlContent, 'text/html');
 
-        if (ending === 'ar') {
-          if (tKey === 'presente') return { yo: stem + 'o', tu: stem + 'as', el: stem + 'a', nosotros: stem + 'amos', vosotros: stem + 'áis', ellos: stem + 'an' };
-          if (tKey === 'pasado' || tKey === 'indefinido') return { yo: stem + 'é', tu: stem + 'aste', el: stem + 'ó', nosotros: stem + 'amos', vosotros: stem + 'asteis', ellos: stem + 'aron' };
-          if (tKey === 'imperfecto') return { yo: stem + 'aba', tu: stem + 'abas', el: stem + 'aba', nosotros: stem + 'ábamos', vosotros: stem + 'abais', ellos: stem + 'aban' };
-          if (tKey === 'futuro') return { yo: verbObj.es + 'é', tu: verbObj.es + 'ás', el: verbObj.es + 'á', nosotros: stem + 'emos', vosotros: stem + 'éis', me: stem, ellos: stem + 'án' };
-        } else if (ending === 'er' || ending === 'ir') {
-          if (tKey === 'presente') return { yo: stem + 'o', tu: stem + 'es', el: stem + 'e', nosotros: stem + 'emos', vosotros: stem + 'éis', ellos: stem + 'en' };
-          if (tKey === 'pasado' || tKey === 'indefinido') return { yo: stem + 'í', tu: stem + 'iste', el: stem + 'ió', nosotros: stem + 'imos', vosotros: stem + 'isteis', ellos: stem + 'ieron' };
-          if (tKey === 'imperfecto') return { yo: stem + 'ía', tu: stem + 'ías', el: stem + 'ía', nosotros: stem + 'íamos', vosotros: stem + 'íais', me: stem, ellos: stem + 'ían' };
-          if (tKey === 'futuro') return { yo: verbObj.es + 'é', tu: verbObj.es + 'ás', el: verbObj.es + 'á', nosotros: stem + 'emos', vosotros: stem + 'éis', me: stem, ellos: stem + 'án' };
-        }
+              // 1. Szukanie wersji w nagłówku lub tytule
+              let foundVersion = null;
+              const versionNodes = doc.querySelectorAll('h1, title, .version, span');
+              for (const node of versionNodes) {
+                const txt = node.textContent || '';
+                const match = txt.match(/(\d+\.\d+)/);
+                if (match) {
+                  foundVersion = match[1];
+                  break;
+                }
+              }
 
-        return { yo: stem + 'o', tu: stem + 'as', el: stem + 'a', nosotros: stem + 'amos', vosotros: stem + 'áis', ellos: stem + 'an' };
-      };
+              // 2. Szukanie logo / svg w nagłówku
+              const logoContainer = doc.querySelector('header .flex, .logo, h1 div, svg');
+              let extractedLogoHtml = null;
+              if (logoContainer) {
+                extractedLogoHtml = logoContainer.outerHTML;
+              }
 
-      const verbList = words.filter(w => w.isVerb);
-      const currentVerb = verbList.length > 0 ? verbList[verbIndex % verbList.length] : null;
-      const currentVerbData = currentVerb ? generateConjugation(currentVerb, selectedTense) : null;
-
-      const filteredWords = words.filter(w => 
-        w.es.toLowerCase().includes(searchTerm.toLowerCase()) || 
-        w.pl.toLowerCase().includes(searchTerm.toLowerCase())
-      );
-
-      const currentCard = shuffledCards.length > 0 ? shuffledCards[fcIndex % shuffledCards.length] : null;
-      const quizItem = shuffledQuiz.length > 0 ? shuffledQuiz[qIndex % shuffledQuiz.length] : null;
-
-      const fcData = currentCard ? {
-        question: fcIsEsToPl ? currentCard.es : currentCard.pl,
-        answer: fcIsEsToPl ? currentCard.pl : currentCard.es,
-        questionLang: fcIsEsToPl ? 'es' : 'pl',
-        answerLang: fcIsEsToPl ? 'pl' : 'es'
-      } : null;
-
-      const quizData = quizItem ? {
-        question: quizIsEsToPl ? quizItem.es : quizItem.pl,
-        answer: quizIsEsToPl ? quizItem.pl : quizItem.es,
-        allowedAnswers: getQuizAllowedAnswers(quizItem, quizIsEsToPl)
-      } : null;
-
-      const handleCheckQuiz = (e) => {
-        e.preventDefault();
-        if (!quizData || quizResult !== null) return;
-        
-        const evaluation = evaluateAnswer(userAnswer, quizData.allowedAnswers);
-
-        if (evaluation.status === 'correct') {
-          playSound('correct');
-          setQuizResult('correct');
-          setScore(prev => prev + 1);
-        } else if (evaluation.status === 'typo') {
-          playSound('typo');
-          setQuizResult('typo');
-          setQuizMatchedWord(quizItem.pl);
-          setScore(prev => prev + 1);
-        } else {
-          playSound('incorrect');
-          setQuizResult('incorrect');
-          setQuizMatchedWord(quizItem.pl);
-        }
-      };
-
-      const handleCheckVerbs = () => {
-        if (!currentVerbData) return;
-        let allCorrect = true;
-        ['yo', 'tu', 'el', 'nosotros', 'vosotros', 'ellos'].forEach(p => {
-          if (normalizeText(verbAnswers[p]) !== normalizeText(currentVerbData[p])) {
-            allCorrect = false;
+              setAppDataState(prev => ({
+                ...prev,
+                [app.id]: {
+                  version: foundVersion || app.defaultVersion,
+                  logoHtml: extractedLogoHtml,
+                  loading: false
+                }
+              }));
+              return;
+            } catch (err) {}
           }
+
+          // Fallback w razie niedostępności sieci / CORS
+          setAppDataState(prev => ({
+            ...prev,
+            [app.id]: {
+              version: app.defaultVersion,
+              logoHtml: null,
+              loading: false
+            }
+          }));
         });
-        if (allCorrect) playSound('correct');
-        else playSound('incorrect');
-        setVerbSubmitted(true);
-      };
-
-      const handleNextQuiz = () => {
-        setUserAnswer('');
-        setQuizResult(null);
-        setQuizMatchedWord('');
-        setQIndex(prev => prev + 1);
-      };
-
-      const handleNextVerb = () => {
-        setVerbSubmitted(false);
-        setVerbAnswers({ yo: '', tu: '', el: '', nosotros: '', vosotros: '', ellos: '' });
-        setVerbIndex(prev => prev + 1);
-      };
+      }, []);
 
       return (
-        <div className={`min-h-[100dvh] w-full bg-slate-950 flex flex-col items-center justify-between ${isMobileView ? 'p-1.5 max-w-sm mx-auto text-xs' : 'p-2 sm:p-4'} text-slate-100 transition-all`}>
-          <header className={`w-full ${isMobileView ? 'max-w-sm p-2.5' : 'max-w-5xl p-4'} bg-slate-900 rounded-2xl shadow-xl border border-slate-800 mb-3 flex justify-between items-center transition-all`}>
-            <Logo isMobileView={isMobileView} />
+        <div className={`min-h-[100dvh] w-full bg-slate-950 flex flex-col items-center justify-between ${isMobileView ? 'p-1.5 max-w-sm mx-auto text-xs' : 'p-2 sm:p-6'} text-slate-100 transition-all`}>
+          
+          {/* Header */}
+          <header className={`w-full ${isMobileView ? 'max-w-sm p-2.5' : 'max-w-4xl p-4'} bg-slate-900 rounded-2xl shadow-xl border border-slate-800 mb-4 flex justify-between items-center transition-all`}>
+            <MasterLogo isMobileView={isMobileView} />
             <div className="flex items-center gap-2">
               <button
                 onClick={() => setIsMobileView(!isMobileView)}
                 title={isMobileView ? "Wyłącz tryb mobilny" : "Włącz tryb mobilny (kompaktowy)"}
-                className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl border text-xs font-bold transition ${isMobileView ? 'bg-red-600 text-white border-red-500' : 'bg-slate-800 text-slate-300 border-slate-700 hover:bg-slate-700'}`}
+                className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl border text-xs font-bold transition ${isMobileView ? 'bg-purple-600 text-white border-purple-500' : 'bg-slate-800 text-slate-300 border-slate-700 hover:bg-slate-700'}`}
               >
                 <i data-lucide={isMobileView ? "smartphone" : "monitor"} className="w-3.5 h-3.5"></i>
                 <span className="hidden sm:inline">{isMobileView ? "Tryb Tel. ON" : "Tryb Tel."}</span>
               </button>
-              <div className={`${isMobileView ? 'text-[10px]' : 'text-xs'} text-slate-400 text-right`}>
-                <div>Słówek: <span className="text-red-400 font-bold">{words.length}</span></div>
-              </div>
             </div>
           </header>
 
-          {eraseModalOpen && (
-            <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4">
-              <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 max-w-md w-full space-y-4 shadow-2xl">
-                <h3 className="text-lg font-bold text-white flex items-center gap-2">
-                  <i data-lucide="alert-triangle" className="w-5 h-5 text-red-500"></i>
-                  <span>Usuwanie bazy danych</span>
-                </h3>
-                <p className="text-xs text-slate-300">Wpisz hasło <code className="text-red-400 font-bold">erase</code>:</p>
-                <form onSubmit={handleEraseDatabase} className="space-y-3">
-                  <input
-                    type="password"
-                    placeholder="Hasło..."
-                    value={erasePassword}
-                    onChange={(e) => setErasePassword(e.target.value)}
-                    className="w-full px-3 py-2 bg-slate-950 border border-slate-700 rounded-xl text-white text-sm"
-                  />
-                  {eraseError && <p className="text-xs text-red-400 font-semibold">Błędne hasło!</p>}
-                  <div className="flex gap-2 justify-end">
-                    <button type="button" onClick={() => setEraseModalOpen(false)} className="px-4 py-2 bg-slate-800 text-xs rounded-xl">Anuluj</button>
-                    <button type="submit" className="px-4 py-2 bg-red-600 text-xs rounded-xl">Usuń</button>
-                  </div>
-                </form>
-              </div>
+          {/* Main Hub Content */}
+          <main className={`w-full ${isMobileView ? 'max-w-sm' : 'max-w-4xl'} flex-1 flex flex-col justify-center my-auto transition-all`}>
+            <div className="text-center mb-6 space-y-2">
+              <h2 className={`${isMobileView ? 'text-xl' : 'text-3xl sm:text-4xl'} font-black text-white tracking-tight`}>
+                Wybierz aplikację językową
+              </h2>
+              <p className={`${isMobileView ? 'text-xs' : 'text-sm sm:text-base'} text-slate-400 max-w-lg mx-auto font-medium`}>
+                Rozpocznij naukę słówek, quizów oraz gramatyki w wybranym języku.
+              </p>
             </div>
-          )}
 
-          <div className={`w-full ${isMobileView ? 'max-w-sm' : 'max-w-5xl'} flex-1 flex flex-col transition-all`}>
-            <div className={`bg-slate-900 ${isMobileView ? 'p-2.5' : 'p-3 sm:p-5'} rounded-2xl shadow-xl border border-slate-800 flex-1 w-full flex flex-col mb-2 transition-all`}>
-              
-              <nav className={`grid grid-cols-5 ${isMobileView ? 'gap-1 mb-3 p-1 text-[10px]' : 'gap-1.5 sm:gap-2 mb-6 p-1.5 text-[11px] sm:text-sm'} bg-slate-950 rounded-xl font-medium border border-slate-800/80 transition-all`}>
-                <button onClick={() => { setActiveTab('flashcards'); }} className={`py-1.5 sm:py-2 rounded-lg flex flex-col sm:flex-row items-center justify-center gap-0.5 sm:gap-1 ${activeTab === 'flashcards' ? 'bg-slate-800 text-red-400 font-bold border border-slate-700' : 'text-slate-400'}`}>
-                  <i data-lucide="layers" className={`${isMobileView ? 'w-3 h-3' : 'w-4 h-4'}`}></i><span>Fiszki</span>
-                </button>
-                <button onClick={() => { setActiveTab('quiz'); }} className={`py-1.5 sm:py-2 rounded-lg flex flex-col sm:flex-row items-center justify-center gap-0.5 sm:gap-1 ${activeTab === 'quiz' ? 'bg-slate-800 text-red-400 font-bold border border-slate-700' : 'text-slate-400'}`}>
-                  <i data-lucide="help-circle" className={`${isMobileView ? 'w-3 h-3' : 'w-4 h-4'}`}></i><span>Quiz</span>
-                </button>
-                <button onClick={() => { setActiveTab('speedtest'); startSpeedTest(); }} className={`py-1.5 sm:py-2 rounded-lg flex flex-col sm:flex-row items-center justify-center gap-0.5 sm:gap-1 ${activeTab === 'speedtest' ? 'bg-slate-800 text-red-400 font-bold border border-slate-700' : 'text-slate-400'}`}>
-                  <i data-lucide="zap" className={`${isMobileView ? 'w-3 h-3' : 'w-4 h-4'}`}></i><span>Szybki</span>
-                </button>
-                <button onClick={() => { setActiveTab('verbs'); }} className={`py-1.5 sm:py-2 rounded-lg flex flex-col sm:flex-row items-center justify-center gap-0.5 sm:gap-1 ${activeTab === 'verbs' ? 'bg-slate-800 text-red-400 font-bold border border-slate-700' : 'text-slate-400'}`}>
-                  <i data-lucide="book-open" className={`${isMobileView ? 'w-3 h-3' : 'w-4 h-4'}`}></i><span>Czas.</span>
-                </button>
-                <button onClick={() => { setActiveTab('admin'); }} className={`py-1.5 sm:py-2 rounded-lg flex flex-col sm:flex-row items-center justify-center gap-0.5 sm:gap-1 ${activeTab === 'admin' ? 'bg-slate-800 text-red-400 font-bold border border-slate-700' : 'text-slate-400'}`}>
-                  <i data-lucide="settings" className={`${isMobileView ? 'w-3 h-3' : 'w-4 h-4'}`}></i><span>Admin</span>
-                </button>
-              </nav>
-
-              {loadMessage && (
-                <div className="mb-3 p-2.5 bg-blue-950/80 border border-blue-800 text-blue-300 text-xs rounded-xl">{loadMessage}</div>
-              )}
-
-              {/* 1. FISZKI */}
-              {activeTab === 'flashcards' && (
-                <div className="flex-1 flex flex-col items-center justify-between space-y-4">
-                  <div className="flex flex-wrap items-center justify-center gap-2">
-                    <div className="flex items-center gap-1 bg-slate-950 p-1 rounded-xl text-xs font-medium border border-slate-800">
-                      <button onClick={() => setDirection('es-pl')} className={`px-2.5 py-1 rounded-lg ${direction === 'es-pl' ? 'bg-slate-800 text-red-400' : 'text-slate-400'}`}>ES ➔ PL</button>
-                      <button onClick={() => setDirection('pl-es')} className={`px-2.5 py-1 rounded-lg ${direction === 'pl-es' ? 'bg-slate-800 text-red-400' : 'text-slate-400'}`}>PL ➔ ES</button>
-                      <button onClick={() => setDirection('random')} className={`px-2.5 py-1 rounded-lg ${direction === 'random' ? 'bg-slate-800 text-red-400' : 'text-slate-400'}`}>Losowo</button>
-                    </div>
-                    <label className="flex items-center gap-1.5 bg-slate-950 px-2.5 py-1.5 rounded-xl text-xs font-medium border border-slate-800 text-slate-300 cursor-pointer">
-                      <input type="checkbox" checked={fcOnlyVerbs} onChange={(e) => setFcOnlyVerbs(e.target.checked)} className="accent-red-600" />
-                      <span className="text-amber-400 font-bold">Tylko czasowniki</span>
-                    </label>
-                  </div>
-
-                  {shuffledCards.length > 0 && fcData ? (
-                    <div className="w-full max-w-md flex-1 flex flex-col items-center justify-center my-2">
-                      <div onClick={() => setIsFlipped(!isFlipped)} className={`w-full ${isMobileView ? 'min-h-[190px] p-5' : 'min-h-[260px] p-8'} rounded-3xl bg-gradient-to-br ${isFlipped ? 'from-slate-950 to-slate-900 border border-slate-800 text-white' : 'from-red-600 to-amber-600 text-white'} shadow-2xl flex flex-col items-center justify-between cursor-pointer text-center transition-all`}>
-                        <div className="w-full flex justify-between items-center text-xs opacity-80">
-                          <span>{isFlipped ? 'Tłumaczenie' : 'Fiszka'}</span>
-                          <span>{(fcIndex % shuffledCards.length) + 1} z {shuffledCards.length}</span>
-                        </div>
-                        <div className="my-auto space-y-1.5">
-                          <h2 className={`${isMobileView ? 'text-2xl' : 'text-3xl'} font-extrabold`}>{isFlipped ? fcData.answer : fcData.question}</h2>
-                          <p className="text-[11px] opacity-75">Kliknij, aby odwrócić</p>
-                        </div>
-                        <button onClick={(e) => { 
-                          e.stopPropagation(); 
-                          speakText(isFlipped ? fcData.answer : fcData.question, isFlipped ? fcData.answerLang : fcData.questionLang); 
-                        }} className="p-2.5 bg-black/30 rounded-full text-white hover:bg-black/50 transition">
-                          <i data-lucide="volume-2" className="w-4 h-4"></i>
-                        </button>
-                      </div>
-                      <div className="flex items-center gap-3 mt-4">
-                        <button onClick={() => { setIsFlipped(false); setFcIndex(prev => Math.max(0, prev - 1)); }} className="p-2.5 bg-slate-800 text-slate-200 rounded-xl"><i data-lucide="chevron-left" className="w-4 h-4"></i></button>
-                        <button onClick={() => { setIsFlipped(false); setFcIndex(prev => prev + 1); }} className="px-5 py-2.5 bg-red-600 text-white rounded-xl font-semibold text-xs sm:text-sm">Następna ➔</button>
-                      </div>
-                    </div>
-                  ) : <div className="text-slate-500 text-sm my-auto">Brak słówek spełniających kryteria.</div>}
-                </div>
-              )}
-
-              {/* 2. QUIZ */}
-              {activeTab === 'quiz' && (
-                <div className="flex-1 flex flex-col items-center justify-between space-y-4">
-                  <div className="w-full flex flex-wrap justify-between items-center gap-2">
-                    <div className="flex items-center gap-1 bg-slate-950 p-1 rounded-xl text-xs font-medium border border-slate-800">
-                      <button onClick={() => setQuizDirection('es-pl')} className={`px-2 py-1 rounded-lg ${quizDirection === 'es-pl' ? 'bg-slate-800 text-red-400' : 'text-slate-400'}`}>ES ➔ PL</button>
-                      <button onClick={() => setQuizDirection('pl-es')} className={`px-2 py-1 rounded-lg ${quizDirection === 'pl-es' ? 'bg-slate-800 text-red-400' : 'text-slate-400'}`}>PL ➔ ES</button>
-                      <button onClick={() => setQuizDirection('random')} className={`px-2 py-1 rounded-lg ${quizDirection === 'random' ? 'bg-slate-800 text-red-400' : 'text-slate-400'}`}>Losowo</button>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <label className="flex items-center gap-1.5 bg-slate-950 px-2.5 py-1 rounded-xl text-xs font-medium border border-slate-800 text-slate-300 cursor-pointer">
-                        <input type="checkbox" checked={quizOnlyVerbs} onChange={(e) => setQuizOnlyVerbs(e.target.checked)} className="accent-red-600" />
-                        <span className="text-amber-400 font-bold">Czasowniki</span>
-                      </label>
-                      <div className="text-xs font-bold text-slate-300 bg-slate-950 px-2.5 py-1 rounded-lg border border-slate-800">Wynik: <span className="text-red-400">{score}</span></div>
-                    </div>
-                  </div>
-
-                  {shuffledQuiz.length > 0 && quizData ? (
-                    <div className="w-full max-w-md my-auto space-y-3">
-                      <div className="bg-slate-950/80 p-4 rounded-2xl border border-slate-800 text-center space-y-1.5 relative">
-                        <div className="text-[11px] text-slate-400 uppercase font-bold">{quizIsEsToPl ? 'Przetłumacz na polski:' : 'Przetłumacz na hiszpański:'}</div>
-                        <h2 className="text-xl sm:text-2xl font-bold text-slate-100 flex items-center justify-center gap-2">
-                          <span>{quizData.question}</span>
-                          <button onClick={() => speakText(quizData.question, quizIsEsToPl ? 'es' : 'pl')} className="text-slate-400 hover:text-red-400">
-                            <i data-lucide="volume-2" className="w-4 h-4"></i>
-                          </button>
-                        </h2>
-                      </div>
-                      <form onSubmit={handleCheckQuiz} className="space-y-3">
-                        <input
-                          ref={el => inputRefs.current['userAnswer'] = el}
-                          type="text"
-                          placeholder="Wpisz tłumaczenie..."
-                          value={userAnswer}
-                          disabled={quizResult !== null}
-                          onChange={(e) => setUserAnswer(e.target.value)}
-                          className="w-full px-3 py-2.5 bg-slate-800 border border-slate-700 text-white rounded-xl text-center text-base font-medium"
-                        />
-                        {quizResult === null && <SpanishCharBar onInsertChar={(c) => insertCharToRef('userAnswer', c, setUserAnswer, userAnswer)} isMobileView={isMobileView} />}
-                        {quizResult === null ? (
-                          <button type="submit" className="w-full py-2.5 bg-red-600 text-white font-semibold rounded-xl text-sm">Sprawdź</button>
-                        ) : (
-                          <div className="space-y-2.5">
-                            {quizResult === 'correct' && (
-                              <div className="p-3 rounded-xl text-center text-xs font-semibold bg-emerald-950 text-emerald-300">
-                                Dobrze!
-                              </div>
-                            )}
-                            {quizResult === 'typo' && (
-                              <div className="p-3 rounded-xl text-center text-xs font-semibold bg-amber-950/90 text-amber-300 border border-amber-700/60 space-y-0.5">
-                                <div>Zaliczone z drobną literówką!</div>
-                                <div className="text-[11px] text-slate-200">Poprawna wersja: <span className="font-bold">{quizMatchedWord}</span></div>
-                              </div>
-                            )}
-                            {quizResult === 'incorrect' && (
-                              <div className="p-3 rounded-xl text-center text-xs font-semibold flex items-center justify-center gap-2 bg-red-950 text-red-300">
-                                <span>Błędnie. Odpowiedź: {quizMatchedWord}</span>
-                                <button type="button" onClick={() => speakText(quizMatchedWord, quizIsEsToPl ? 'pl' : 'es')} className="hover:opacity-80">
-                                  <i data-lucide="volume-2" className="w-3.5 h-3.5"></i>
-                                </button>
-                              </div>
-                            )}
-                            <button type="button" onClick={handleNextQuiz} className="w-full py-2.5 bg-slate-800 text-white font-semibold rounded-xl text-sm">Następne ➔</button>
+            <div className={`grid grid-cols-1 ${isMobileView ? 'gap-3' : 'sm:grid-cols-2 gap-5'} w-full`}>
+              {APPS_CONFIG.map((app) => {
+                const data = appDataState[app.id];
+                return (
+                  <div 
+                    key={app.id} 
+                    className={`bg-slate-900 border ${app.borderColor} rounded-3xl ${isMobileView ? 'p-4' : 'p-6 sm:p-7'} shadow-2xl flex flex-col justify-between transition-all duration-300 group hover:-translate-y-1`}
+                  >
+                    <div>
+                      {/* Górny pasek kafelka: Logo i Wersja */}
+                      <div className="flex items-center justify-between mb-4">
+                        <div className="flex items-center gap-3">
+                          <div className={`w-11 h-11 rounded-2xl bg-gradient-to-br ${app.colorFrom} ${app.colorVia} ${app.colorTo} p-0.5 shadow-md flex items-center justify-center`}>
+                            <div className="w-full h-full bg-slate-950 rounded-[14px] flex items-center justify-center font-black text-white text-base">
+                              {app.fallbackSvgTag}
+                            </div>
                           </div>
-                        )}
-                      </form>
-                    </div>
-                  ) : <div className="text-slate-500 text-sm my-auto">Brak słówek w quizie spełniających kryteria.</div>}
-                </div>
-              )}
-
-              {/* SZYBKI TEST (20 słówek) */}
-              {activeTab === 'speedtest' && (
-                <div className="flex-1 flex flex-col items-center justify-between space-y-4">
-                  {speedTestQueue.length > 0 && speedTestIndex < speedTestQueue.length ? (
-                    <div className="w-full max-w-md my-auto space-y-3">
-                      <div className="flex justify-between items-center text-xs text-slate-400 font-semibold px-1">
-                        <span>{speedTestIsReview ? 'Powtórka błędnych' : 'Szybki Test (20 słówek)'}</span>
-                        <span>{speedTestIndex + 1} / {speedTestQueue.length}</span>
-                      </div>
-                      <div className="bg-slate-950/80 p-4 rounded-2xl border border-slate-800 text-center space-y-1.5">
-                        <div className="text-[11px] text-amber-400 uppercase font-bold">Przetłumacz na polski:</div>
-                        <h2 className="text-xl sm:text-2xl font-bold text-slate-100 flex items-center justify-center gap-2">
-                          <span>{speedTestQueue[speedTestIndex].es}</span>
-                          <button onClick={() => speakText(speedTestQueue[speedTestIndex].es, 'es')} className="text-slate-400 hover:text-red-400">
-                            <i data-lucide="volume-2" className="w-4 h-4"></i>
-                          </button>
-                        </h2>
-                      </div>
-                      <form onSubmit={handleCheckSpeedTest} className="space-y-3">
-                        <input
-                          ref={el => inputRefs.current['speedAnswer'] = el}
-                          type="text"
-                          placeholder="Wpisz tłumaczenie po polsku..."
-                          value={speedTestAnswer}
-                          disabled={speedTestResult !== null}
-                          onChange={(e) => setSpeedTestAnswer(e.target.value)}
-                          className="w-full px-3 py-2.5 bg-slate-800 border border-slate-700 text-white rounded-xl text-center text-base font-medium"
-                        />
-                        {speedTestResult === null && <SpanishCharBar onInsertChar={(c) => insertCharToRef('speedAnswer', c, setSpeedTestAnswer, speedTestAnswer)} isMobileView={isMobileView} />}
-                        {speedTestResult === null ? (
-                          <button type="submit" className="w-full py-2.5 bg-red-600 text-white font-semibold rounded-xl text-sm">Sprawdź</button>
-                        ) : (
-                          <div className="space-y-2.5">
-                            {speedTestResult === 'correct' && (
-                              <div className="p-3 rounded-xl text-center text-xs font-semibold bg-emerald-950 text-emerald-300">
-                                Dobrze!
-                              </div>
-                            )}
-                            {speedTestResult === 'typo' && (
-                              <div className="p-3 rounded-xl text-center text-xs font-semibold bg-amber-950/90 text-amber-300 border border-amber-700/60 space-y-0.5">
-                                <div>Zaliczone z drobną literówką!</div>
-                                <div className="text-[11px] text-slate-200">Poprawna wersja: <span className="font-bold">{speedTestMatchedWord}</span></div>
-                              </div>
-                            )}
-                            {speedTestResult === 'incorrect' && (
-                              <div className="p-3 rounded-xl text-center text-xs font-semibold flex items-center justify-center gap-2 bg-red-950 text-red-300">
-                                <span>Błędnie. Odpowiedź: {speedTestMatchedWord}</span>
-                                <button type="button" onClick={() => speakText(speedTestMatchedWord, 'pl')} className="hover:opacity-80">
-                                  <i data-lucide="volume-2" className="w-3.5 h-3.5"></i>
-                                </button>
-                              </div>
-                            )}
-                            <button type="button" onClick={handleNextSpeedTest} className="w-full py-2.5 bg-slate-800 text-white font-semibold rounded-xl text-sm">Następne ➔</button>
+                          <div>
+                            <h3 className="font-extrabold text-white text-base sm:text-lg tracking-tight group-hover:text-purple-400 transition">
+                              {app.title}
+                            </h3>
+                            <span className={`inline-block px-2 py-0.5 mt-0.5 rounded-md border text-[10px] font-bold ${app.badgeBg}`}>
+                              Wersja {data.version}
+                            </span>
                           </div>
-                        )}
-                      </form>
-                    </div>
-                  ) : (
-                    <div className="w-full max-w-md my-auto space-y-4 text-center bg-slate-950/80 p-6 rounded-2xl border border-slate-800">
-                      <h2 className="text-xl font-black text-white">Wynik testu</h2>
-                      <p className="text-xs text-slate-300">
-                        Twój wynik: <span className="text-red-400 font-bold text-base">{speedTestScore}</span> z <span className="font-bold text-base">{speedTestQueue.length}</span>
+                        </div>
+                      </div>
+
+                      {/* Opis */}
+                      <p className="text-slate-400 text-xs sm:text-sm leading-relaxed mb-6 font-medium">
+                        {app.description}
                       </p>
-                      
-                      {speedTestWrongItems.length > 0 ? (
-                        <div className="space-y-2.5">
-                          <p className="text-[11px] text-amber-400 font-semibold">Masz {speedTestWrongItems.length} błędnych odpowiedzi do powtórzenia.</p>
-                          <button 
-                            onClick={() => startSpeedTest(shuffleArray(speedTestWrongItems))} 
-                            className="w-full py-2.5 bg-amber-600 hover:bg-amber-500 text-white font-semibold rounded-xl text-xs shadow transition"
-                          >
-                            Powtórz błędne słówka
-                          </button>
-                        </div>
-                      ) : (
-                        <div className="p-2.5 bg-emerald-950/80 text-emerald-300 border border-emerald-800 rounded-xl text-[11px] font-bold">
-                          Gratulacje! Wszystkie odpowiedzi były poprawne!
-                        </div>
-                      )}
+                    </div>
 
-                      <button 
-                        onClick={() => startSpeedTest()} 
-                        className="w-full py-2.5 bg-red-600 hover:bg-red-500 text-white font-semibold rounded-xl text-xs shadow transition"
+                    {/* Przycisk przejścia */}
+                    <div className="pt-4 border-t border-slate-800/85 flex items-center justify-between">
+                      <span className="text-[11px] text-emerald-400 font-semibold flex items-center gap-1.5 bg-emerald-950/60 px-2.5 py-1 rounded-lg border border-emerald-900/60">
+                        <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                        Aktywna
+                      </span>
+
+                      <a 
+                        href={app.url} 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        className={`inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r ${app.colorFrom} ${app.colorTo} text-white font-bold text-xs sm:text-sm shadow-lg hover:scale-105 active:scale-95 transition-all`}
                       >
-                        Rozpocznij nowy test
-                      </button>
-                    </div>
-                  )}
-                </div>
-              )}
-
-              {/* 3. CZASOWNIKI */}
-              {activeTab === 'verbs' && (
-                <div className="flex-1 flex flex-col space-y-4">
-                  {currentVerb && currentVerbData ? (
-                    <div className="flex-1 flex flex-col justify-between max-w-xl mx-auto w-full space-y-3">
-                      <div className="text-center space-y-1.5">
-                        <h3 className="text-base font-bold text-slate-100 capitalize flex items-center justify-center gap-2">
-                          <span>Czasownik: <span className="text-red-400">{currentVerb.es}</span> ({currentVerb.pl})</span>
-                          <button onClick={() => speakText(currentVerb.es, 'es')} className="text-slate-400 hover:text-red-400">
-                            <i data-lucide="volume-2" className="w-4 h-4"></i>
-                          </button>
-                        </h3>
-                        <div className="flex flex-wrap justify-center gap-1">
-                          {['presente', 'pasado', 'imperfecto', 'futuro'].map(t => (
-                            <button key={t} onClick={() => setSelectedTense(t)} className={`px-2.5 py-1 text-[11px] rounded-lg uppercase font-semibold ${selectedTense === t ? 'bg-red-600 text-white' : 'bg-slate-800 text-slate-400'}`}>
-                              {t}
-                            </button>
-                          ))}
-                        </div>
-                      </div>
-
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-                        {['yo', 'tu', 'el', 'nosotros', 'vosotros', 'ellos'].map((p) => {
-                          const isFieldCorrect = verbSubmitted && normalizeText(verbAnswers[p]) === normalizeText(currentVerbData[p]);
-                          return (
-                            <div key={p} className={`bg-slate-950 p-2.5 rounded-xl border ${verbSubmitted ? (isFieldCorrect ? 'border-emerald-700' : 'border-red-800') : 'border-slate-800'}`}>
-                              <div className="flex justify-between items-center mb-1">
-                                <label className="text-[11px] font-bold text-slate-300">{PERSON_LABELS[p] || p}</label>
-                                {verbSubmitted && (
-                                  <button onClick={() => speakText(currentVerbData[p], 'es')} className="text-slate-400 hover:text-red-400">
-                                    <i data-lucide="volume-2" className="w-3.5 h-3.5"></i>
-                                  </button>
-                                )}
-                              </div>
-                              <input
-                                ref={el => inputRefs.current[`verb_${p}`] = el}
-                                type="text"
-                                value={verbAnswers[p]}
-                                disabled={verbSubmitted}
-                                onFocus={() => setActiveVerbField(p)}
-                                onChange={(e) => setVerbAnswers({ ...verbAnswers, [p]: e.target.value })}
-                                placeholder={verbSubmitted ? currentVerbData[p] : '...'}
-                                className={`w-full px-2.5 py-1 text-xs rounded-lg border bg-slate-800 text-white ${
-                                  verbSubmitted 
-                                    ? (isFieldCorrect ? 'border-emerald-500 text-emerald-300' : 'border-red-500 text-red-300')
-                                    : 'border-slate-700'
-                                }`}
-                              />
-                              {verbSubmitted && !isFieldCorrect && (
-                                <div className="mt-0.5 text-[10px] text-red-400 font-medium">
-                                  Poprawnie: <span className="font-bold">{currentVerbData[p]}</span>
-                                </div>
-                              )}
-                            </div>
-                          );
-                        })}
-                      </div>
-
-                      {!verbSubmitted && (
-                        <SpanishCharBar onInsertChar={(c) => insertCharToRef(`verb_${activeVerbField}`, c, (val) => setVerbAnswers({...verbAnswers, [activeVerbField]: val}), verbAnswers[activeVerbField])} isMobileView={isMobileView} />
-                      )}
-
-                      <div className="flex gap-2.5">
-                        {!verbSubmitted ? (
-                          <button onClick={handleCheckVerbs} className="flex-1 py-2 bg-red-600 text-white font-semibold rounded-xl text-xs">Sprawdź</button>
-                        ) : (
-                          <button onClick={handleNextVerb} className="flex-1 py-2 bg-slate-800 text-white font-semibold rounded-xl text-xs">Następny ➔</button>
-                        )}
-                      </div>
-                    </div>
-                  ) : <div className="text-center text-slate-500 text-sm my-auto">Brak czasowników w bazie.</div>}
-                </div>
-              )}
-
-              {/* 4. ADMIN */}
-              {activeTab === 'admin' && (
-                <div className="space-y-4 flex-1 flex flex-col max-w-xl mx-auto w-full text-xs">
-                  <div className="bg-slate-950 p-3 rounded-xl border border-slate-800 space-y-2">
-                    <h3 className="font-bold text-white">Pobierz i zamontuj bazę z serwera</h3>
-                    <button onClick={handleDownloadAndSaveDatabase} disabled={loading} className="px-3 py-1.5 bg-blue-600 text-white rounded-lg font-semibold shadow">
-                      {loading ? 'Pobieranie...' : 'Pobierz bazę'}
-                    </button>
-                  </div>
-
-                  <div className="bg-slate-950 p-3 rounded-xl border border-slate-800 space-y-2">
-                    <h3 className="font-bold text-white">Wybierz plik z dysku (.ods)</h3>
-                    <input ref={fileInputRef} type="file" accept=".ods, .xlsx" onChange={handleLoadLocalDatabase} className="hidden" />
-                    <button onClick={() => fileInputRef.current && fileInputRef.current.click()} className="px-3 py-1.5 bg-amber-600 text-white rounded-lg font-semibold shadow">
-                      Wybierz plik
-                    </button>
-                  </div>
-
-                  <div className="bg-slate-950 p-3 rounded-xl border border-slate-800 space-y-2">
-                    <h3 className="font-bold text-white">Zapisz wpisane słówka do pliku baza_esp_ręcznie.ods</h3>
-                    <button onClick={handleSaveManualWordsToDisk} className="px-3 py-1.5 bg-emerald-600 text-white rounded-lg font-semibold shadow">
-                      Zapisz jako baza_esp_ręcznie.ods
-                    </button>
-                  </div>
-
-                  <div className="bg-slate-950 p-3 rounded-xl border border-slate-800 space-y-2">
-                    <h3 className="font-bold text-white flex items-center gap-1.5">
-                      <i data-lucide="book" className="w-3.5 h-3.5 text-red-500"></i>
-                      <span>Słownik bazy ({words.length} słówek)</span>
-                    </h3>
-                    <input
-                      type="text"
-                      placeholder="Szukaj w słowniku..."
-                      value={searchTerm}
-                      onChange={(e) => setSearchTerm(e.target.value)}
-                      className="w-full px-2.5 py-1.5 bg-slate-900 border border-slate-700 text-white rounded-lg text-xs"
-                    />
-                    <div className="max-h-[180px] overflow-y-auto border border-slate-800 rounded-lg bg-slate-900/50">
-                      <table className="w-full text-left text-xs">
-                        <thead className="bg-slate-900 border-b border-slate-800 sticky top-0 text-slate-400 uppercase">
-                          <tr>
-                            <th className="p-2">Hiszpański</th>
-                            <th className="p-2">Polski</th>
-                            <th className="p-2 text-center">Typ</th>
-                            <th className="p-2 text-right">Akcje</th>
-                          </tr>
-                        </thead>
-                        <tbody className="divide-y divide-slate-800">
-                          {filteredWords.map((item) => (
-                            <tr key={item.id} className="hover:bg-slate-800/40">
-                              <td className="p-2 font-semibold text-slate-100 flex items-center gap-1">
-                                <span>{item.es}</span>
-                                <button onClick={() => speakText(item.es, 'es')} className="text-slate-500 hover:text-red-400">
-                                  <i data-lucide="volume-2" className="w-3 h-3"></i>
-                                </button>
-                              </td>
-                              <td className="p-2 text-slate-300">
-                                <div className="flex items-center gap-1">
-                                  <span>{item.pl}</span>
-                                  <button onClick={() => speakText(item.pl, 'pl')} className="text-slate-500 hover:text-red-400">
-                                    <i data-lucide="volume-2" className="w-3 h-3"></i>
-                                  </button>
-                                </div>
-                              </td>
-                              <td className="p-2 text-center">
-                                <div className="flex items-center justify-center gap-1">
-                                  {item.isVerb && <span className="px-1 py-0.5 bg-amber-950 text-amber-400 border border-amber-800 text-[8px] font-bold rounded">CZAS.</span>}
-                                  {item.isManual && <span className="px-1 py-0.5 bg-purple-950 text-purple-300 border border-purple-800 text-[8px] font-bold rounded">RĘCZNE</span>}
-                                </div>
-                              </td>
-                              <td className="p-2 text-right">
-                                {item.isManual ? (
-                                  <div className="flex items-center justify-end gap-1">
-                                    <button onClick={() => handleEditManualWord(item)} className="px-2 py-0.5 bg-blue-900/60 hover:bg-blue-800 text-blue-200 rounded text-[9px] font-semibold">Edytuj</button>
-                                    <button onClick={() => handleDeleteManualWord(item.id)} className="px-2 py-0.5 bg-red-900/60 hover:bg-red-800 text-red-200 rounded text-[9px] font-semibold">Usuń</button>
-                                  </div>
-                                ) : (
-                                  <span className="text-[9px] text-slate-600 italic">baza</span>
-                                )}
-                              </td>
-                            </tr>
-                          ))}
-                        </tbody>
-                      </table>
+                        <span>Uruchom</span>
+                        <i data-lucide="external-link" className="w-4 h-4"></i>
+                      </a>
                     </div>
                   </div>
-
-                  <form onSubmit={handleSaveWordForm} className="bg-slate-950 p-3 rounded-xl border border-slate-800 space-y-2.5">
-                    <h3 className="font-bold text-white">
-                      {editingId ? 'Edytuj słówko / czasownik' : 'Dodaj słówko / czasownik'}
-                    </h3>
-                    <input type="text" placeholder="Hiszpański" value={newEs} onChange={(e) => setNewEs(e.target.value)} className="w-full px-2.5 py-1.5 bg-slate-900 border border-slate-700 rounded-lg text-xs text-white" />
-                    <input type="text" placeholder="Polski" value={newPl} onChange={(e) => setNewPl(e.target.value)} className="w-full px-2.5 py-1.5 bg-slate-900 border border-slate-700 rounded-lg text-xs text-white" />
-                    
-                    <div className="space-y-1 pt-0.5">
-                      <label className="flex items-center gap-2 text-xs text-slate-300">
-                        <input type="checkbox" checked={newIsVerb} onChange={(e) => setNewIsVerb(e.target.checked)} />
-                        <span className="font-bold text-amber-400">Czasownik (udostępnia odmianę dla 4 czasów)</span>
-                      </label>
-                    </div>
-
-                    {newIsVerb && (
-                      <div className="space-y-2 p-2.5 bg-slate-900 rounded-xl border border-slate-800 mt-2">
-                        <div className="font-bold text-slate-300 text-[11px]">Odmiana dla 4 czasów:</div>
-                        <div className="flex gap-1">
-                          {['presente', 'pasado', 'imperfecto', 'futuro'].map(t => (
-                            <button
-                              key={t}
-                              type="button"
-                              onClick={() => setActiveManualTense(t)}
-                              className={`px-2 py-0.5 text-[10px] rounded uppercase font-semibold ${activeManualTense === t ? 'bg-red-600 text-white' : 'bg-slate-800 text-slate-400'}`}
-                            >
-                              {t}
-                            </button>
-                          ))}
-                        </div>
-                        <div className="grid grid-cols-2 gap-1.5 pt-1">
-                          {['yo', 'tu', 'el', 'nosotros', 'vosotros', 'ellos'].map(p => (
-                            <div key={p}>
-                              <label className="text-[9px] text-slate-400 uppercase block mb-0.5">{p}</label>
-                              <input
-                                type="text"
-                                placeholder={`Forma dla ${p}`}
-                                value={newManualConjs[activeManualTense][p]}
-                                onChange={(e) => {
-                                  const val = e.target.value;
-                                  setNewManualConjs(prev => ({
-                                    ...prev,
-                                    [activeManualTense]: {
-                                      ...prev[activeManualTense],
-                                      [p]: val
-                                    }
-                                  }));
-                                }}
-                                className="w-full px-2 py-1 text-xs bg-slate-950 border border-slate-700 rounded text-white"
-                              />
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                    )}
-
-                    <div className="flex justify-end gap-2 pt-1">
-                      {editingId && (
-                        <button type="button" onClick={() => { setEditingId(null); setNewEs(''); setNewPl(''); setNewIsVerb(false); }} className="px-3 py-1.5 bg-slate-800 text-white font-semibold rounded-lg text-xs">Anuluj</button>
-                      )}
-                      <button type="submit" className="px-3 py-1.5 bg-red-600 text-white font-semibold rounded-lg text-xs">
-                        {editingId ? 'Zapisz zmiany' : 'Dodaj'}
-                      </button>
-                    </div>
-                  </form>
-
-                  <div className="bg-slate-950 p-3 rounded-xl border border-red-950 space-y-2">
-                    <h3 className="font-bold text-red-400">Usuń całą bazę</h3>
-                    <button onClick={() => setEraseModalOpen(true)} className="px-3 py-1.5 bg-red-900 text-white rounded-lg font-semibold text-xs">Usuń bazę</button>
-                  </div>
-                </div>
-              )}
-
+                );
+              })}
             </div>
-          </div>
+          </main>
 
-          <footer className={`w-full ${isMobileView ? 'max-w-sm' : 'max-w-5xl'} text-center py-1.5 text-[9px] text-slate-500 font-medium space-y-0.5 transition-all`}>
-            <div>Ostatnia aktualizacja kodu (plik): <span className="text-slate-400 font-semibold">{fileLastModified}</span></div>
-            <div>Ostatnia aktualizacja bazy (baza_esp.ods): <span className="text-slate-400 font-semibold">{dbLastModified}</span></div>
+          {/* Footer */}
+          <footer className={`w-full ${isMobileView ? 'max-w-sm' : 'max-w-4xl'} text-center py-3 text-[10px] text-slate-500 font-medium mt-6 transition-all border-t border-slate-900`}>
+            <div>Językowy Master Hub &bull; Wszystkie prawa zastrzeżone</div>
           </footer>
         </div>
       );
