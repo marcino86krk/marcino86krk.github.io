@@ -134,6 +134,110 @@
       { id: '100', base: 'creative', comparative: 'more creative', superlative: 'the most creative', pl: 'kreatywny', rule: 'long' }
     ];
 
+    // Baza 100 prostych zdań porównawczych dopasowanych do 5 klasy SP
+    const INITIAL_WEB_SENTENCES = [
+      { id: 's1', en: 'An elephant is bigger than a dog.', pl: 'Słoń jest większy niż pies.' },
+      { id: 's2', en: 'A cat is smaller than a horse.', pl: 'Kot jest mniejszy niż koń.' },
+      { id: 's3', en: 'My bag is heavier than your bag.', pl: 'Mój plecak jest cięższy niż twój plecak.' },
+      { id: 's4', en: 'English is easier than math.', pl: 'Angielski jest łatwiejszy niż matematyka.' },
+      { id: 's5', en: 'Summer is hotter than winter.', pl: 'Lato jest gorętsze niż zima.' },
+      { id: 's6', en: 'Today is colder than yesterday.', pl: 'Dzisiaj jest zimniej niż wczoraj.' },
+      { id: 's7', en: 'A car is faster than a bike.', pl: 'Samochód jest szybszy niż rower.' },
+      { id: 's8', en: 'A bike is slower than a train.', pl: 'Rower jest wolniejszy niż pociąg.' },
+      { id: 's9', en: 'My sister is taller than me.', pl: 'Moja siostra jest wyższa ode mnie.' },
+      { id: '10', en: 'My brother is younger than me.', pl: 'Mój brat jest młodszy ode mnie.' },
+      { id: '11', en: 'This book is thinner than that book.', pl: 'Ta książka jest cieńsza niż tamta książka.' },
+      { id: '12', en: 'Milk is better than cola.', pl: 'Mleko jest lepsze niż cola.' },
+      { id: '13', en: 'Bad weather is worse than sunshine.', pl: 'Zła pogoda jest gorsza niż słońce.' },
+      { id: '14', en: 'A lion is stronger than a cat.', pl: 'Lew jest silniejszy niż kot.' },
+      { id: '15', en: 'My room is cleaner than your room.', pl: 'Mój pokój jest czystszy niż twój pokój.' },
+      { id: '16', en: 'Fruit is healthier than sweets.', pl: 'Owoce są zdrowsze niż słodycze.' },
+      { id: '17', en: 'Gold is more expensive than silver.', pl: 'Złoto jest droższe niż srebro.' },
+      { id: '18', en: 'Water is cheaper than juice.', pl: 'Woda jest tańsza niż sok.' },
+      { id: '19', en: 'Science is more difficult than art.', pl: 'Przyroda jest trudniejsza niż plastyka.' },
+      { id: '20', en: 'A dog is friendlier than a wolf.', pl: 'Pies jest bardziej przyjazny niż wilk.' },
+      { id: '21', en: 'A mouse is smaller than a cat.', pl: 'Mysz jest mniejsza niż kot.' },
+      { id: '22', en: 'A giraffe is taller than a horse.', pl: 'Żyrafa jest wyższa niż koń.' },
+      { id: '23', en: 'An apple is sweeter than a lemon.', pl: 'Jabłko jest słodsze niż cytryna.' },
+      { id: '24', en: 'A turtle is slower than a rabbit.', pl: 'Żółw jest wolniejszy niż królik.' },
+      { id: '25', en: 'A plane is faster than a bird.', pl: 'Samolot jest szybszy niż ptak.' },
+      { id: '26', en: 'My shoes are newer than your shoes.', pl: 'Moje buty są nowsze niż twoje buty.' },
+      { id: '27', en: 'His pencil is longer than her pencil.', pl: 'Jego ołówek jest dłuższy niż jej ołówek.' },
+      { id: '28', en: 'This test is easier than the last test.', pl: 'Ten test jest łatwiejszy niż ostatni test.' },
+      { id: '29', en: 'History is more interesting than math.', pl: 'Historia jest ciekawsza niż matematyka.' },
+      { id: '30', en: 'A snake is longer than a lizard.', pl: 'Wąż jest dłuższy niż jaszczurka.' },
+      { id: '31', en: 'Milk is warmer than ice cream.', pl: 'Mleko jest cieplejsze niż lody.' },
+      { id: '32', en: 'A river is deeper than a puddle.', pl: 'Rzeka jest głębsza niż kałuża.' },
+      { id: '33', en: 'A mountain is higher than a hill.', pl: 'Góra jest wyższa niż wzgórze.' },
+      { id: '34', en: 'My desk is cleaner than your desk.', pl: 'Moje biurko jest czystsze niż twoje biurko.' },
+      { id: '35', en: 'A ball is rounder than a box.', pl: 'Piłka jest bardziej okrągła niż pudełko.' },
+      { id: '36', en: 'Soup is hotter than salad.', pl: 'Zupa jest gorętsza niż sałatka.' },
+      { id: '37', en: 'A sheep is fatter than a dog.', pl: 'Owca jest grubsza niż pies.' },
+      { id: '38', en: 'A tiger is wilder than a cow.', pl: 'Tygrys jest dzikszy niż krowa.' },
+      { id: '39', en: 'An airplane is bigger than a car.', pl: 'Samolot jest większy niż samochód.' },
+      { id: '40', en: 'A feather is lighter than a stone.', pl: 'Piórko jest lżejsze niż kamień.' },
+      { id: '41', en: 'My teacher is older than me.', pl: 'Mój nauczyciel jest starszy ode mnie.' },
+      { id: '42', en: 'A park is quieter than a street.', pl: 'Park jest cichszy niż ulica.' },
+      { id: '43', en: 'A city is noisier than a village.', pl: 'Miasto jest głośniejsze niż wieś.' },
+      { id: '44', en: 'The sun is brighter than the moon.', pl: 'Słońce jest jaśniejsze niż księżyc.' },
+      { id: '45', en: 'Night is darker than day.', pl: 'Noc jest ciemniejsza niż dzień.' },
+      { id: '46', en: 'Coffee is darker than milk.', pl: 'Kawa jest ciemniejsza niż mleko.' },
+      { id: '47', en: 'Ice is colder than water.', pl: 'Lód jest zimniejszy niż woda.' },
+      { id: '48', en: 'Tea is hotter than water.', pl: 'Herbata jest cieplejsza niż woda.' },
+      { id: '49', en: 'A pillow is softer than a desk.', pl: 'Poduszka jest miększa niż biurko.' },
+      { id: '50', en: 'A rock is harder than wood.', pl: 'Skała jest twardsza niż drewno.' },
+      { id: '51', en: 'Spring is warmer than winter.', pl: 'Wiosna jest cieplejsza niż zima.' },
+      { id: '52', en: 'Autumn is colder than summer.', pl: 'Jesień jest zimniejsza niż lato.' },
+      { id: '53', en: 'A shark is more dangerous than a fish.', pl: 'Rekin jest bardziej niebezpieczny niż ryba.' },
+      { id: '54', en: 'A bear is stronger than a wolf.', pl: 'Niedźwiedź jest silniejszy niż wilk.' },
+      { id: '55', en: 'An ant is smaller than a bee.', pl: 'Mrówka jest mniejsza niż pszczoła.' },
+      { id: '56', en: 'A whale is bigger than a shark.', pl: 'Wieloryb jest większy niż rekin.' },
+      { id: '57', en: 'A horse is taller than a dog.', pl: 'Koń jest wyższy niż pies.' },
+      { id: '58', en: 'A monkey is funnier than a frog.', pl: 'Małpa jest zabawniejsza niż żaba.' },
+      { id: '59', en: 'A parrot is noisier than a fish.', pl: 'Papuga jest głośniejsza niż ryba.' },
+      { id: '60', en: 'A pig is dirtier than a cat.', pl: 'Świnia jest brudniejsza niż kot.' },
+      { id: '61', en: 'A chicken is smaller than a turkey.', pl: 'Kura jest mniejsza niż indyk.' },
+      { id: '62', en: 'Watermelon is bigger than a strawberry.', pl: 'Arbuz jest większy niż truskawka.' },
+      { id: '63', en: 'Cake is sweeter than bread.', pl: 'Ciasto jest słodsze niż chleb.' },
+      { id: '64', en: 'Lemon is sourer than an apple.', pl: 'Cytryna jest kwaśniejsza niż jabłko.' },
+      { id: '65', en: 'Pizza is better than soup.', pl: 'Pizza jest lepsza niż zupa.' },
+      { id: '66', en: 'Homework is harder than games.', pl: 'Praca domowa jest trudniejsza niż gry.' },
+      { id: '67', en: 'Playing is more fun than cleaning.', pl: 'Zabawa jest fajniejsza niż sprzątanie.' },
+      { id: '68', en: 'Saturday is better than Monday.', pl: 'Sobota jest lepsza niż poniedziałek.' },
+      { id: '69', en: 'Holiday is longer than a weekend.', pl: 'Wakacje są dłuższe niż weekend.' },
+      { id: '70', en: 'A minute is shorter than an hour.', pl: 'Minuta jest krótsza niż godzina.' },
+      { id: '71', en: 'An hour is shorter than a day.', pl: 'Godzina jest krótsza niż dzień.' },
+      { id: '72', en: 'My hair is longer than your hair.', pl: 'Moje włosy są dłuższe niż twoje włosy.' },
+      { id: '73', en: 'Your shirt is newer than my shirt.', pl: 'Twoja koszula jest nowsza niż moja koszula.' },
+      { id: '74', en: 'Our house is bigger than their house.', pl: 'Nasz dom jest większy niż ich dom.' },
+      { id: '75', en: 'Your school is nearer than my school.', pl: 'Twoja szkoła jest bliżej niż moja szkoła.' },
+      { id: '76', en: 'A computer is more expensive than a toy.', pl: 'Komputer jest droższy niż zabawka.' },
+      { id: '77', en: 'A pen is cheaper than a phone.', pl: 'Pióro jest tańsze niż telefon.' },
+      { id: '78', en: 'A lion is scarier than a rabbit.', pl: 'Lew jest straszniejszy niż królik.' },
+      { id: '79', en: 'A ghost story is scarier than a cartoon.', pl: 'Historia o duchach jest straszniejsza niż kreskówka.' },
+      { id: '80', en: 'A cartoon is funnier than a documentary.', pl: 'Kreskówka jest zabawniejsza niż film dokumentalny.' },
+      { id: '81', en: 'English is easier than German.', pl: 'Angielski jest łatwiejszy niż niemiecki.' },
+      { id: '82', en: 'PE is easier than math.', pl: 'W-F jest łatwiejszy niż matematyka.' },
+      { id: '83', en: 'My friend is happier today.', pl: 'Mój przyjaciel jest dzisiaj szczęśliwszy.' },
+      { id: '84', en: 'The playground is noisier than the classroom.', pl: 'Plac zabaw jest głośniejszy niż klasa.' },
+      { id: '85', en: 'A mouse is faster than a snail.', pl: 'Mysz jest szybsza niż ślimak.' },
+      { id: '86', en: 'A snail is slower than a mouse.', pl: 'Ślimak jest wolniejszy niż mysz.' },
+      { id: '87', en: 'A duck is smaller than a swan.', pl: 'Kaczka jest mniejsza niż łabędź.' },
+      { id: '88', en: 'A swan is bigger than a duck.', pl: 'Łabędź jest większy niż kaczka.' },
+      { id: '89', en: 'Winter is colder than autumn.', pl: 'Zima jest zimniejsza niż jesień.' },
+      { id: '90', en: 'Spring is nicer than winter.', pl: 'Wiosna jest mińszcza / przyjemniejsza niż zima.' },
+      { id: '91', en: 'A jacket is warmer than a t-shirt.', pl: 'Kurtka jest cieplejsza niż koszulka.' },
+      { id: '92', en: 'Boots are heavier than shoes.', pl: 'Buty zimowe są cięższe niż półbuty.' },
+      { id: '93', en: 'A blanket is warmer than a sheet.', pl: 'Koc jest cieplejszy niż prześcieradło.' },
+      { id: '94', en: 'A lamp is brighter than a candle.', pl: 'Lampa jest jaśniejsza niż świeczka.' },
+      { id: '95', en: 'A candle is dimmer than a lamp.', pl: 'Świeczka daje mniej światła niż lampa.' },
+      { id: '96', en: 'A spoon is smaller than a ladle.', pl: 'Łyżka jest mniejsza niż chochla.' },
+      { id: '97', en: 'A fork is sharper than a spoon.', pl: 'Widelec jest ostrzejszy niż łyżka.' },
+      { id: '98', en: 'A plate is wider than a cup.', pl: 'Talerz jest szerszy niż kubek.' },
+      { id: '99', en: 'Milk is sweeter than water.', pl: 'Mleko jest słodsze niż woda.' },
+      { id: '100', en: 'Practice makes you better.', pl: 'Praktyka czyni cię lepszym.' }
+    ];
+
     function Logo({ isMobileView }) {
       return (
         <div className="flex items-center gap-2.5">
@@ -195,6 +299,14 @@
       const [quizResult, setQuizResult] = useState(null);
       const [score, setScore] = useState(0);
 
+      // Stan dla Modułu: 100 zdań poziomu 5 klasy
+      const [webSentences, setWebSentences] = useState(INITIAL_WEB_SENTENCES);
+      const [shuffledWebSentences, setShuffledWebSentences] = useState([]);
+      const [webIndex, setWebIndex] = useState(0);
+      const [userWebInput, setUserWebInput] = useState('');
+      const [webResult, setWebResult] = useState(null);
+      const [webScore, setWebScore] = useState(0);
+
       const voicesRef = useRef([]);
 
       useEffect(() => {
@@ -223,7 +335,7 @@
       }, []);
 
       const normalizeText = (text) => {
-        return (text || '').toLowerCase().trim();
+        return (text || '').toLowerCase().trim().replace(/[.,!?]/g, '').replace(/\s+/g, ' ');
       };
 
       const shuffleArray = (arr) => {
@@ -274,7 +386,11 @@
           setFcIndex(0);
           setQuizIndex(0);
         }
-      }, [words]);
+        if (webSentences.length > 0) {
+          setShuffledWebSentences(shuffleArray(webSentences));
+          setWebIndex(0);
+        }
+      }, [words, webSentences]);
 
       useEffect(() => {
         if (window.lucide) window.lucide.createIcons();
@@ -282,6 +398,7 @@
 
       const currentCard = shuffledCards.length > 0 ? shuffledCards[fcIndex % shuffledCards.length] : null;
       const currentQuizItem = shuffledQuiz.length > 0 ? shuffledQuiz[quizIndex % shuffledQuiz.length] : null;
+      const currentWebItem = shuffledWebSentences.length > 0 ? shuffledWebSentences[webIndex % shuffledWebSentences.length] : null;
 
       const handleCheckQuiz = (e) => {
         e.preventDefault();
@@ -309,6 +426,27 @@
         setUserSup('');
         setQuizResult(null);
         setQuizIndex(prev => prev + 1);
+      };
+
+      const handleCheckWeb = (e) => {
+        e.preventDefault();
+        if (!currentWebItem || webResult !== null) return;
+
+        const userVal = normalizeText(userWebInput);
+        const correctVal = normalizeText(currentWebItem.en);
+
+        if (userVal === correctVal) {
+          setWebResult('correct');
+          setWebScore(prev => prev + 1);
+        } else {
+          setWebResult('incorrect');
+        }
+      };
+
+      const handleNextWeb = () => {
+        setUserWebInput('');
+        setWebResult(null);
+        setWebIndex(prev => prev + 1);
       };
 
       const filteredWords = words.filter(w => 
@@ -341,17 +479,20 @@
             <div className={`bg-slate-900 ${isMobileView ? 'p-2.5' : 'p-3 sm:p-5'} rounded-2xl shadow-xl border border-slate-800 flex-1 w-full flex flex-col mb-2 transition-all`}>
               
               {/* Nawigacja */}
-              <nav className={`grid grid-cols-4 ${isMobileView ? 'gap-1 mb-3 p-1 text-[9px]' : 'gap-1.5 sm:gap-2 mb-6 p-1.5 text-[11px] sm:text-sm'} bg-slate-950 rounded-xl font-medium border border-slate-800/80 transition-all text-center`}>
-                <button onClick={() => setActiveTab('flashcards')} className={`py-2 rounded-lg flex flex-col sm:flex-row items-center justify-center gap-1 ${activeTab === 'flashcards' ? 'bg-slate-800 text-purple-400 font-bold border border-slate-700' : 'text-slate-400'}`}>
+              <nav className={`grid grid-cols-5 ${isMobileView ? 'gap-0.5 mb-3 p-1 text-[8px]' : 'gap-1.5 sm:gap-2 mb-6 p-1.5 text-[10px] sm:text-xs'} bg-slate-950 rounded-xl font-medium border border-slate-800/80 transition-all text-center`}>
+                <button onClick={() => setActiveTab('flashcards')} className={`py-2 rounded-lg flex flex-col items-center justify-center gap-0.5 ${activeTab === 'flashcards' ? 'bg-slate-800 text-purple-400 font-bold border border-slate-700' : 'text-slate-400'}`}>
                   <i data-lucide="layers" className="w-3.5 h-3.5"></i><span>Fiszki</span>
                 </button>
-                <button onClick={() => setActiveTab('exercise')} className={`py-2 rounded-lg flex flex-col sm:flex-row items-center justify-center gap-1 ${activeTab === 'exercise' ? 'bg-slate-800 text-purple-400 font-bold border border-slate-700' : 'text-slate-400'}`}>
-                  <i data-lucide="check-circle" className="w-3.5 h-3.5"></i><span>Ćwiczenie</span>
+                <button onClick={() => setActiveTab('exercise')} className={`py-2 rounded-lg flex flex-col items-center justify-center gap-0.5 ${activeTab === 'exercise' ? 'bg-slate-800 text-purple-400 font-bold border border-slate-700' : 'text-slate-400'}`}>
+                  <i data-lucide="check-circle" className="w-3.5 h-3.5"></i><span>Stopniowanie</span>
                 </button>
-                <button onClick={() => setActiveTab('rules')} className={`py-2 rounded-lg flex flex-col sm:flex-row items-center justify-center gap-1 ${activeTab === 'rules' ? 'bg-slate-800 text-purple-400 font-bold border border-slate-700' : 'text-slate-400'}`}>
-                  <i data-lucide="book-open" className="w-3.5 h-3.5"></i><span>Spelling Rules</span>
+                <button onClick={() => setActiveTab('webSentences')} className={`py-2 rounded-lg flex flex-col items-center justify-center gap-0.5 ${activeTab === 'webSentences' ? 'bg-slate-800 text-purple-400 font-bold border border-slate-700' : 'text-slate-400'}`}>
+                  <i data-lucide="book-open-check" className="w-3.5 h-3.5"></i><span>Zdania (Poziom 5 SP)</span>
                 </button>
-                <button onClick={() => setActiveTab('admin')} className={`py-2 rounded-lg flex flex-col sm:flex-row items-center justify-center gap-1 ${activeTab === 'admin' ? 'bg-slate-800 text-purple-400 font-bold border border-slate-700' : 'text-slate-400'}`}>
+                <button onClick={() => setActiveTab('rules')} className={`py-2 rounded-lg flex flex-col items-center justify-center gap-0.5 ${activeTab === 'rules' ? 'bg-slate-800 text-purple-400 font-bold border border-slate-700' : 'text-slate-400'}`}>
+                  <i data-lucide="book-open" className="w-3.5 h-3.5"></i><span>Rules</span>
+                </button>
+                <button onClick={() => setActiveTab('admin')} className={`py-2 rounded-lg flex flex-col items-center justify-center gap-0.5 ${activeTab === 'admin' ? 'bg-slate-800 text-purple-400 font-bold border border-slate-700' : 'text-slate-400'}`}>
                   <i data-lucide="database" className="w-3.5 h-3.5"></i><span>Słownik</span>
                 </button>
               </nav>
@@ -468,7 +609,66 @@
                 </div>
               )}
 
-              {/* 3. MODUŁ: SPELLING RULES */}
+              {/* 3. MODUŁ: ZDANIA POZIOM 5 KLASA SP */}
+              {activeTab === 'webSentences' && (
+                <div className="flex-1 flex flex-col items-center justify-between space-y-4 max-w-lg mx-auto w-full">
+                  <div className="w-full flex justify-between items-center text-xs text-slate-400 font-semibold px-1">
+                    <span>Zdania porównawcze (Poziom 5 klasa SP)</span>
+                    <span>Wynik: <span className="text-purple-400">{webScore}</span></span>
+                  </div>
+
+                  {shuffledWebSentences.length > 0 && currentWebItem ? (
+                    <div className="w-full my-auto space-y-4 bg-slate-950/80 p-5 rounded-2xl border border-slate-800">
+                      <div className="text-center space-y-2">
+                        <div className="text-xs text-purple-400 font-bold uppercase tracking-wider">Przetłumacz na język angielski:</div>
+                        <div className="text-base font-bold text-white bg-slate-900 p-3.5 rounded-xl border border-slate-800">
+                          „{currentWebItem.pl}”
+                        </div>
+                        <p className="text-[11px] text-slate-400 italic">Użyj stopni wyższych i słówka „than”</p>
+                      </div>
+
+                      <form onSubmit={handleCheckWeb} className="space-y-3 pt-1">
+                        <input
+                          type="text"
+                          placeholder="Wpisz zdanie po angielsku..."
+                          value={userWebInput}
+                          disabled={webResult !== null}
+                          onChange={(e) => setUserWebInput(e.target.value)}
+                          className="w-full px-3 py-2.5 bg-slate-900 border border-slate-700 text-white rounded-xl text-sm font-medium text-center"
+                        />
+
+                        {webResult === null ? (
+                          <button type="submit" className="w-full py-2.5 bg-purple-600 hover:bg-purple-500 text-white font-semibold rounded-xl text-sm shadow transition">Sprawdź zdanie</button>
+                        ) : (
+                          <div className="space-y-2.5 pt-1">
+                            {webResult === 'correct' ? (
+                              <div className="p-3 rounded-xl text-center text-xs font-semibold bg-emerald-950 text-emerald-300 border border-emerald-800 flex items-center justify-center gap-2">
+                                <span>Świetnie! Idealne tłumaczenie!</span>
+                                <button type="button" onClick={() => speakText(currentWebItem.en)} className="text-emerald-300 hover:text-white" title="Posłuchaj">
+                                  <i data-lucide="volume-2" className="w-4 h-4"></i>
+                                </button>
+                              </div>
+                            ) : (
+                              <div className="p-3 rounded-xl text-center text-xs font-semibold bg-red-950 text-red-300 border border-red-800 space-y-1">
+                                <div>Niezupełnie. Wzorcowe zdanie to:</div>
+                                <div className="text-slate-100 font-bold flex items-center justify-center gap-2">
+                                  <span>{currentWebItem.en}</span>
+                                  <button type="button" onClick={() => speakText(currentWebItem.en)} className="text-red-200 hover:text-white" title="Posłuchaj">
+                                    <i data-lucide="volume-2" className="w-4 h-4"></i>
+                                  </button>
+                                </div>
+                              </div>
+                            )}
+                            <button type="button" onClick={handleNextWeb} className="w-full py-2.5 bg-slate-800 hover:bg-slate-700 text-white font-semibold rounded-xl text-sm transition">Następne zdanie ➔</button>
+                          </div>
+                        )}
+                      </form>
+                    </div>
+                  ) : <div className="text-slate-500 text-sm my-auto">Brak zdań w bazie.</div>}
+                </div>
+              )}
+
+              {/* 4. MODUŁ: SPELLING RULES */}
               {activeTab === 'rules' && (
                 <div className="flex-1 flex flex-col space-y-4 max-w-2xl mx-auto w-full text-xs custom-scrollbar overflow-y-auto max-h-[65dvh] p-1">
                   <div className="bg-slate-950 p-4 rounded-2xl border border-purple-900/50 space-y-3">
@@ -512,7 +712,7 @@
                 </div>
               )}
 
-              {/* 4. MODUŁ: SŁOWNIK / ADMIN */}
+              {/* 5. MODUŁ: SŁOWNIK / ADMIN */}
               {activeTab === 'admin' && (
                 <div className="space-y-4 flex-1 flex flex-col max-w-xl mx-auto w-full text-xs">
                   <div className="bg-slate-950 p-3 rounded-xl border border-slate-800 space-y-2">
@@ -562,7 +762,7 @@
 
           <footer className={`w-full ${isMobileView ? 'max-w-sm' : 'max-w-5xl'} text-center py-1.5 text-[9px] text-slate-500 font-medium space-y-0.5 transition-all`}>
             <div>Ostatnia aktualizacja kodu (plik): <span className="text-slate-400 font-semibold">{fileLastModified}</span></div>
-            <div>Baza danych: <span className="text-purple-400 font-semibold">100 przymiotników (Stopniowanie)</span></div>
+            <div>Baza danych: <span className="text-purple-400 font-semibold">100 przymiotników + 100 zdań (Poziom 5 SP)</span></div>
           </footer>
         </div>
       );
