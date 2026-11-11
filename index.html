@@ -40,11 +40,12 @@
         accentColor: 'text-blue-500',
         badgeBg: 'bg-blue-950/80 text-blue-300 border-blue-800',
         fallbackSvgTag: 'EN',
+        isCompact: false,
         description: 'Ucz się słówek, zwrotów i gramatyki języka angielskiego w nowoczesnym interaktywnym środowisku.'
       },
       {
         id: 'esp',
-        title: 'Hiszpański Master Junior',
+        title: 'Hiszpański Master',
         defaultVersion: '1.8',
         url: 'https://marcino86krk.github.io/esp_master.html',
         colorFrom: 'from-red-600',
@@ -54,7 +55,24 @@
         accentColor: 'text-red-500',
         badgeBg: 'bg-red-950/80 text-red-300 border-red-800',
         fallbackSvgTag: 'Ñ',
+        isCompact: false,
         description: 'Odkrywaj słoneczny język hiszpański! Fiszki, quizy, szybkie testy i pełna odmiana czasowników.'
+      },
+      {
+        id: 'eng_stopniowanie',
+        title: 'Angielski Master Good * Better * The Best',
+        defaultVersion: '1.0',
+        url: 'https://marcino86krk.github.io/eng_master_stopniowanie.html',
+        colorFrom: 'from-purple-600',
+        colorVia: 'via-indigo-600',
+        colorTo: 'to-cyan-400',
+        borderColor: 'border-purple-500/40 hover:border-purple-500',
+        accentColor: 'text-purple-400',
+        badgeBg: 'bg-purple-950/80 text-purple-300 border-purple-800',
+        fallbackSvgTag: '★',
+        isCompact: true,
+        badgeTag: 'STOPNIOWANIE',
+        description: 'Praktyczny moduł treningowy ze stopniowania przymiotników i przysłówków po angielsku.'
       }
     ];
 
@@ -90,7 +108,8 @@
 
       const [appDataState, setAppDataState] = useState({
         eng: { version: '1.0', logoHtml: null, loading: true },
-        esp: { version: '1.8', logoHtml: null, loading: true }
+        esp: { version: '1.8', logoHtml: null, loading: true },
+        eng_stopniowanie: { version: '1.0', logoHtml: null, loading: true }
       });
 
       useEffect(() => {
@@ -197,8 +216,9 @@
               </p>
             </div>
 
-            <div className={`grid grid-cols-1 ${isMobileView ? 'gap-3' : 'sm:grid-cols-2 gap-5'} w-full`}>
-              {APPS_CONFIG.map((app) => {
+            {/* Główne 2 duże kafelki */}
+            <div className={`grid grid-cols-1 ${isMobileView ? 'gap-3' : 'sm:grid-cols-2 gap-5'} w-full mb-4`}>
+              {APPS_CONFIG.filter(app => !app.isCompact).map((app) => {
                 const data = appDataState[app.id];
                 return (
                   <div 
@@ -252,6 +272,57 @@
                 );
               })}
             </div>
+
+            {/* Mniejszy uzupełniający kafelek dla Stopniowania */}
+            {APPS_CONFIG.filter(app => app.isCompact).map((app) => {
+              const data = appDataState[app.id];
+              return (
+                <div 
+                  key={app.id}
+                  className={`w-full bg-slate-900/90 border ${app.borderColor} rounded-2xl ${isMobileView ? 'p-3' : 'p-4 sm:p-5'} shadow-xl flex flex-col sm:flex-row items-center justify-between gap-3 transition-all duration-300 hover:bg-slate-900`}
+                >
+                  <div className="flex items-center gap-3 w-full sm:w-auto">
+                    <div className={`w-10 h-10 shrink-0 rounded-xl bg-gradient-to-br ${app.colorFrom} ${app.colorVia} ${app.colorTo} p-0.5 shadow-md flex items-center justify-center`}>
+                      <div className="w-full h-full bg-slate-950 rounded-[10px] flex items-center justify-center font-black text-amber-400 text-sm">
+                        {app.fallbackSvgTag}
+                      </div>
+                    </div>
+                    <div className="flex-1">
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <h3 className="font-extrabold text-white text-sm sm:text-base tracking-tight">
+                          {app.title}
+                        </h3>
+                        <span className="px-1.5 py-0.5 rounded bg-purple-950 text-purple-300 border border-purple-800 text-[9px] font-bold">
+                          {app.badgeTag}
+                        </span>
+                        <span className={`px-1.5 py-0.5 rounded border text-[9px] font-bold ${app.badgeBg}`}>
+                          v{data.version}
+                        </span>
+                      </div>
+                      <p className="text-slate-400 text-xs font-medium mt-0.5 line-clamp-1">
+                        {app.description}
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-3 w-full sm:w-auto justify-end border-t sm:border-t-0 border-slate-800/80 pt-2 sm:pt-0">
+                    <span className="text-[10px] text-emerald-400 font-semibold flex items-center gap-1 bg-emerald-950/60 px-2 py-0.5 rounded border border-emerald-900/60">
+                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                      Nowość
+                    </span>
+                    <a 
+                      href={app.url} 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      className={`inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-gradient-to-r ${app.colorFrom} ${app.colorTo} text-white font-bold text-xs shadow-md hover:scale-105 active:scale-95 transition-all`}
+                    >
+                      <span>Otwórz</span>
+                      <i data-lucide="external-link" className="w-3.5 h-3.5"></i>
+                    </a>
+                  </div>
+                </div>
+              );
+            })}
           </main>
 
           {/* Footer */}
