@@ -1,0 +1,687 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Angielski Master Junior 1.0</title>
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <!-- SheetJS (xlsx) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  <!-- React & ReactDOM -->
+  <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+  <!-- Babel -->
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <style>
+    body { background-color: #020617; color: #f8fafc; font-family: system-ui, -apple-system, sans-serif; margin: 0; padding: 0; min-height: 100dvh; overflow-x: hidden; }
+    .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+    .custom-scrollbar::-webkit-scrollbar-thumb { background-color: #334155; border-radius: 9999px; }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+
+  <script type="text/babel">
+    const { useState, useEffect, useRef } = React;
+
+    const DATABASE_URL = 'https://marcino86krk.github.io/baza_eng.ods';
+
+    function Logo({ isMobileView }) {
+      return (
+        <div className="flex items-center gap-2.5">
+          <div className={`${isMobileView ? 'w-9 h-9' : 'w-12 h-12'} rounded-xl bg-gradient-to-br from-blue-600 via-indigo-600 to-red-600 p-0.5 shadow-lg flex items-center justify-center transition-all`}>
+            <div className="w-full h-full bg-slate-950 rounded-[10px] flex items-center justify-center relative overflow-hidden">
+              <svg viewBox="0 0 100 100" className={isMobileView ? 'w-6 h-6' : 'w-9 h-9'}>
+                <path d="M 15,30 Q 35,22 50,35 Q 65,22 85,30 L 85,75 Q 65,67 50,80 Q 35,67 15,75 Z" fill="#1e293b" stroke="#3b82f6" strokeWidth="3"/>
+                <path d="M 50,35 L 50,80" stroke="#3b82f6" strokeWidth="3"/>
+                <line x1="23" y1="42" x2="41" y2="47" stroke="#94a3b8" strokeWidth="3" strokeLinecap="round"/>
+                <line x1="23" y1="52" x2="38" y2="57" stroke="#94a3b8" strokeWidth="3" strokeLinecap="round"/>
+                <line x1="59" y1="42" x2="77" y2="47" stroke="#ef4444" strokeWidth="3" strokeLinecap="round"/>
+                <line x1="59" y1="52" x2="74" y2="57" stroke="#94a3b8" strokeWidth="3" strokeLinecap="round"/>
+                <text x="50" y="30" fontFamily="system-ui" fontWeight="900" fontSize="22" fill="#3b82f6" textAnchor="middle">EN</text>
+              </svg>
+            </div>
+          </div>
+          <div>
+            <h1 className={`${isMobileView ? 'text-sm' : 'text-lg'} font-black tracking-tight text-white flex items-center gap-1`}>
+              ANGLIELSKI MASTER JUNIOR <span className="text-blue-500">1.0</span>
+            </h1>
+            <p className={`${isMobileView ? 'text-[9px]' : 'text-[11px]'} text-slate-400 font-medium`}>Seria: Językowy Master</p>
+          </div>
+        </div>
+      );
+    }
+
+    function App() {
+      const [words, setWords] = useState(() => {
+        const saved = localStorage.getItem('amj_words');
+        if (saved) {
+          try {
+            const parsed = JSON.parse(saved);
+            if (parsed && parsed.length > 0) return parsed;
+          } catch(e) {}
+        }
+        return [];
+      });
+
+      const [isMobileView, setIsMobileView] = useState(() => {
+        const saved = localStorage.getItem('amj_mobile_view');
+        return saved ? JSON.parse(saved) : false;
+      });
+
+      useEffect(() => {
+        localStorage.setItem('amj_mobile_view', JSON.stringify(isMobileView));
+      }, [isMobileView]);
+
+      const [dbLastModified, setDbLastModified] = useState('Brak danych');
+      const [fileLastModified, setFileLastModified] = useState('');
+      const [loading, setLoading] = useState(false);
+      const [loadMessage, setLoadMessage] = useState(null);
+      const [activeTab, setActiveTab] = useState('flashcards');
+      const [searchTerm, setSearchTerm] = useState('');
+      const [direction, setDirection] = useState('random');
+
+      const [newEs, setNewEs] = useState('');
+      const [newPl, setNewPl] = useState('');
+      const [editingId, setEditingId] = useState(null);
+
+      const [eraseModalOpen, setEraseModalOpen] = useState(false);
+      const [erasePassword, setErasePassword] = useState('');
+      const [eraseError, setEraseError] = useState(false);
+
+      const [shuffledCards, setShuffledCards] = useState([]);
+      const [fcIndex, setFcIndex] = useState(0);
+      const [isFlipped, setIsFlipped] = useState(false);
+      const [fcIsEsToPl, setFcIsEsToPl] = useState(true);
+
+      const fileInputRef = useRef(null);
+      const voicesRef = useRef([]);
+
+      useEffect(() => {
+        try {
+          if (document.lastModified) {
+            const modDate = new Date(document.lastModified);
+            if (!isNaN(modDate)) {
+              setFileLastModified(modDate.toLocaleString('pl-PL', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' }));
+            } else {
+              setFileLastModified(document.lastModified);
+            }
+          }
+        } catch(e) {
+          setFileLastModified('Brak danych');
+        }
+
+        const loadVoices = () => {
+          if ('speechSynthesis' in window) {
+            voicesRef.current = window.speechSynthesis.getVoices();
+          }
+        };
+        loadVoices();
+        if ('speechSynthesis' in window) {
+          window.speechSynthesis.onvoiceschanged = loadVoices;
+        }
+      }, []);
+
+      const normalizeText = (text) => {
+        return (text || '').toLowerCase().trim();
+      };
+
+      const shuffleArray = (arr) => {
+        const copy = [...arr];
+        for (let i = copy.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [copy[i], copy[j]] = [copy[j], copy[i]];
+        }
+        return copy;
+      };
+
+      const speakText = (text, forcedLang = null) => {
+        if (!text) return;
+        const cleanText = text.split(/[\/,;]/)[0].trim();
+        let targetLang = forcedLang || 'en';
+
+        try {
+          const ttsUrl = `https://translate.google.com/translate_tts?ie=UTF-8&q=${encodeURIComponent(cleanText)}&tl=${targetLang}&client=tw-ob`;
+          const audio = new Audio(ttsUrl);
+          audio.play().catch(() => {
+            fallbackSpeak(cleanText, targetLang === 'en' ? 'en-GB' : 'pl-PL');
+          });
+        } catch (e) {
+          fallbackSpeak(cleanText, targetLang === 'en' ? 'en-GB' : 'pl-PL');
+        }
+      };
+
+      const fallbackSpeak = (text, lang) => {
+        if (!('speechSynthesis' in window)) return;
+        window.speechSynthesis.cancel();
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.lang = lang;
+        utterance.rate = 0.92;
+        const voices = voicesRef.current.length > 0 ? voicesRef.current : window.speechSynthesis.getVoices();
+        const matchingVoices = voices.filter(v => v.lang.toLowerCase().includes(lang.slice(0, 2).toLowerCase()));
+        if (matchingVoices.length > 0) {
+          utterance.voice = matchingVoices[0];
+        }
+        window.speechSynthesis.speak(utterance);
+      };
+
+      useEffect(() => {
+        localStorage.setItem('amj_words', JSON.stringify(words));
+      }, [words]);
+
+      const parseWorkbookData = (workbook) => {
+        let bazaSheetName = workbook.SheetNames.find(name => normalizeText(name).includes('baza') || normalizeText(name) === 'words') || workbook.SheetNames[0];
+        const wsBaza = workbook.Sheets[bazaSheetName];
+        const rowsBaza = XLSX.utils.sheet_to_json(wsBaza, { header: 1 });
+
+        const wordMap = new Map();
+        rowsBaza.forEach(row => {
+          if (row && row[0] && row[1]) {
+            const es = String(row[0]).trim();
+            const pl = String(row[1]).trim();
+            const key = normalizeText(es);
+
+            if (wordMap.has(key)) {
+              const item = wordMap.get(key);
+              const existingVars = item.pl.split(/[\/,;]/).map(v => normalizeText(v));
+              if (!existingVars.includes(normalizeText(pl))) {
+                item.pl = `${item.pl} / ${pl}`;
+              }
+            } else {
+              wordMap.set(key, { es, pl, isManual: false });
+            }
+          }
+        });
+
+        const newWords = [];
+        let idCounter = Date.now();
+        wordMap.forEach((val) => {
+          newWords.push({ id: (idCounter++).toString(), ...val });
+        });
+
+        return newWords;
+      };
+
+      useEffect(() => {
+        const autoUpdateDatabase = async () => {
+          const urlsToTry = [
+            DATABASE_URL,
+            'https://api.allorigins.win/raw?url=' + encodeURIComponent(DATABASE_URL)
+          ];
+
+          let blob = null;
+          let lastModHeader = null;
+
+          for (const url of urlsToTry) {
+            try {
+              const response = await fetch(url);
+              if (!response.ok) continue;
+              lastModHeader = response.headers.get('Last-Modified');
+              blob = await response.blob();
+              break;
+            } catch (e) {}
+          }
+
+          if (lastModHeader) {
+            try {
+              const dateObj = new Date(lastModHeader);
+              if (!isNaN(dateObj)) {
+                setDbLastModified(dateObj.toLocaleString('pl-PL', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' }));
+              }
+            } catch(e) {}
+          }
+
+          if (!blob) return;
+
+          try {
+            const arrayBuffer = await blob.arrayBuffer();
+            const workbook = XLSX.read(arrayBuffer, { type: 'array' });
+            const newWords = parseWorkbookData(workbook);
+
+            if (newWords.length > 0) {
+              setWords(prev => {
+                const existingManual = prev.filter(w => w.isManual);
+                return [...existingManual, ...newWords];
+              });
+            }
+          } catch (err) {}
+        };
+
+        if (words.length === 0) {
+          autoUpdateDatabase();
+        }
+      }, []);
+
+      const handleDownloadAndSaveDatabase = async () => {
+        setLoading(true);
+        setLoadMessage("Pobieranie pliku bazy z serwera...");
+
+        const urlsToTry = [
+          DATABASE_URL,
+          'https://api.allorigins.win/raw?url=' + encodeURIComponent(DATABASE_URL)
+        ];
+
+        let blob = null;
+        let lastModHeader = null;
+
+        for (const url of urlsToTry) {
+          try {
+            const response = await fetch(url);
+            if (!response.ok) continue;
+            lastModHeader = response.headers.get('Last-Modified');
+            blob = await response.blob();
+            break;
+          } catch (e) {}
+        }
+
+        if (lastModHeader) {
+          try {
+            const dateObj = new Date(lastModHeader);
+            if (!isNaN(dateObj)) {
+              setDbLastModified(dateObj.toLocaleString('pl-PL', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' }));
+            }
+          } catch(e) {}
+        }
+
+        if (!blob) {
+          setLoading(false);
+          setLoadMessage("Nie udało się pobrać pliku z serwera.");
+          setTimeout(() => setLoadMessage(null), 5000);
+          return;
+        }
+
+        const downloadUrl = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = downloadUrl;
+        a.download = 'baza_eng.ods';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(downloadUrl);
+
+        try {
+          const arrayBuffer = await blob.arrayBuffer();
+          const workbook = XLSX.read(arrayBuffer, { type: 'array' });
+          const newWords = parseWorkbookData(workbook);
+
+          if (newWords.length > 0) {
+            const existingManual = words.filter(w => w.isManual);
+            setWords([...existingManual, ...newWords]);
+            setLoadMessage(`Zamontowano pomyślnie ${newWords.length} słówek.`);
+          }
+        } catch (err) {}
+
+        setLoading(false);
+        setTimeout(() => setLoadMessage(null), 5000);
+      };
+
+      const handleLoadLocalDatabase = (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+        
+        if (file.lastModified) {
+          try {
+            const dateObj = new Date(file.lastModified);
+            if (!isNaN(dateObj)) {
+              setDbLastModified(dateObj.toLocaleString('pl-PL', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' }) + ' (lokalny)');
+            }
+          } catch(e) {}
+        }
+
+        const reader = new FileReader();
+        reader.onload = (evt) => {
+          try {
+            const data = new Uint8Array(evt.target.result);
+            const workbook = XLSX.read(data, { type: 'array' });
+            const newWords = parseWorkbookData(workbook);
+
+            if (newWords.length > 0) {
+              const existingManual = words.filter(w => w.isManual);
+              setWords([...existingManual, ...newWords]);
+              setLoadMessage(`Zamontowano pomyślnie ${newWords.length} słówek z dysku lokalnego!`);
+            }
+          } catch (err) {}
+          setTimeout(() => setLoadMessage(null), 4000);
+        };
+        reader.readAsArrayBuffer(file);
+      };
+
+      const handleSaveManualWordsToDisk = () => {
+        const manualWords = words.filter(w => w.isManual);
+        if (manualWords.length === 0) {
+          setLoadMessage("Brak ręcznie wpisanych słówek do zapisu.");
+          setTimeout(() => setLoadMessage(null), 4000);
+          return;
+        }
+
+        const sheetDataBaza = [
+          ["Angielski", "Polski"],
+          ...manualWords.map(w => [w.es, w.pl])
+        ];
+        const wsBaza = XLSX.utils.aoa_to_sheet(sheetDataBaza);
+
+        const wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, wsBaza, "baza");
+        XLSX.writeFile(wb, "baza_eng_ręcznie.ods");
+        setLoadMessage("Pomyślnie zapisano wpisane słówka do pliku baza_eng_ręcznie.ods!");
+        setTimeout(() => setLoadMessage(null), 4000);
+      };
+
+      const handleEraseDatabase = (e) => {
+        e.preventDefault();
+        if (erasePassword.trim().toLowerCase() === 'erase') {
+          setWords([]);
+          localStorage.removeItem('amj_words');
+          setErasePassword('');
+          setEraseError(false);
+          setEraseModalOpen(false);
+          setLoadMessage("Baza została wyczyszczona.");
+          setTimeout(() => setLoadMessage(null), 3000);
+        } else {
+          setEraseError(true);
+        }
+      };
+
+      const handleSaveWordForm = (e) => {
+        e.preventDefault();
+        if (!newEs.trim() || !newPl.trim()) return;
+
+        if (editingId) {
+          setWords(words.map(w => {
+            if (w.id === editingId) {
+              return { ...w, es: newEs.trim(), pl: newPl.trim() };
+            }
+            return w;
+          }));
+          setLoadMessage(`Zaktualizowano słówko: "${newEs.trim()}".`);
+        } else {
+          const newItem = {
+            id: Date.now().toString(),
+            es: newEs.trim(),
+            pl: newPl.trim(),
+            isManual: true
+          };
+
+          setWords([newItem, ...words]);
+          setLoadMessage(`Dodano nowe słówko: "${newItem.es}".`);
+        }
+
+        setNewEs('');
+        setNewPl('');
+        setEditingId(null);
+        setTimeout(() => setLoadMessage(null), 3000);
+      };
+
+      const handleEditManualWord = (item) => {
+        if (!item.isManual) return;
+        setNewEs(item.es);
+        setNewPl(item.pl);
+        setEditingId(item.id);
+      };
+
+      const handleDeleteManualWord = (id) => {
+        setWords(words.filter(w => w.id !== id));
+        setLoadMessage("Usunięto słówko wpisane ręcznie.");
+        setTimeout(() => setLoadMessage(null), 3000);
+      };
+
+      useEffect(() => {
+        if (words.length > 0) {
+          setShuffledCards(shuffleArray(words));
+          setFcIndex(0);
+        } else {
+          setShuffledCards([]);
+        }
+      }, [words]);
+
+      useEffect(() => {
+        if (window.lucide) window.lucide.createIcons();
+      });
+
+      useEffect(() => {
+        if (direction === 'es-pl') setFcIsEsToPl(true);
+        else if (direction === 'pl-es') setFcIsEsToPl(false);
+        else setFcIsEsToPl(Math.random() < 0.5);
+      }, [fcIndex, direction]);
+
+      const filteredWords = words.filter(w => 
+        w.es.toLowerCase().includes(searchTerm.toLowerCase()) || 
+        w.pl.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+
+      const currentCard = shuffledCards.length > 0 ? shuffledCards[fcIndex % shuffledCards.length] : null;
+
+      const fcData = currentCard ? {
+        question: fcIsEsToPl ? currentCard.es : currentCard.pl,
+        answer: fcIsEsToPl ? currentCard.pl : currentCard.es,
+        questionLang: fcIsEsToPl ? 'en' : 'pl',
+        answerLang: fcIsEsToPl ? 'pl' : 'en'
+      } : null;
+
+      return (
+        <div className={`min-h-[100dvh] w-full bg-slate-950 flex flex-col items-center justify-between ${isMobileView ? 'p-1.5 max-w-sm mx-auto text-xs' : 'p-2 sm:p-4'} text-slate-100 transition-all`}>
+          <header className={`w-full ${isMobileView ? 'max-w-sm p-2.5' : 'max-w-5xl p-4'} bg-slate-900 rounded-2xl shadow-xl border border-slate-800 mb-3 flex justify-between items-center transition-all`}>
+            <Logo isMobileView={isMobileView} />
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => setIsMobileView(!isMobileView)}
+                title={isMobileView ? "Wyłącz tryb mobilny" : "Włącz tryb mobilny (kompaktowy)"}
+                className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl border text-xs font-bold transition ${isMobileView ? 'bg-blue-600 text-white border-blue-500' : 'bg-slate-800 text-slate-300 border-slate-700 hover:bg-slate-700'}`}
+              >
+                <i data-lucide={isMobileView ? "smartphone" : "monitor"} className="w-3.5 h-3.5"></i>
+                <span className="hidden sm:inline">{isMobileView ? "Tryb Tel. ON" : "Tryb Tel."}</span>
+              </button>
+              <div className={`${isMobileView ? 'text-[10px]' : 'text-xs'} text-slate-400 text-right`}>
+                <div>Słówek: <span className="text-blue-400 font-bold">{words.length}</span></div>
+              </div>
+            </div>
+          </header>
+
+          {eraseModalOpen && (
+            <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4">
+              <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 max-w-md w-full space-y-4 shadow-2xl">
+                <h3 className="text-lg font-bold text-white flex items-center gap-2">
+                  <i data-lucide="alert-triangle" className="w-5 h-5 text-blue-500"></i>
+                  <span>Usuwanie bazy danych</span>
+                </h3>
+                <p className="text-xs text-slate-300">Wpisz hasło <code className="text-blue-400 font-bold">erase</code>:</p>
+                <form onSubmit={handleEraseDatabase} className="space-y-3">
+                  <input
+                    type="password"
+                    placeholder="Hasło..."
+                    value={erasePassword}
+                    onChange={(e) => setErasePassword(e.target.value)}
+                    className="w-full px-3 py-2 bg-slate-950 border border-slate-700 rounded-xl text-white text-sm"
+                  />
+                  {eraseError && <p className="text-xs text-red-400 font-semibold">Błędne hasło!</p>}
+                  <div className="flex gap-2 justify-end">
+                    <button type="button" onClick={() => setEraseModalOpen(false)} className="px-4 py-2 bg-slate-800 text-xs rounded-xl">Anuluj</button>
+                    <button type="submit" className="px-4 py-2 bg-blue-600 text-xs rounded-xl">Usuń</button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          )}
+
+          <div className={`w-full ${isMobileView ? 'max-w-sm' : 'max-w-5xl'} flex-1 flex flex-col transition-all`}>
+            <div className={`bg-slate-900 ${isMobileView ? 'p-2.5' : 'p-3 sm:p-5'} rounded-2xl shadow-xl border border-slate-800 flex-1 w-full flex flex-col mb-2 transition-all`}>
+              
+              <nav className={`grid grid-cols-2 ${isMobileView ? 'gap-1 mb-3 p-1 text-[10px]' : 'gap-1.5 sm:gap-2 mb-6 p-1.5 text-[11px] sm:text-sm'} bg-slate-950 rounded-xl font-medium border border-slate-800/80 transition-all`}>
+                <button onClick={() => { setActiveTab('flashcards'); }} className={`py-2 rounded-lg flex items-center justify-center gap-1.5 ${activeTab === 'flashcards' ? 'bg-slate-800 text-blue-400 font-bold border border-slate-700' : 'text-slate-400'}`}>
+                  <i data-lucide="layers" className="w-4 h-4"></i><span>Fiszki</span>
+                </button>
+                <button onClick={() => { setActiveTab('admin'); }} className={`py-2 rounded-lg flex items-center justify-center gap-1.5 ${activeTab === 'admin' ? 'bg-slate-800 text-blue-400 font-bold border border-slate-700' : 'text-slate-400'}`}>
+                  <i data-lucide="settings" className="w-4 h-4"></i><span>Admin</span>
+                </button>
+              </nav>
+
+              {loadMessage && (
+                <div className="mb-3 p-2.5 bg-blue-950/80 border border-blue-800 text-blue-300 text-xs rounded-xl">{loadMessage}</div>
+              )}
+
+              {/* FISZKI */}
+              {activeTab === 'flashcards' && (
+                <div className="flex-1 flex flex-col items-center justify-between space-y-4">
+                  <div className="flex flex-wrap items-center justify-center gap-2">
+                    <div className="flex items-center gap-1 bg-slate-950 p-1 rounded-xl text-xs font-medium border border-slate-800">
+                      <button onClick={() => setDirection('es-pl')} className={`px-2.5 py-1 rounded-lg ${direction === 'es-pl' ? 'bg-slate-800 text-blue-400' : 'text-slate-400'}`}>EN ➔ PL</button>
+                      <button onClick={() => setDirection('pl-es')} className={`px-2.5 py-1 rounded-lg ${direction === 'pl-es' ? 'bg-slate-800 text-blue-400' : 'text-slate-400'}`}>PL ➔ EN</button>
+                      <button onClick={() => setDirection('random')} className={`px-2.5 py-1 rounded-lg ${direction === 'random' ? 'bg-slate-800 text-blue-400' : 'text-slate-400'}`}>Losowo</button>
+                    </div>
+                  </div>
+
+                  {shuffledCards.length > 0 && fcData ? (
+                    <div className="w-full max-w-md flex-1 flex flex-col items-center justify-center my-2">
+                      <div onClick={() => setIsFlipped(!isFlipped)} className={`w-full ${isMobileView ? 'min-h-[190px] p-5' : 'min-h-[260px] p-8'} rounded-3xl bg-gradient-to-br ${isFlipped ? 'from-slate-950 to-slate-900 border border-slate-800 text-white' : 'from-blue-600 to-indigo-700 text-white'} shadow-2xl flex flex-col items-center justify-between cursor-pointer text-center transition-all`}>
+                        <div className="w-full flex justify-between items-center text-xs opacity-80">
+                          <span>{isFlipped ? 'Tłumaczenie' : 'Fiszka'}</span>
+                          <span>{(fcIndex % shuffledCards.length) + 1} z {shuffledCards.length}</span>
+                        </div>
+                        <div className="my-auto space-y-1.5">
+                          <h2 className={`${isMobileView ? 'text-2xl' : 'text-3xl'} font-extrabold`}>{isFlipped ? fcData.answer : fcData.question}</h2>
+                          <p className="text-[11px] opacity-75">Kliknij, aby odwrócić</p>
+                        </div>
+                        <button onClick={(e) => { 
+                          e.stopPropagation(); 
+                          speakText(isFlipped ? fcData.answer : fcData.question, isFlipped ? fcData.answerLang : fcData.questionLang); 
+                        }} className="p-2.5 bg-black/30 rounded-full text-white hover:bg-black/50 transition">
+                          <i data-lucide="volume-2" className="w-4 h-4"></i>
+                        </button>
+                      </div>
+                      <div className="flex items-center gap-3 mt-4">
+                        <button onClick={() => { setIsFlipped(false); setFcIndex(prev => Math.max(0, prev - 1)); }} className="p-2.5 bg-slate-800 text-slate-200 rounded-xl"><i data-lucide="chevron-left" className="w-4 h-4"></i></button>
+                        <button onClick={() => { setIsFlipped(false); setFcIndex(prev => prev + 1); }} className="px-5 py-2.5 bg-blue-600 text-white rounded-xl font-semibold text-xs sm:text-sm">Następna ➔</button>
+                      </div>
+                    </div>
+                  ) : <div className="text-slate-500 text-sm my-auto text-center space-y-2">
+                        <div>Brak słówek w bazie.</div>
+                        <div className="text-xs text-blue-400">Przejdź do zakładki Admin i pobierz plik bazy lub dodaj słówka ręcznie.</div>
+                      </div>}
+                </div>
+              )}
+
+              {/* ADMIN */}
+              {activeTab === 'admin' && (
+                <div className="space-y-4 flex-1 flex flex-col max-w-xl mx-auto w-full text-xs">
+                  <div className="bg-slate-950 p-3 rounded-xl border border-slate-800 space-y-2">
+                    <h3 className="font-bold text-white">Pobierz i zamontuj bazę z serwera</h3>
+                    <button onClick={handleDownloadAndSaveDatabase} disabled={loading} className="px-3 py-1.5 bg-blue-600 text-white rounded-lg font-semibold shadow">
+                      {loading ? 'Pobieranie...' : 'Pobierz bazę (baza_eng.ods)'}
+                    </button>
+                  </div>
+
+                  <div className="bg-slate-950 p-3 rounded-xl border border-slate-800 space-y-2">
+                    <h3 className="font-bold text-white">Wybierz plik z dysku (.ods)</h3>
+                    <input ref={fileInputRef} type="file" accept=".ods, .xlsx" onChange={handleLoadLocalDatabase} className="hidden" />
+                    <button onClick={() => fileInputRef.current && fileInputRef.current.click()} className="px-3 py-1.5 bg-amber-600 text-white rounded-lg font-semibold shadow">
+                      Wybierz plik
+                    </button>
+                  </div>
+
+                  <div className="bg-slate-950 p-3 rounded-xl border border-slate-800 space-y-2">
+                    <h3 className="font-bold text-white">Zapisz wpisane słówka do pliku baza_eng_ręcznie.ods</h3>
+                    <button onClick={handleSaveManualWordsToDisk} className="px-3 py-1.5 bg-emerald-600 text-white rounded-lg font-semibold shadow">
+                      Zapisz jako baza_eng_ręcznie.ods
+                    </button>
+                  </div>
+
+                  <div className="bg-slate-950 p-3 rounded-xl border border-slate-800 space-y-2">
+                    <h3 className="font-bold text-white flex items-center gap-1.5">
+                      <i data-lucide="book" className="w-3.5 h-3.5 text-blue-500"></i>
+                      <span>Słownik bazy ({words.length} słówek)</span>
+                    </h3>
+                    <input
+                      type="text"
+                      placeholder="Szukaj w słowniku..."
+                      value={searchTerm}
+                      onChange={(e) => setSearchTerm(e.target.value)}
+                      className="w-full px-2.5 py-1.5 bg-slate-900 border border-slate-700 text-white rounded-lg text-xs"
+                    />
+                    <div className="max-h-[180px] overflow-y-auto border border-slate-800 rounded-lg bg-slate-900/50">
+                      <table className="w-full text-left text-xs">
+                        <thead className="bg-slate-900 border-b border-slate-800 sticky top-0 text-slate-400 uppercase">
+                          <tr>
+                            <th className="p-2">Angielski</th>
+                            <th className="p-2">Polski</th>
+                            <th className="p-2 text-center">Typ</th>
+                            <th className="p-2 text-right">Akcje</th>
+                          </tr>
+                        </thead>
+                        <tbody className="divide-y divide-slate-800">
+                          {filteredWords.map((item) => (
+                            <tr key={item.id} className="hover:bg-slate-800/40">
+                              <td className="p-2 font-semibold text-slate-100 flex items-center gap-1">
+                                <span>{item.es}</span>
+                                <button onClick={() => speakText(item.es, 'en')} className="text-slate-500 hover:text-blue-400">
+                                  <i data-lucide="volume-2" className="w-3 h-3"></i>
+                                </button>
+                              </td>
+                              <td className="p-2 text-slate-300">
+                                <div className="flex items-center gap-1">
+                                  <span>{item.pl}</span>
+                                  <button onClick={() => speakText(item.pl, 'pl')} className="text-slate-500 hover:text-blue-400">
+                                    <i data-lucide="volume-2" className="w-3 h-3"></i>
+                                  </button>
+                                </div>
+                              </td>
+                              <td className="p-2 text-center">
+                                {item.isManual ? <span className="px-1 py-0.5 bg-purple-950 text-purple-300 border border-purple-800 text-[8px] font-bold rounded">RĘCZNE</span> : <span className="text-[9px] text-slate-600 italic">baza</span>}
+                              </td>
+                              <td className="p-2 text-right">
+                                {item.isManual && (
+                                  <div className="flex items-center justify-end gap-1">
+                                    <button onClick={() => handleEditManualWord(item)} className="px-2 py-0.5 bg-blue-900/60 hover:bg-blue-800 text-blue-200 rounded text-[9px] font-semibold">Edytuj</button>
+                                    <button onClick={() => handleDeleteManualWord(item.id)} className="px-2 py-0.5 bg-red-900/60 hover:bg-red-800 text-red-200 rounded text-[9px] font-semibold">Usuń</button>
+                                  </div>
+                                )}
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+
+                  <form onSubmit={handleSaveWordForm} className="bg-slate-950 p-3 rounded-xl border border-slate-800 space-y-2.5">
+                    <h3 className="font-bold text-white">
+                      {editingId ? 'Edytuj słówko' : 'Dodaj słówko'}
+                    </h3>
+                    <input type="text" placeholder="Angielski" value={newEs} onChange={(e) => setNewEs(e.target.value)} className="w-full px-2.5 py-1.5 bg-slate-900 border border-slate-700 rounded-lg text-xs text-white" />
+                    <input type="text" placeholder="Polski" value={newPl} onChange={(e) => setNewPl(e.target.value)} className="w-full px-2.5 py-1.5 bg-slate-900 border border-slate-700 rounded-lg text-xs text-white" />
+
+                    <div className="flex justify-end gap-2 pt-1">
+                      {editingId && (
+                        <button type="button" onClick={() => { setEditingId(null); setNewEs(''); setNewPl(''); }} className="px-3 py-1.5 bg-slate-800 text-white font-semibold rounded-lg text-xs">Anuluj</button>
+                      )}
+                      <button type="submit" className="px-3 py-1.5 bg-blue-600 text-white font-semibold rounded-lg text-xs">
+                        {editingId ? 'Zapisz zmiany' : 'Dodaj'}
+                      </button>
+                    </div>
+                  </form>
+
+                  <div className="bg-slate-950 p-3 rounded-xl border border-red-950 space-y-2">
+                    <h3 className="font-bold text-red-400">Usuń całą bazę</h3>
+                    <button onClick={() => setEraseModalOpen(true)} className="px-3 py-1.5 bg-red-900 text-white rounded-lg font-semibold text-xs">Usuń bazę</button>
+                  </div>
+                </div>
+              )}
+
+            </div>
+          </div>
+
+          <footer className={`w-full ${isMobileView ? 'max-w-sm' : 'max-w-5xl'} text-center py-1.5 text-[9px] text-slate-500 font-medium space-y-0.5 transition-all`}>
+            <div>Ostatnia aktualizacja kodu (plik): <span className="text-slate-400 font-semibold">{fileLastModified}</span></div>
+            <div>Ostatnia aktualizacja bazy (baza_eng.ods): <span className="text-slate-400 font-semibold">{dbLastModified}</span></div>
+          </footer>
+        </div>
+      );
+    }
+
+    ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+  </script>
+</body>
+</html>
