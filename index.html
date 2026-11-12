@@ -27,7 +27,7 @@
   <script type="text/babel">
     const { useState, useEffect } = React;
 
-    // Konfiguracja kafelków aplikacji ze spadkowymi i dynamicznymi logotypami SVG z nagłówków
+    // Konfiguracja kafelków aplikacji z automatycznym pobieraniem wersji ze źródeł
     const APPS_CONFIG = [
       {
         id: 'eng',
@@ -127,6 +127,7 @@
         return saved ? JSON.parse(saved) : false;
       });
 
+      // Inicjalizacja domyślnymi wersjami jako zabezpieczenie (fallback)
       const [appVersions, setAppVersions] = useState({
         eng: '1.0',
         esp: '1.8',
@@ -141,23 +142,34 @@
         if (window.lucide) window.lucide.createIcons();
       });
 
+      // Automatyczne pobieranie wersji ze wszystkich stron z uwzględnieniem CORS i proxy
       useEffect(() => {
         APPS_CONFIG.forEach(async (app) => {
-          try {
-            const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(app.url)}`;
-            const res = await fetch(proxyUrl);
-            if (res.ok) {
+          const urlsToTry = [
+            app.url,
+            `https://api.allorigins.win/raw?url=${encodeURIComponent(app.url)}`
+          ];
+
+          for (const targetUrl of urlsToTry) {
+            try {
+              const res = await fetch(targetUrl);
+              if (!res.ok) continue;
+              
               const text = await res.text();
               const parser = new DOMParser();
               const doc = parser.parseFromString(text, 'text/html');
               
+              // Szukanie wzorca wersji (np. 1.0, 1.8) w tytule strony lub głównym nagłówku
               const titleOrH1 = doc.querySelector('title')?.textContent || doc.querySelector('h1')?.textContent || '';
               const match = titleOrH1.match(/(\d+\.\d+)/);
-              if (match) {
+              if (match && match[1]) {
                 setAppVersions(prev => ({ ...prev, [app.id]: match[1] }));
+                break;
               }
+            } catch (e) {
+              // W przypadku problemów z siecią lub CORS, przechodzimy do kolejnego źródła / zostaje domyślna
             }
-          } catch (e) {}
+          }
         });
       }, []);
 
@@ -197,11 +209,9 @@
                   key={app.id} 
                   className={`relative overflow-hidden bg-slate-900 border ${app.borderColor} rounded-3xl ${isMobileView ? 'p-4' : 'p-6 sm:p-7'} shadow-2xl flex flex-col justify-between transition-all duration-300 group hover:-translate-y-1`}
                 >
-                  {/* Efekt świetlnej poświaty w tle kafelka */}
                   <div className={`absolute -top-12 -right-12 w-40 h-40 ${app.glowColor} rounded-full blur-3xl transition-all`}></div>
 
                   <div className="relative z-10">
-                    {/* Górny pasek kafelka */}
                     <div className="flex items-center justify-between mb-4">
                       <div className="flex items-center gap-3">
                         <div className={`w-12 h-12 rounded-2xl bg-gradient-to-br ${app.gradient} p-0.5 shadow-lg flex items-center justify-center shrink-0`}>
@@ -220,13 +230,11 @@
                       </div>
                     </div>
 
-                    {/* Opis */}
                     <p className="text-slate-400 text-xs sm:text-sm leading-relaxed mb-6 font-medium">
                       {app.description}
                     </p>
                   </div>
 
-                  {/* Przycisk uruchomienia */}
                   <div className="relative z-10 pt-4 border-t border-slate-800/85 flex items-center justify-between">
                     <span className="text-[11px] text-emerald-400 font-semibold flex items-center gap-1.5 bg-emerald-950/60 px-2.5 py-1 rounded-lg border border-emerald-900/60">
                       <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
@@ -252,7 +260,6 @@
                 key={app.id}
                 className={`relative overflow-hidden w-full bg-slate-900/90 border ${app.borderColor} rounded-2xl ${isMobileView ? 'p-3' : 'p-4 sm:p-5'} shadow-xl flex flex-col sm:flex-row items-center justify-between gap-3 transition-all duration-300 group hover:-translate-y-1 hover:bg-slate-900`}
               >
-                {/* Efekt świetlnej poświaty w tle kafelka */}
                 <div className={`absolute -top-12 -right-12 w-40 h-40 ${app.glowColor} rounded-full blur-3xl transition-all`}></div>
 
                 <div className="relative z-10 flex items-center gap-3 w-full sm:w-auto">
