@@ -30,7 +30,7 @@
 
     const DATABASE_URL = 'https://marcino86krk.github.io/baza_eng.ods';
 
-    function Logo({ isMobileView }) {
+    function Logo({ isMobileView, appVersion }) {
       return (
         <div className="flex items-center gap-2.5">
           <div className={`${isMobileView ? 'w-9 h-9' : 'w-12 h-12'} rounded-xl bg-gradient-to-br from-blue-600 via-indigo-600 to-red-600 p-0.5 shadow-lg flex items-center justify-center transition-all`}>
@@ -48,7 +48,7 @@
           </div>
           <div>
             <h1 className={`${isMobileView ? 'text-sm' : 'text-lg'} font-black tracking-tight text-white flex items-center gap-1`}>
-              ANGLIELSKI MASTER JUNIOR <span className="text-blue-500">1.1</span>
+              ANGLIELSKI MASTER JUNIOR <span className="text-blue-500">{appVersion}</span>
             </h1>
             <p className={`${isMobileView ? 'text-[9px]' : 'text-[11px]'} text-slate-400 font-medium`}>Seria: Językowy Master</p>
           </div>
@@ -57,6 +57,19 @@
     }
 
     function App() {
+      const [appVersion, setAppVersion] = useState('1.1');
+
+      useEffect(() => {
+        // Automatyczne pobieranie wersji z tytułu dokumentu (tag <title>)
+        try {
+          const titleText = document.title;
+          const match = titleText.match(/([\d\.]+)\s*$/);
+          if (match && match[1]) {
+            setAppVersion(match[1]);
+          }
+        } catch (e) {}
+      }, []);
+
       const [words, setWords] = useState([]);
       const [isMobileView, setIsMobileView] = useState(() => {
         const saved = localStorage.getItem('amj_mobile_view');
@@ -548,7 +561,7 @@
       return (
         <div className={`min-h-[100dvh] w-full bg-slate-950 flex flex-col items-center justify-between ${isMobileView ? 'p-1.5 max-w-sm mx-auto text-xs' : 'p-2 sm:p-4'} text-slate-100 transition-all`}>
           <header className={`w-full ${isMobileView ? 'max-w-sm p-2.5' : 'max-w-5xl p-4'} bg-slate-900 rounded-2xl shadow-xl border border-slate-800 mb-3 flex justify-between items-center transition-all`}>
-            <Logo isMobileView={isMobileView} />
+            <Logo isMobileView={isMobileView} appVersion={appVersion} />
             <div className="flex items-center gap-2">
               <button
                 onClick={() => setIsMobileView(!isMobileView)}
