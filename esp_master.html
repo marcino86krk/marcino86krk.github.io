@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Hiszpański Master 1.8</title>
+  <title>Hiszpański Master 1.9</title>
 
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -11,6 +11,8 @@
   <script src="https://unpkg.com/lucide@latest"></script>
   <!-- SheetJS (xlsx) -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  <!-- jsPDF dla generatora testów papierowych -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <!-- React & ReactDOM -->
   <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
   <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
@@ -35,8 +37,15 @@
       { id: '1', es: 'ser', pl: 'być', isVerb: true, isManual: false },
       { id: '2', es: 'estar', pl: 'być / znajdować się', isVerb: true, isManual: false },
       { id: '3', es: 'hablar', pl: 'mówić', isVerb: true, isManual: false },
-      { id: '4', es: 'hola', pl: 'cześć', isVerb: false, isManual: false },
-      { id: '5', es: 'gracias', pl: 'dziękuję', isVerb: false, isManual: false }
+      { id: '4', es: 'tener', pl: 'mieć', isVerb: true, isManual: false },
+      { id: '5', es: 'ir', pl: 'iść / jechać', isVerb: true, isManual: false },
+      { id: '6', es: 'comer', pl: 'jeść', isVerb: true, isManual: false },
+      { id: '7', es: 'vivir', pl: 'mieszkać', isVerb: true, isManual: false },
+      { id: '8', es: 'hacer', pl: 'robić', isVerb: true, isManual: false },
+      { id: '9', es: 'poder', pl: 'móc', isVerb: true, isManual: false },
+      { id: '10', es: 'decir', pl: 'powiedzieć', isVerb: true, isManual: false },
+      { id: '11', es: 'hola', pl: 'cześć', isVerb: false, isManual: false },
+      { id: '12', es: 'gracias', pl: 'dziękuję', isVerb: false, isManual: false }
     ];
 
     const PERSON_LABELS = {
@@ -87,7 +96,7 @@
           </div>
           <div>
             <h1 className={`${isMobileView ? 'text-sm' : 'text-lg'} font-black tracking-tight text-white flex items-center gap-1`}>
-              HISZPAŃSKI <span className="text-red-500">MASTER 1.8</span>
+              HISZPAŃSKI <span className="text-red-500">MASTER 1.9</span>
             </h1>
             <p className={`${isMobileView ? 'text-[9px]' : 'text-[11px]'} text-slate-400 font-medium`}>Seria: Językowy Master</p>
           </div>
@@ -154,6 +163,14 @@
       const [erasePassword, setErasePassword] = useState('');
       const [eraseError, setEraseError] = useState(false);
 
+      const [testTenses, setTestTenses] = useState({
+        presente: true,
+        pasado: true,
+        imperfecto: false,
+        futuro: false
+      });
+      const [testGenMessage, setTestGenMessage] = useState('');
+
       const [shuffledCards, setShuffledCards] = useState([]);
       const [fcIndex, setFcIndex] = useState(0);
       const [isFlipped, setIsFlipped] = useState(false);
@@ -176,6 +193,7 @@
       const [speedTestScore, setSpeedTestScore] = useState(0);
       const [speedTestIsReview, setSpeedTestIsReview] = useState(false);
 
+      const [verbQueue, setVerbQueue] = useState([]);
       const [verbIndex, setVerbIndex] = useState(0);
       const [selectedTense, setSelectedTense] = useState('presente');
       const [verbAnswers, setVerbAnswers] = useState({ yo: '', tu: '', el: '', nosotros: '', vosotros: '', ellos: '' });
@@ -400,6 +418,16 @@
       useEffect(() => {
         localStorage.setItem('hm_conjugations', JSON.stringify(conjugationTable));
       }, [conjugationTable]);
+
+      useEffect(() => {
+        const verbList = words.filter(w => w.isVerb);
+        if (verbList.length > 0) {
+          setVerbQueue(shuffleArray(verbList));
+          setVerbIndex(0);
+        } else {
+          setVerbQueue([]);
+        }
+      }, [words, activeTab]);
 
       const parseWorkbookData = (workbook) => {
         let bazaSheetName = workbook.SheetNames.find(name => normalizeText(name).includes('baza') || normalizeText(name) === 'words') || workbook.SheetNames[0];
@@ -669,6 +697,254 @@
         }
       };
 
+      // Bezpieczny konwerter polskich znaków gwarantujący poprawność w standardowych czcionkach PDF
+      const fixPolish = (str) => {
+        if (!str) return "";
+        return String(str)
+          .replace(/ą/g, "a").replace(/Ą/g, "A")
+          .replace(/ć/g, "c").replace(/Ć/g, "C")
+          .replace(/ę/g, "e").replace(/Ę/g, "E")
+          .replace(/ł/g, "l").replace(/Ł/g, "L")
+          .replace(/ń/g, "n").replace(/Ń/g, "N")
+          .replace(/ó/g, "o").replace(/Ó/g, "O")
+          .replace(/ś/g, "s").replace(/Ś/g, "S")
+          .replace(/ź/g, "z").replace(/Ź/g, "Z")
+          .replace(/ż/g, "z").replace(/Ż/g, "Z");
+      };
+
+      const handleGeneratePaperTests = () => {
+        if (!window.jspdf) {
+          setTestGenMessage("Błąd: Biblioteka jsPDF nie jest załadowana.");
+          return;
+        }
+
+        const activeTensesList = Object.keys(testTenses).filter(t => testTenses[t]);
+        if (activeTensesList.length === 0) {
+          setTestGenMessage("Zaznacz przynajmniej jeden czas do odmiany czasowników!");
+          setTimeout(() => setTestGenMessage(''), 4000);
+          return;
+        }
+
+        const verbsPool = words.filter(w => w.isVerb);
+        const shuffledWordsEsPl = shuffleArray(words).slice(0, 10);
+        const shuffledWordsPlEs = shuffleArray(words).slice(0, 10);
+
+        const irregularKeys = ['ser', 'estar', 'tener', 'ir', 'hacer', 'decir', 'poder', 'venir', 'tener', 'poner'];
+        const irregs = verbsPool.filter(v => irregularKeys.includes(normalizeText(v.es)));
+        const regs = verbsPool.filter(v => !irregularKeys.includes(normalizeText(v.es)));
+
+        const selectedIrregs = shuffleArray(irregs.length >= 3 ? irregs : verbsPool).slice(0, 3);
+        const remainingVerbs = verbsPool.filter(v => !selectedIrregs.some(sel => sel.id === v.id));
+        const selectedRegs = shuffleArray(remainingVerbs.length >= 7 ? remainingVerbs : verbsPool).slice(0, 7);
+        const testVerbs = [...selectedIrregs, ...selectedRegs];
+
+        const verbTestItems = testVerbs.map(v => {
+          const chosenTense = activeTensesList[Math.floor(Math.random() * activeTensesList.length)];
+          const conj = generateConjugation(v, chosenTense);
+          return { verb: v, tense: chosenTense, conj };
+        });
+
+        const { jsPDF } = window.jspdf;
+
+        // --- PDF 1: TEST UCZNIA ---
+        const docTest = new jsPDF();
+        
+        docTest.setFillColor(185, 28, 28);
+        docTest.rect(0, 0, 210, 12, "F");
+        docTest.setFillColor(15, 23, 42);
+        docTest.rect(0, 12, 210, 3, "F");
+
+        docTest.setFont("helvetica", "bold");
+        docTest.setFontSize(15);
+        docTest.setTextColor(30, 41, 59);
+        docTest.text(fixPolish("SPRAWDZIAN Z JEZYKA HISZPANSKIEGO"), 105, 24, { align: "center" });
+
+        docTest.setFont("helvetica", "normal");
+        docTest.setFontSize(9);
+        docTest.setTextColor(100, 116, 139);
+        docTest.text(fixPolish("Seria: Jezykowy Master 1.9"), 105, 29, { align: "center" });
+
+        docTest.setDrawColor(203, 213, 225);
+        docTest.setFillColor(248, 250, 252);
+        docTest.roundedRect(14, 35, 182, 14, 2, 2, "FD");
+
+        docTest.setFont("helvetica", "bold");
+        docTest.setFontSize(9);
+        docTest.setTextColor(51, 65, 85);
+        docTest.text(fixPolish("Imie i nazwisko: .............................................................."), 18, 44);
+        docTest.text(fixPolish("Data: .................................."), 140, 44);
+
+        let y = 58;
+
+        docTest.setFont("helvetica", "bold");
+        docTest.setFontSize(11);
+        docTest.setTextColor(185, 28, 28);
+        docTest.text(fixPolish("Zadanie 1. Przetlumacz na jezyk polski (10 pkt):"), 14, y);
+        y += 6;
+
+        docTest.setFont("helvetica", "normal");
+        docTest.setFontSize(10);
+        docTest.setTextColor(51, 65, 85);
+        shuffledWordsEsPl.forEach((item, idx) => {
+          docTest.text(`${idx + 1}. ${fixPolish(item.es)}`, 18, y);
+          docTest.setLineDash([1, 1], 0);
+          docTest.setDrawColor(203, 213, 225);
+          docTest.line(55, y, 195, y);
+          y += 7;
+        });
+
+        y += 4;
+        docTest.setFont("helvetica", "bold");
+        docTest.setFontSize(11);
+        docTest.setTextColor(185, 28, 28);
+        docTest.text(fixPolish("Zadanie 2. Przetlumacz na jezyk hiszpanski (10 pkt):"), 14, y);
+        y += 6;
+
+        docTest.setFont("helvetica", "normal");
+        docTest.setFontSize(10);
+        docTest.setTextColor(51, 65, 85);
+        shuffledWordsPlEs.forEach((item, idx) => {
+          docTest.text(`${idx + 1}. ${fixPolish(item.pl)}`, 18, y);
+          docTest.setLineDash([1, 1], 0);
+          docTest.line(65, y, 195, y);
+          y += 7;
+        });
+
+        docTest.addPage();
+        docTest.setFillColor(185, 28, 28);
+        docTest.rect(0, 0, 210, 12, "F");
+        docTest.setFillColor(15, 23, 42);
+        docTest.rect(0, 12, 210, 3, "F");
+
+        y = 25;
+        docTest.setFont("helvetica", "bold");
+        docTest.setFontSize(11);
+        docTest.setTextColor(185, 28, 28);
+        docTest.text(fixPolish("Zadanie 3. Odmien podane czasowniki w wybranym czasie (3 pkt za czasownik) (30 pkt):"), 14, y);
+        y += 8;
+
+        verbTestItems.forEach((item, idx) => {
+          if (y > 255) {
+            docTest.addPage();
+            y = 20;
+          }
+          const typeLabel = idx < 3 ? "[Nieregularny]" : "[Regularny]";
+          docTest.setFont("helvetica", "bold");
+          docTest.setFontSize(9.5);
+          docTest.setTextColor(15, 23, 42);
+          docTest.text(fixPolish(`${idx + 1}. ${item.verb.es} (${item.verb.pl})  —  Czas: ${item.tense.toUpperCase()}  ${typeLabel}`), 16, y);
+          y += 5;
+
+          docTest.setFont("helvetica", "normal");
+          docTest.setFontSize(9);
+          docTest.setTextColor(51, 65, 85);
+          docTest.text(fixPolish(`yo: ...........................     tu: ...........................     el / ella / ud: ...........................`), 18, y);
+          y += 5;
+          docTest.text(fixPolish(`nosotros: ...........................     vosotros: ...........................     ellos / uds: ...........................`), 18, y);
+          y += 8;
+        });
+
+        const pageCount = docTest.internal.getNumberOfPages();
+        for(let i = 1; i <= pageCount; i++) {
+          docTest.setPage(i);
+          docTest.setFont("helvetica", "italic");
+          docTest.setFontSize(8);
+          docTest.setTextColor(148, 163, 184);
+          docTest.text(fixPolish(`Strona ${i} z ${pageCount} — Hiszpanski Master 1.9`), 105, 292, { align: "center" });
+        }
+
+        docTest.save("test_hiszpanski_v1.9.pdf");
+
+        // --- PDF 2: KLUCZ ODPOWIEDZI ---
+        const docKey = new jsPDF();
+        
+        docKey.setFillColor(15, 23, 42);
+        docKey.rect(0, 0, 210, 12, "F");
+        docKey.setFillColor(185, 28, 28);
+        docKey.rect(0, 12, 210, 3, "F");
+
+        docKey.setFont("helvetica", "bold");
+        docKey.setFontSize(15);
+        docKey.setTextColor(30, 41, 59);
+        docKey.text(fixPolish("KLUCZ ODPOWIEDZI — SPRAWDZIAN"), 105, 24, { align: "center" });
+
+        y = 36;
+        docKey.setFont("helvetica", "bold");
+        docKey.setFontSize(11);
+        docKey.setTextColor(185, 28, 28);
+        docKey.text(fixPolish("1. Tlumaczenie ES ➔ PL:"), 14, y);
+        y += 6;
+
+        docKey.setFont("helvetica", "normal");
+        docKey.setFontSize(10);
+        docKey.setTextColor(51, 65, 85);
+        shuffledWordsEsPl.forEach((item, idx) => {
+          docKey.text(fixPolish(`${idx + 1}. ${item.es} ➔ ${item.pl}`), 18, y);
+          y += 6;
+        });
+
+        y += 4;
+        docKey.setFont("helvetica", "bold");
+        docKey.setFontSize(11);
+        docKey.setTextColor(185, 28, 28);
+        docKey.text(fixPolish("2. Tlumaczenie PL ➔ ES:"), 14, y);
+        y += 6;
+
+        docKey.setFont("helvetica", "normal");
+        docKey.setFontSize(10);
+        docKey.setTextColor(51, 65, 85);
+        shuffledWordsPlEs.forEach((item, idx) => {
+          docKey.text(fixPolish(`${idx + 1}. ${item.pl} ➔ ${item.es}`), 18, y);
+          y += 6;
+        });
+
+        docKey.addPage();
+        docKey.setFillColor(15, 23, 42);
+        docKey.rect(0, 0, 210, 12, "F");
+        docKey.setFillColor(185, 28, 28);
+        docKey.rect(0, 12, 210, 3, "F");
+
+        y = 25;
+        docKey.setFont("helvetica", "bold");
+        docKey.setFontSize(11);
+        docKey.setTextColor(185, 28, 28);
+        docKey.text(fixPolish("3. Odmiana czasowników (Klucz odpowiedzi):"), 14, y);
+        y += 8;
+
+        verbTestItems.forEach((item, idx) => {
+          if (y > 260) {
+            docKey.addPage();
+            y = 20;
+          }
+          docKey.setFont("helvetica", "bold");
+          docKey.setFontSize(9.5);
+          docKey.setTextColor(15, 23, 42);
+          docKey.text(fixPolish(`${idx + 1}. ${item.verb.es} (${item.verb.pl}) — Czas: ${item.tense.toUpperCase()}`), 16, y);
+          y += 5;
+          docKey.setFont("helvetica", "normal");
+          docKey.setFontSize(9);
+          docKey.setTextColor(51, 65, 85);
+          docKey.text(fixPolish(`yo: ${item.conj.yo}   |   tu: ${item.conj.tu}   |   el: ${item.conj.el}`), 18, y);
+          y += 5;
+          docKey.text(fixPolish(`nosotros: ${item.conj.nosotros}   |   vosotros: ${item.conj.vosotros}   |   ellos: ${item.conj.ellos}`), 18, y);
+          y += 8;
+        });
+
+        const keyPageCount = docKey.internal.getNumberOfPages();
+        for(let i = 1; i <= keyPageCount; i++) {
+          docKey.setPage(i);
+          docKey.setFont("helvetica", "italic");
+          docKey.setFontSize(8);
+          docKey.setTextColor(148, 163, 184);
+          docKey.text(fixPolish(`Strona ${i} z ${keyPageCount} — Klucz Odpowiedzi Hiszpanski Master 1.9`), 105, 292, { align: "center" });
+        }
+
+        docKey.save("klucz_odpowiedzi_v1.9.pdf");
+
+        setTestGenMessage("Pomyślnie wygenerowano test oraz klucz odpowiedzi w plikach PDF!");
+        setTimeout(() => setTestGenMessage(''), 5000);
+      };
+
       const handleSaveWordForm = (e) => {
         e.preventDefault();
         if (!newEs.trim() || !newPl.trim()) return;
@@ -875,8 +1151,7 @@
         return { yo: stem + 'o', tu: stem + 'as', el: stem + 'a', nosotros: stem + 'amos', vosotros: stem + 'áis', ellos: stem + 'an' };
       };
 
-      const verbList = words.filter(w => w.isVerb);
-      const currentVerb = verbList.length > 0 ? verbList[verbIndex % verbList.length] : null;
+      const currentVerb = verbQueue.length > 0 ? verbQueue[verbIndex % verbQueue.length] : null;
       const currentVerbData = currentVerb ? generateConjugation(currentVerb, selectedTense) : null;
 
       const filteredWords = words.filter(w => 
@@ -945,7 +1220,13 @@
       const handleNextVerb = () => {
         setVerbSubmitted(false);
         setVerbAnswers({ yo: '', tu: '', el: '', nosotros: '', vosotros: '', ellos: '' });
-        setVerbIndex(prev => prev + 1);
+        if (verbIndex + 1 >= verbQueue.length) {
+          const verbList = words.filter(w => w.isVerb);
+          setVerbQueue(shuffleArray(verbList));
+          setVerbIndex(0);
+        } else {
+          setVerbIndex(prev => prev + 1);
+        }
       };
 
       return (
@@ -1300,6 +1581,38 @@
               {/* 4. ADMIN */}
               {activeTab === 'admin' && (
                 <div className="space-y-4 flex-1 flex flex-col max-w-xl mx-auto w-full text-xs">
+                  <div className="bg-slate-950 p-4 rounded-xl border border-red-900/50 space-y-3 shadow-lg">
+                    <h3 className="font-bold text-white flex items-center gap-2 text-sm">
+                      <i data-lucide="file-text" className="w-4 h-4 text-red-500"></i>
+                      <span>Generator Testów Papierowych (PDF)</span>
+                    </h3>
+                    <p className="text-[11px] text-slate-300">
+                      Wybierz czasy do uwzględnienia w odmianie czasowników (3 nieregularne, 7 regularnych):
+                    </p>
+                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                      {Object.keys(testTenses).map(t => (
+                        <label key={t} className="flex items-center gap-2 bg-slate-900 px-3 py-2 rounded-lg border border-slate-800 cursor-pointer text-slate-200 capitalize">
+                          <input
+                            type="checkbox"
+                            checked={testTenses[t]}
+                            onChange={(e) => setTestTenses({ ...testTenses, [t]: e.target.checked })}
+                            className="accent-red-600"
+                          />
+                          <span className="font-semibold text-xs">{t}</span>
+                        </label>
+                      ))}
+                    </div>
+                    {testGenMessage && <div className="p-2 bg-emerald-950 text-emerald-300 rounded-lg text-center text-xs font-semibold">{testGenMessage}</div>}
+                    <button
+                      type="button"
+                      onClick={handleGeneratePaperTests}
+                      className="w-full py-2.5 bg-red-600 hover:bg-red-500 text-white font-bold rounded-xl text-xs shadow transition flex items-center justify-center gap-2"
+                    >
+                      <i data-lucide="download" className="w-4 h-4"></i>
+                      <span>Generuj Test (PDF) oraz Klucz Odpowiedzi (PDF)</span>
+                    </button>
+                  </div>
+
                   <div className="bg-slate-950 p-3 rounded-xl border border-slate-800 space-y-2">
                     <h3 className="font-bold text-white">Pobierz i zamontuj bazę z serwera</h3>
                     <button onClick={handleDownloadAndSaveDatabase} disabled={loading} className="px-3 py-1.5 bg-blue-600 text-white rounded-lg font-semibold shadow">
