@@ -30,16 +30,16 @@
     // Konfiguracja kafelków aplikacji z automatycznym pobieraniem wersji ze źródeł
     const APPS_CONFIG = [
       {
-        id: 'eng',
-        title: 'Angielski Master Junior',
+        id: 'eng_kids',
+        title: 'Angielski Master Kids',
         defaultVersion: '1.0',
-        url: 'https://marcino86krk.github.io/eng_master_junior.html',
+        url: 'https://marcino86krk.github.io/eng_master_kids.html',
         gradient: 'from-blue-600 via-indigo-600 to-red-600',
         borderColor: 'border-blue-500/40 hover:border-blue-500',
         badgeBg: 'bg-blue-950/80 text-blue-300 border-blue-800',
         glowColor: 'bg-blue-600/10 group-hover:bg-blue-600/20',
         isCompact: false,
-        description: 'Ucz się słówek, zwrotów i gramatyki języka angielskiego w nowoczesnym interaktywnym środowisku.',
+        description: 'Ucz się słówek, zwrotów i gramatyki języka angielskiego w nowoczesnym interaktywnym środowisku dla najmłodszych.',
         logoSvg: (
           <svg viewBox="0 0 100 100" className="w-full h-full p-1.5">
             <path d="M 15,30 Q 35,22 50,35 Q 65,22 85,30 L 85,75 Q 65,67 50,80 Q 35,67 15,75 Z" fill="#1e293b" stroke="#3b82f6" strokeWidth="3"/>
@@ -127,9 +127,8 @@
         return saved ? JSON.parse(saved) : false;
       });
 
-      // Inicjalizacja domyślnymi wersjami jako zabezpieczenie (fallback)
       const [appVersions, setAppVersions] = useState({
-        eng: '1.0',
+        eng_kids: '1.0',
         esp: '1.8',
         eng_stopniowanie: '1.0'
       });
@@ -142,7 +141,6 @@
         if (window.lucide) window.lucide.createIcons();
       });
 
-      // Automatyczne pobieranie wersji ze wszystkich stron z uwzględnieniem CORS i proxy
       useEffect(() => {
         APPS_CONFIG.forEach(async (app) => {
           const urlsToTry = [
@@ -159,16 +157,13 @@
               const parser = new DOMParser();
               const doc = parser.parseFromString(text, 'text/html');
               
-              // Szukanie wzorca wersji (np. 1.0, 1.8) w tytule strony lub głównym nagłówku
               const titleOrH1 = doc.querySelector('title')?.textContent || doc.querySelector('h1')?.textContent || '';
               const match = titleOrH1.match(/(\d+\.\d+)/);
               if (match && match[1]) {
                 setAppVersions(prev => ({ ...prev, [app.id]: match[1] }));
                 break;
               }
-            } catch (e) {
-              // W przypadku problemów z siecią lub CORS, przechodzimy do kolejnego źródła / zostaje domyślna
-            }
+            } catch (e) {}
           }
         });
       }, []);
