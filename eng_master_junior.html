@@ -1,0 +1,695 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Angielski Master Junior 1.2</title>
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <!-- React & ReactDOM -->
+  <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+  <!-- Babel -->
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <style>
+    body { background-color: #020617; color: #f8fafc; font-family: system-ui, -apple-system, sans-serif; margin: 0; padding: 0; min-height: 100dvh; overflow-x: hidden; }
+    .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+    .custom-scrollbar::-webkit-scrollbar-thumb { background-color: #334155; border-radius: 9999px; }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+
+  <script type="text/babel">
+    const { useState, useEffect, useRef } = React;
+
+    // Generator 800+ przykładów i słownictwa (bez żadnych numerków w działach i treściach)
+    const generateMassiveClass5Database = () => {
+      const db = [];
+
+      // Szkoła i Przybory
+      const schoolVocab = [
+        ["Geography", "geografia"], ["History", "historia"], ["ICT", "informatyka"], ["PE", "wychowanie fizyczne"],
+        ["Maths", "matematyka"], ["Science", "przyroda"], ["Art", "plastyka"], ["Music", "muzyka"],
+        ["ruler", "linijka"], ["scissors", "nożyczki"], ["pencil case", "piórnik"], ["rubber", "gumka do ścierania"],
+        ["notebook", "zeszyt"], ["backpack", "plecak"], ["timetable", "plan lekcji"], ["desk", "ławka szkolna"],
+        ["blackboard", "tablica"], ["dictionary", "słownik"], ["calculator", "kalkulator"], ["paintbrush", "pędzel"]
+      ];
+      for(let i=0; i<100; i++) {
+        const item = schoolVocab[i % schoolVocab.length];
+        db.push({ dept: 'Szkoła i Przybory', es: item[0], pl: item[1] });
+      }
+
+      // Rodzina i Wygląd
+      const familyVocab = [
+        ["nephew", "siostrzeniec / bratronek"], ["niece", "siostrzenica / bratrzenica"], ["cousin", "kuzyn / kuzynka"],
+        ["curly hair", "kręcone włosy"], ["straight hair", "proste włosy"], ["fair hair", "jasne włosy"],
+        ["dark hair", "ciemne włosy"], ["beard", "broda"], ["moustache", "wąsy"], ["glasses", "okulary"],
+        ["tall", "wysoki"], ["short", "niski"], ["slim", "szczupły"], ["friendly", "przyjazny"], ["clever", "bystry"]
+      ];
+      for(let i=0; i<100; i++) {
+        const item = familyVocab[i % familyVocab.length];
+        db.push({ dept: 'Rodzina i Wygląd', es: item[0], pl: item[1] });
+      }
+
+      // Czas wolny i Hobby
+      const hobbiesVocab = [
+        ["board games", "gry planszowe"], ["hang out with friends", "spędzać czas z przyjaciółmi"],
+        ["coding", "programowanie"], ["cycling", "jazda na rowerze"], ["skateboarding", "jazda na desce"],
+        ["playing the guitar", "gra na gitarze"], ["taking photos", "robienie zdjęć"], ["reading comics", "czytanie komiksów"]
+      ];
+      for(let i=0; i<100; i++) {
+        const item = hobbiesVocab[i % hobbiesVocab.length];
+        db.push({ dept: 'Czas wolny i Hobby', es: item[0], pl: item[1] });
+      }
+
+      // Jedzenie i Zdrowie
+      const healthVocab = [
+        ["stomachache", "ból brzucha"], ["headache", "ból głowy"], ["toothache", "ból zęba"],
+        ["temperature", "wysoka temperatura / gorączka"], ["crisps", "chipsy"], ["healthy food", "zdrowe jedzenie"],
+        ["medicine", "lekarstwo"], ["cough", "kaszel"], ["cold", "przeziębienie"]
+      ];
+      for(let i=0; i<100; i++) {
+        const item = healthVocab[i % healthVocab.length];
+        db.push({ dept: 'Jedzenie i Zdrowie', es: item[0], pl: item[1] });
+      }
+
+      // Present Simple
+      const psList = [
+        ["I play football on Mondays", "Gram w piłkę w poniedziałki"],
+        ["She plays the piano very well", "Ona gra na pianinie bardzo dobrze"],
+        ["He does not like milk", "On nie lubi mleka"],
+        ["Do you get up early?", "Czy wstajesz wcześnie?"],
+        ["My mum always drinks tea", "Moja mama zawsze pija herbatę"],
+        ["Cats catch mice", "Koty łapią myszy"],
+        ["Water freezes at zero degrees", "Woda zamarza w zerze stopni"],
+        ["The sun rises in the east", "Słońce wschodzi na wschodzie"],
+        ["We sometimes go to the cinema", "Czasami chodzimy do kina"],
+        ["They never eat fish", "Oni nigdy nie jedzą ryb"]
+      ];
+      for(let i=0; i<70; i++) {
+        const item = psList[i % psList.length];
+        db.push({ dept: 'Present Simple', es: item[0], pl: item[1] });
+      }
+
+      // Present Continuous
+      const pcList = [
+        ["Look! Tom is running in the park", "Spójrz! Tom biega w parku"],
+        ["We are reading books right now", "Czytamy książki w tej chwili"],
+        ["She is not sleeping", "Ona nie śpi"],
+        ["Are they watching TV?", "Czy oni oglądają telewizję?"],
+        ["Listen! The birds are singing", "Posłuchaj! Ptaki śpiewają"],
+        ["I am doing my homework", "Odrabiam pracę domową"],
+        ["He is swimming in the pool", "On pływa w basenie"],
+        ["What are you cooking?", "Co gotujesz?"],
+        ["They are playing computer games", "Oni grają w gry komputerowe"],
+        ["It is raining outside", "Na zewnątrz pada deszcz"]
+      ];
+      for(let i=0; i<70; i++) {
+        const item = pcList[i % pcList.length];
+        db.push({ dept: 'Present Continuous', es: item[0], pl: item[1] });
+      }
+
+      // Past Simple
+      const pastList = [
+        ["I visited my grandparents yesterday", "Odwiedziłem dziadków wczoraj"],
+        ["They went to London last year", "Oni pojechali do Londynu w zeszłym roku"],
+        ["She did not like the soup", "Ona nie polubiła zupy"],
+        ["Did you see that film?", "Czy widziałeś ten film?"],
+        ["We bought a new car", "Kupiliśmy nowy samochód"],
+        ["He ate an apple an hour ago", "On zjadł jabłko godzinę temu"],
+        ["I was at home on Sunday", "Byłem w domu w niedzielę"],
+        ["They were happy", "Oni byli szczęśliwi"],
+        ["She wrote a long letter", "Ona napisała długi list"],
+        ["Tom flew to Paris in 2020", "Tom poleciał do Paryża w 2020 roku"]
+      ];
+      for(let i=0; i<70; i++) {
+        const item = pastList[i % pastList.length];
+        db.push({ dept: 'Past Simple', es: item[0], pl: item[1] });
+      }
+
+      // Future Simple
+      const futList = [
+        ["Tomorrow it will rain", "Jutro będzie padać deszcz"],
+        ["I will help you with your bag", "Pomogę ci z torbą"],
+        ["They will not forget about it", "Oni o tym nie zapomną"],
+        ["Will you come to my party?", "Czy przyjdziesz na moją imprezę?"],
+        ["I think she will win the race", "Myślę, że ona wygra wyścig"]
+      ];
+      for(let i=0; i<60; i++) {
+        const item = futList[i % futList.length];
+        db.push({ dept: 'Future Simple', es: item[0], pl: item[1] });
+      }
+
+      // Czasowniki Modalne
+      const modList = [
+        ["You must wear a seatbelt", "Musisz zapinać pas bezpieczeństwa"],
+        ["You must not park here", "Nie wolno ci tutaj parkować"],
+        ["You should eat more fruit", "Powinieneś jeść więcej owoców"],
+        ["Birds can fly", "Ptaki potrafią latać"],
+        ["Can you swim?", "Czy potrafisz pływać?"]
+      ];
+      for(let i=0; i<60; i++) {
+        const item = modList[i % modList.length];
+        db.push({ dept: 'Czasowniki Modalne', es: item[0], pl: item[1] });
+      }
+
+      // Stopniowanie Przymiotników
+      const adjList = [
+        ["tall - taller - the tallest", "wysoki - wyższy - najwyższy"],
+        ["big - bigger - the biggest", "duży - większy - największy"],
+        ["good - better - the best", "dobry - lepszy - najlepszy"],
+        ["bad - worse - the worst", "zły - gorszy - najgorszy"],
+        ["My house is bigger than yours", "Mój dom jest większy niż twój"]
+      ];
+      for(let i=0; i<60; i++) {
+        const item = adjList[i % adjList.length];
+        db.push({ dept: 'Stopniowanie Przymiotników', es: item[0], pl: item[1] });
+      }
+
+      return db.map((item, idx) => ({ id: String(idx + 1), ...item }));
+    };
+
+    function Logo({ isMobileView, appVersion }) {
+      return (
+        <div className="flex items-center gap-2.5">
+          <div className={`${isMobileView ? 'w-9 h-9' : 'w-12 h-12'} rounded-xl bg-gradient-to-br from-blue-600 via-indigo-600 to-red-600 p-0.5 shadow-lg flex items-center justify-center transition-all`}>
+            <div className="w-full h-full bg-slate-950 rounded-[10px] flex items-center justify-center relative overflow-hidden">
+              <svg viewBox="0 0 100 100" className={isMobileView ? 'w-6 h-6' : 'w-9 h-9'}>
+                <path d="M 15,30 Q 35,22 50,35 Q 65,22 85,30 L 85,75 Q 65,67 50,80 Q 35,67 15,75 Z" fill="#1e293b" stroke="#3b82f6" strokeWidth="3"/>
+                <path d="M 50,35 L 50,80" stroke="#3b82f6" strokeWidth="3"/>
+                <line x1="23" y1="42" x2="41" y2="47" stroke="#94a3b8" strokeWidth="3" strokeLinecap="round"/>
+                <line x1="23" y1="52" x2="38" y2="57" stroke="#94a3b8" strokeWidth="3" strokeLinecap="round"/>
+                <line x1="59" y1="42" x2="77" y2="47" stroke="#ef4444" strokeWidth="3" strokeLinecap="round"/>
+                <line x1="59" y1="52" x2="74" y2="57" stroke="#94a3b8" strokeWidth="3" strokeLinecap="round"/>
+                <text x="50" y="30" fontFamily="system-ui" fontWeight="900" fontSize="22" fill="#3b82f6" textAnchor="middle">EN</text>
+              </svg>
+            </div>
+          </div>
+          <div>
+            <h1 className={`${isMobileView ? 'text-xs' : 'text-base'} font-black tracking-tight text-white flex items-center gap-1`}>
+              ANGLIELSKI MASTER JUNIOR <span className="text-blue-500">{appVersion}</span>
+            </h1>
+            <p className={`${isMobileView ? 'text-[9px]' : 'text-[11px]'} text-slate-400 font-medium`}>Seria: Językowy Master</p>
+          </div>
+        </div>
+      );
+    }
+
+    function App() {
+      const [appVersion, setAppVersion] = useState('1.2');
+
+      useEffect(() => {
+        try {
+          const titleText = document.title;
+          const match = titleText.match(/([\d\.]+)\s*$/);
+          if (match && match[1]) setAppVersion(match[1]);
+        } catch (e) {}
+      }, []);
+
+      const [words] = useState(generateMassiveClass5Database);
+      const [isMobileView, setIsMobileView] = useState(() => {
+        const saved = localStorage.getItem('amj_mobile_view');
+        return saved ? JSON.parse(saved) : false;
+      });
+
+      useEffect(() => {
+        localStorage.setItem('amj_mobile_view', JSON.stringify(isMobileView));
+      }, [isMobileView]);
+
+      const [fileLastModified, setFileLastModified] = useState('');
+      const [activeTab, setActiveTab] = useState('flashcards');
+
+      // Podział działów dla Fiszek (lista rozwijana)
+      const [fcDept, setFcDept] = useState('Szkoła i Przybory');
+      const [shuffledCards, setShuffledCards] = useState([]);
+      const [fcIndex, setFcIndex] = useState(0);
+      const [isFlipped, setIsFlipped] = useState(false);
+      const [direction, setDirection] = useState('random');
+      const [fcIsEsToPl, setFcIsEsToPl] = useState(true);
+
+      // Podział działów dla Pisania (lista rozwijana)
+      const [typeDept, setTypeDept] = useState('Szkoła i Przybory');
+      const [typeDirection, setTypeDirection] = useState('random');
+      const [shuffledTypeItems, setShuffledTypeItems] = useState([]);
+      const [typeIndex, setTypeIndex] = useState(0);
+      const [userAnswer, setUserAnswer] = useState('');
+      const [typeResult, setTypeResult] = useState(null);
+      const [typeScore, setTypeScore] = useState(0);
+      const [typeIsEnToPl, setTypeIsEnToPl] = useState(true);
+      const [typeMatchedWord, setTypeMatchedWord] = useState('');
+
+      const voicesRef = useRef([]);
+
+      useEffect(() => {
+        try {
+          if (document.lastModified) {
+            const modDate = new Date(document.lastModified);
+            if (!isNaN(modDate)) {
+              setFileLastModified(modDate.toLocaleString('pl-PL', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' }));
+            } else {
+              setFileLastModified(document.lastModified);
+            }
+          }
+        } catch(e) {
+          setFileLastModified('Brak danych');
+        }
+
+        const loadVoices = () => {
+          if ('speechSynthesis' in window) {
+            voicesRef.current = window.speechSynthesis.getVoices();
+          }
+        };
+        loadVoices();
+        if ('speechSynthesis' in window) {
+          window.speechSynthesis.onvoiceschanged = loadVoices;
+        }
+      }, []);
+
+      const normalizeText = (text) => {
+        return (text || '').toLowerCase().trim();
+      };
+
+      const getLevenshteinDistance = (a, b) => {
+        if (a.length === 0) return b.length;
+        if (b.length === 0) return a.length;
+        const matrix = [];
+        for (let i = 0; i <= b.length; i++) { matrix[i] = [i]; }
+        for (let j = 0; j <= a.length; j++) { matrix[0][j] = j; }
+        for (let i = 1; i <= b.length; i++) {
+          for (let j = 1; j <= a.length; j++) {
+            if (b.charAt(i - 1) === a.charAt(j - 1)) {
+              matrix[i][j] = matrix[i - 1][j - 1];
+            } else {
+              matrix[i][j] = Math.min(
+                matrix[i - 1][j - 1] + 1,
+                Math.min(matrix[i][j - 1] + 1, matrix[i - 1][j] + 1)
+              );
+            }
+          }
+        }
+        return matrix[b.length][a.length];
+      };
+
+      const evaluateAnswer = (userText, allowedAnswersList) => {
+        const userNorm = normalizeText(userText);
+        if (!userNorm) return { status: 'incorrect', matched: '' };
+
+        for (const ans of allowedAnswersList) {
+          if (userNorm === ans) {
+            return { status: 'correct', matched: ans };
+          }
+        }
+
+        for (const ans of allowedAnswersList) {
+          const maxAllowedDist = ans.length <= 5 ? 1 : 2;
+          const dist = getLevenshteinDistance(userNorm, ans);
+          if (dist <= maxAllowedDist) {
+            return { status: 'typo', matched: ans };
+          }
+        }
+
+        return { status: 'incorrect', matched: allowedAnswersList[0] || '' };
+      };
+
+      const shuffleArray = (arr) => {
+        const copy = [...arr];
+        for (let i = copy.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [copy[i], copy[j]] = [copy[j], copy[i]];
+        }
+        return copy;
+      };
+
+      const speakText = (text, forcedLang = null) => {
+        if (!text) return;
+        const cleanText = text.split(/[\/,;]/)[0].trim();
+        let targetLang = forcedLang || 'en';
+
+        try {
+          const ttsUrl = `https://translate.google.com/translate_tts?ie=UTF-8&q=${encodeURIComponent(cleanText)}&tl=${targetLang}&client=tw-ob`;
+          const audio = new Audio(ttsUrl);
+          audio.play().catch(() => {
+            fallbackSpeak(cleanText, targetLang === 'en' ? 'en-GB' : 'pl-PL');
+          });
+        } catch (e) {
+          fallbackSpeak(cleanText, targetLang === 'en' ? 'en-GB' : 'pl-PL');
+        }
+      };
+
+      const fallbackSpeak = (text, lang) => {
+        if (!('speechSynthesis' in window)) return;
+        window.speechSynthesis.cancel();
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.lang = lang;
+        utterance.rate = 0.92;
+        const voices = voicesRef.current.length > 0 ? voicesRef.current : window.speechSynthesis.getVoices();
+        const matchingVoices = voices.filter(v => v.lang.toLowerCase().includes(lang.slice(0, 2).toLowerCase()));
+        if (matchingVoices.length > 0) {
+          utterance.voice = matchingVoices[0];
+        }
+        window.speechSynthesis.speak(utterance);
+      };
+
+      // Inicjalizacja fiszek dla wybranego działu
+      useEffect(() => {
+        const filtered = words.filter(w => w.dept === fcDept);
+        if (filtered.length > 0) {
+          setShuffledCards(shuffleArray(filtered));
+          setFcIndex(0);
+          setIsFlipped(false);
+        }
+      }, [fcDept, words]);
+
+      // Inicjalizacja pisania dla wybranego działu
+      useEffect(() => {
+        const filtered = words.filter(w => w.dept === typeDept);
+        if (filtered.length > 0) {
+          setShuffledTypeItems(shuffleArray(filtered));
+          setTypeIndex(0);
+          setTypeScore(0);
+          setUserAnswer('');
+          setTypeResult(null);
+        }
+      }, [typeDept, typeDirection, words]);
+
+      useEffect(() => {
+        if (typeDirection === 'en-pl') setTypeIsEnToPl(true);
+        else if (typeDirection === 'pl-en') setTypeIsEnToPl(false);
+        else setTypeIsEnToPl(Math.random() < 0.5);
+      }, [typeIndex, typeDirection]);
+
+      useEffect(() => {
+        if (direction === 'es-pl') setFcIsEsToPl(true);
+        else if (direction === 'pl-es') setFcIsEsToPl(false);
+        else setFcIsEsToPl(Math.random() < 0.5);
+      }, [fcIndex, direction]);
+
+      useEffect(() => {
+        if (window.lucide) window.lucide.createIcons();
+      });
+
+      const currentCard = shuffledCards.length > 0 ? shuffledCards[fcIndex % shuffledCards.length] : null;
+      const fcData = currentCard ? {
+        question: fcIsEsToPl ? currentCard.es : currentCard.pl,
+        answer: fcIsEsToPl ? currentCard.pl : currentCard.es,
+        questionLang: fcIsEsToPl ? 'en' : 'pl',
+        answerLang: fcIsEsToPl ? 'pl' : 'en',
+        dept: currentCard.dept
+      } : null;
+
+      const currentTypeItem = shuffledTypeItems.length > 0 ? shuffledTypeItems[typeIndex % shuffledTypeItems.length] : null;
+      const typeData = currentTypeItem ? {
+        question: typeIsEnToPl ? currentTypeItem.es : currentTypeItem.pl,
+        allowedAnswers: typeIsEnToPl 
+          ? currentTypeItem.pl.split(/[\/,;]/).map(a => normalizeText(a))
+          : currentTypeItem.es.split(/[\/,;]/).map(a => normalizeText(a)),
+        displayAnswer: typeIsEnToPl ? currentTypeItem.pl : currentTypeItem.es,
+        audioWord: currentTypeItem.es,
+        dept: currentTypeItem.dept
+      } : null;
+
+      const handleCheckTypeAnswer = (e) => {
+        e.preventDefault();
+        if (typeResult !== null || !typeData) return;
+
+        const evaluation = evaluateAnswer(userAnswer, typeData.allowedAnswers);
+        if (evaluation.status === 'correct' || evaluation.status === 'typo') {
+          setTypeResult(evaluation.status);
+          setTypeScore(prev => prev + 1);
+          if (!typeIsEnToPl) speakText(typeData.audioWord, 'en');
+        } else {
+          setTypeResult('incorrect');
+          setTypeMatchedWord(typeData.displayAnswer);
+        }
+      };
+
+      const handleNextTypeItem = () => {
+        setUserAnswer('');
+        setTypeResult(null);
+        setTypeMatchedWord('');
+        setTypeIndex(prev => prev + 1);
+      };
+
+      const departmentsList = [
+        'Szkoła i Przybory',
+        'Rodzina i Wygląd',
+        'Czas wolny i Hobby',
+        'Jedzenie i Zdrowie',
+        'Present Simple',
+        'Present Continuous',
+        'Past Simple',
+        'Future Simple',
+        'Czasowniki Modalne',
+        'Stopniowanie Przymiotników'
+      ];
+
+      return (
+        <div className={`min-h-[100dvh] w-full bg-slate-950 flex flex-col items-center justify-between ${isMobileView ? 'p-1.5 max-w-sm mx-auto text-xs' : 'p-2 sm:p-4'} text-slate-100 transition-all`}>
+          <header className={`w-full ${isMobileView ? 'max-w-sm p-2.5' : 'max-w-5xl p-4'} bg-slate-900 rounded-2xl shadow-xl border border-slate-800 mb-3 flex justify-between items-center transition-all`}>
+            <Logo isMobileView={isMobileView} appVersion={appVersion} />
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => setIsMobileView(!isMobileView)}
+                title="Tryb mobilny"
+                className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl border text-xs font-bold transition ${isMobileView ? 'bg-blue-600 text-white border-blue-500' : 'bg-slate-800 text-slate-300 border-slate-700 hover:bg-slate-700'}`}
+              >
+                <i data-lucide={isMobileView ? "smartphone" : "monitor"} className="w-3.5 h-3.5"></i>
+                <span className="hidden sm:inline">{isMobileView ? "Tryb Tel. ON" : "Tryb Tel."}</span>
+              </button>
+              <div className={`${isMobileView ? 'text-[10px]' : 'text-xs'} text-slate-400 text-right`}>
+                <div>Baza: <span className="text-blue-400 font-bold">{words.length}</span> pozycji</div>
+              </div>
+            </div>
+          </header>
+
+          <div className={`w-full ${isMobileView ? 'max-w-sm' : 'max-w-5xl'} flex-1 flex flex-col transition-all`}>
+            <div className={`bg-slate-900 ${isMobileView ? 'p-2.5' : 'p-3 sm:p-5'} rounded-2xl shadow-xl border border-slate-800 flex-1 w-full flex flex-col mb-2 transition-all`}>
+              
+              <nav className={`grid grid-cols-3 ${isMobileView ? 'gap-1 mb-2.5 p-1 text-[10px]' : 'gap-1.5 sm:gap-2 mb-4 p-1.5 text-[11px] sm:text-sm'} bg-slate-950 rounded-xl font-medium border border-slate-800/80 transition-all`}>
+                <button onClick={() => setActiveTab('flashcards')} className={`py-2 rounded-lg flex items-center justify-center gap-1.5 ${activeTab === 'flashcards' ? 'bg-slate-800 text-blue-400 font-bold border border-slate-700' : 'text-slate-400'}`}>
+                  <i data-lucide="layers" className="w-4 h-4"></i><span>Fiszki</span>
+                </button>
+                <button onClick={() => setActiveTab('typing')} className={`py-2 rounded-lg flex items-center justify-center gap-1.5 ${activeTab === 'typing' ? 'bg-slate-800 text-blue-400 font-bold border border-slate-700' : 'text-slate-400'}`}>
+                  <i data-lucide="edit-3" className="w-4 h-4"></i><span>Pisanie</span>
+                </button>
+                <button onClick={() => setActiveTab('grammar')} className={`py-2 rounded-lg flex items-center justify-center gap-1.5 ${activeTab === 'grammar' ? 'bg-slate-800 text-blue-400 font-bold border border-slate-700' : 'text-slate-400'}`}>
+                  <i data-lucide="book-open" className="w-4 h-4"></i><span>Teoria K5</span>
+                </button>
+              </nav>
+
+              {/* FISZKI */}
+              {activeTab === 'flashcards' && (
+                <div className="flex-1 flex flex-col items-center justify-between space-y-4">
+                  <div className="w-full max-w-md space-y-1">
+                    <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wide block">Wybierz dział / zagadnienie fiszek:</label>
+                    <select
+                      value={fcDept}
+                      onChange={(e) => setFcDept(e.target.value)}
+                      className="w-full px-3 py-2 bg-slate-950 border border-slate-800 text-white rounded-xl text-xs font-semibold focus:outline-none focus:border-blue-500 shadow-inner"
+                    >
+                      {departmentsList.map(dept => (
+                        <option key={dept} value={dept}>{dept}</option>
+                      ))}
+                    </select>
+                  </div>
+
+                  <div className="flex flex-wrap items-center justify-center gap-2">
+                    <div className="flex items-center gap-1 bg-slate-950 p-1 rounded-xl text-xs font-medium border border-slate-800">
+                      <button onClick={() => setDirection('es-pl')} className={`px-2.5 py-1 rounded-lg ${direction === 'es-pl' ? 'bg-slate-800 text-blue-400' : 'text-slate-400'}`}>EN ➔ PL</button>
+                      <button onClick={() => setDirection('pl-es')} className={`px-2.5 py-1 rounded-lg ${direction === 'pl-es' ? 'bg-slate-800 text-blue-400' : 'text-slate-400'}`}>PL ➔ EN</button>
+                      <button onClick={() => setDirection('random')} className={`px-2.5 py-1 rounded-lg ${direction === 'random' ? 'bg-slate-800 text-blue-400' : 'text-slate-400'}`}>Losowo</button>
+                    </div>
+                  </div>
+
+                  {shuffledCards.length > 0 && fcData ? (
+                    <div className="w-full max-w-md flex-1 flex flex-col items-center justify-center my-2">
+                      <div onClick={() => setIsFlipped(!isFlipped)} className={`w-full ${isMobileView ? 'min-h-[190px] p-5' : 'min-h-[240px] p-8'} rounded-3xl bg-gradient-to-br ${isFlipped ? 'from-slate-950 to-slate-900 border border-slate-800 text-white' : 'from-blue-600 to-indigo-700 text-white'} shadow-2xl flex flex-col items-center justify-between cursor-pointer text-center transition-all`}>
+                        <div className="w-full flex justify-between items-center text-[11px] opacity-80">
+                          <span className="bg-black/30 px-2.5 py-1 rounded-lg text-[10px] font-bold text-blue-300">{fcData.dept}</span>
+                          <span>{(fcIndex % shuffledCards.length) + 1} z {shuffledCards.length}</span>
+                        </div>
+                        <div className="my-auto space-y-1.5">
+                          <h2 className={`${isMobileView ? 'text-xl' : 'text-2xl'} font-extrabold`}>{isFlipped ? fcData.answer : fcData.question}</h2>
+                          <p className="text-[11px] opacity-75">Kliknij, aby odwrócić</p>
+                        </div>
+                        <button onClick={(e) => { 
+                          e.stopPropagation(); 
+                          speakText(isFlipped ? fcData.answer : fcData.question, isFlipped ? fcData.answerLang : fcData.questionLang); 
+                        }} className="p-2.5 bg-black/30 rounded-full text-white hover:bg-black/50 transition">
+                          <i data-lucide="volume-2" className="w-4 h-4"></i>
+                        </button>
+                      </div>
+                      <div className="flex items-center gap-3 mt-4">
+                        <button onClick={() => { setIsFlipped(false); setFcIndex(prev => Math.max(0, prev - 1)); }} className="p-2.5 bg-slate-800 text-slate-200 rounded-xl"><i data-lucide="chevron-left" className="w-4 h-4"></i></button>
+                        <button onClick={() => { setIsFlipped(false); setFcIndex(prev => prev + 1); }} className="px-5 py-2.5 bg-blue-600 text-white rounded-xl font-semibold text-xs sm:text-sm">Następna ➔</button>
+                      </div>
+                    </div>
+                  ) : <div className="text-slate-500 text-sm my-auto text-center">Brak danych w wybranym dziale.</div>}
+                </div>
+              )}
+
+              {/* PISANIE */}
+              {activeTab === 'typing' && (
+                <div className="flex-1 flex flex-col items-center justify-between space-y-4">
+                  <div className="w-full max-w-md space-y-1">
+                    <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wide block">Wybierz dział / zagadnienie pisania:</label>
+                    <select
+                      value={typeDept}
+                      onChange={(e) => setTypeDept(e.target.value)}
+                      className="w-full px-3 py-2 bg-slate-950 border border-slate-800 text-white rounded-xl text-xs font-semibold focus:outline-none focus:border-blue-500 shadow-inner"
+                    >
+                      {departmentsList.map(dept => (
+                        <option key={dept} value={dept}>{dept}</option>
+                      ))}
+                    </select>
+                  </div>
+
+                  <div className="w-full flex flex-wrap justify-between items-center gap-2">
+                    <div className="flex items-center gap-1 bg-slate-950 p-1 rounded-xl text-xs font-medium border border-slate-800">
+                      <button onClick={() => setTypeDirection('en-pl')} className={`px-2.5 py-1 rounded-lg ${typeDirection === 'en-pl' ? 'bg-slate-800 text-blue-400' : 'text-slate-400'}`}>EN ➔ PL</button>
+                      <button onClick={() => setTypeDirection('pl-en')} className={`px-2.5 py-1 rounded-lg ${typeDirection === 'pl-en' ? 'bg-slate-800 text-blue-400' : 'text-slate-400'}`}>PL ➔ EN</button>
+                      <button onClick={() => setTypeDirection('random')} className={`px-2.5 py-1 rounded-lg ${typeDirection === 'random' ? 'bg-slate-800 text-blue-400' : 'text-slate-400'}`}>Losowo</button>
+                    </div>
+                    <div className="text-xs font-bold text-slate-300 bg-slate-950 px-3 py-1.5 rounded-lg border border-slate-800">
+                      Punkty: <span className="text-blue-400">{typeScore}</span>
+                    </div>
+                  </div>
+
+                  {shuffledTypeItems.length > 0 && typeData ? (
+                    <div className="w-full max-w-md my-auto space-y-3">
+                      <div className="bg-slate-950/80 p-4 rounded-2xl border border-slate-800 text-center space-y-2">
+                        <div className="flex justify-between items-center text-[10px] text-slate-400 font-bold uppercase">
+                          <span>{typeIsEnToPl ? 'Wpisz tłumaczenie po polsku:' : 'Wpisz tłumaczenie po angielsku:'}</span>
+                          <span className="bg-slate-900 px-2.5 py-0.5 rounded-lg border border-slate-800 text-blue-300">{typeData.dept}</span>
+                        </div>
+                        <h2 className="text-xl sm:text-2xl font-bold text-slate-100 flex items-center justify-center gap-2">
+                          <span>{typeData.question}</span>
+                          {!typeIsEnToPl && (
+                            <button onClick={() => speakText(currentTypeItem.es, 'en')} className="text-slate-400 hover:text-blue-400">
+                              <i data-lucide="volume-2" className="w-4 h-4"></i>
+                            </button>
+                          )}
+                        </h2>
+                      </div>
+
+                      <form onSubmit={handleCheckTypeAnswer} className="space-y-3">
+                        <input
+                          type="text"
+                          placeholder="Wpisz tłumaczenie..."
+                          value={userAnswer}
+                          disabled={typeResult !== null}
+                          onChange={(e) => setUserAnswer(e.target.value)}
+                          className="w-full px-3 py-2.5 bg-slate-800 border border-slate-700 text-white rounded-xl text-center text-base font-medium focus:outline-none focus:border-blue-500"
+                        />
+
+                        {typeResult === null ? (
+                          <button type="submit" className="w-full py-2.5 bg-blue-600 hover:bg-blue-500 text-white font-semibold rounded-xl text-sm transition">Sprawdź</button>
+                        ) : (
+                          <div className="space-y-2.5">
+                            {typeResult === 'correct' && (
+                              <div className="p-3 rounded-xl text-center text-xs font-semibold bg-emerald-950 text-emerald-300 border border-emerald-800">
+                                Świetnie! Poprawnie.
+                              </div>
+                            )}
+                            {typeResult === 'typo' && (
+                              <div className="p-3 rounded-xl text-center text-xs font-semibold bg-amber-950/90 text-amber-300 border border-amber-700/60 space-y-0.5">
+                                <div>Zaliczone z drobną literówką!</div>
+                                <div className="text-[11px] text-slate-200">Poprawnie: <span className="font-bold">{typeData.displayAnswer}</span></div>
+                              </div>
+                            )}
+                            {typeResult === 'incorrect' && (
+                              <div className="p-3 rounded-xl text-center text-xs font-semibold bg-red-950 text-red-300 border border-red-800 space-y-1">
+                                <div>Błędnie. Prawidłowa odpowiedź:</div>
+                                <div className="font-bold text-white text-sm">{typeMatchedWord}</div>
+                              </div>
+                            )}
+                            <button type="button" onClick={handleNextTypeItem} className="w-full py-2.5 bg-slate-800 hover:bg-slate-700 text-white font-semibold rounded-xl text-sm transition">Następne słówko ➔</button>
+                          </div>
+                        )}
+                      </form>
+                    </div>
+                  ) : <div className="text-slate-500 text-sm my-auto text-center">Brak danych w wybranym dziale.</div>}
+                </div>
+              )}
+
+              {/* TEORIA I GRAMATYKA KLASA 5 */}
+              {activeTab === 'grammar' && (
+                <div className="flex-1 overflow-y-auto max-h-[380px] pr-1 space-y-3 text-xs custom-scrollbar">
+                  
+                  <div className="bg-slate-950 p-3.5 rounded-xl border border-slate-800 space-y-2">
+                    <h3 className="font-bold text-blue-400 text-sm">Present Simple (Czas teraźniejszy prosty)</h3>
+                    <div className="space-y-1.5 text-slate-300">
+                      <p>Stosowany do rutyny, nawyków oraz faktów. Określniki: <em>always, usually, often, sometimes, never</em>.</p>
+                      <p><strong>Wyjątki w 3. osobie liczby pojedynczej (he / she / it):</strong></p>
+                      <ul className="list-disc pl-4 space-y-1 text-slate-400">
+                        <li>Do czasowników kończących się na <em>-ch, -sh, -ss, -x, -o, -zz</em> dodajemy końcówkę <strong>-es</strong> (np. <em>watch ➔ watches, go ➔ goes</em>).</li>
+                        <li>Gdy czasownik kończy się na spółgłoskę + <em>y</em>, usuwamy <em>y</em> i dodajemy <strong>-ies</strong> (np. <em>study ➔ studies, fly ➔ flies</em>). Jeśli przed <em>y</em> stoi samogłoska, dodajemy normalnie <em>-s</em> (np. <em>play ➔ plays</em>).</li>
+                      </ul>
+                    </div>
+                  </div>
+
+                  <div className="bg-slate-950 p-3.5 rounded-xl border border-slate-800 space-y-2">
+                    <h3 className="font-bold text-blue-400 text-sm">Present Continuous (Czas teraźniejszy ciągły)</h3>
+                    <div className="space-y-1.5 text-slate-300">
+                      <p>Czynności wykonywane w tej chwili. Budowa: <em>am / is / are + czasownik z końcówką -ing</em>. Określniki: <em>now, at the moment, look!, listen!</em></p>
+                      <p><strong>Wyjątki ortograficzne przy dodawaniu -ing:</strong></p>
+                      <ul className="list-disc pl-4 space-y-1 text-slate-400">
+                        <li>Niemime <em>-e</em> na końcu wyrazu znika (np. <em>write ➔ writing, dance ➔ dancing</em>). Wyjątek: <em>be ➔ being</em>.</li>
+                        <li>W czasownikach jednosylabowych z krótką samogłoską między spółgłoskami podwajamy ostatnią spółgłoskę (np. <em>run ➔ running, swim ➔ swimming</em>).</li>
+                        <li>Czasowniki zakończone na <em>-ie</em> zamieniają je na <em>-y</em> przed dodaniem <em>-ing</em> (np. <em>lie ➔ lying, die ➔ dying</em>).</li>
+                      </ul>
+                    </div>
+                  </div>
+
+                  <div className="bg-slate-950 p-3.5 rounded-xl border border-slate-800 space-y-2">
+                    <h3 className="font-bold text-blue-400 text-sm">Past Simple (Czas przeszły prosty)</h3>
+                    <div className="space-y-1.5 text-slate-300">
+                      <p>Wydarzenia w pełni zamknięte w przeszłości. Określniki: <em>yesterday, last week, in 2018, ago</em>.</p>
+                      <p><strong>Zasady i wyjątki czasowników regularnych (-ed):</strong></p>
+                      <ul className="list-disc pl-4 space-y-1 text-slate-400">
+                        <li>Jeśli czasownik kończy się na <em>-e</em>, dodajemy tylko <em>-d</em> (np. <em>smile ➔ smiled</em>).</li>
+                        <li>Spółgłoska + <em>y</em> zamienia się w <em>-ied</em> (np. <em>cry ➔ cried</em>).</li>
+                        <li>Krótkie czasowniki z jedną samogłoską na końcu podwajają spółgłoskę (np. <em>stop ➔ stopped</em>).</li>
+                      </ul>
+                      <p><em>Czasowniki nieregularne:</em> Nie podlegają regułom i należy je zapamiętać z tabeli (np. <em>go ➔ went, see ➔ saw, buy ➔ bought</em>).</p>
+                    </div>
+                  </div>
+
+                  <div className="bg-slate-950 p-3.5 rounded-xl border border-slate-800 space-y-2">
+                    <h3 className="font-bold text-blue-400 text-sm">Czasowniki Modalne i Pułapki</h3>
+                    <div className="space-y-1.5 text-slate-300">
+                      <p><strong>Can / Could:</strong> Wyrażają umiejętność. Nigdy nie przyjmują końcówki <em>-s</em> w 3. osobie l.poj. i występują z bezokolicznikiem bez <em>to</em> (np. <em>He can swim</em>).</p>
+                      <p><strong>Must vs Have to:</strong> <em>Must</em> wyraża wewnętrzny nakaz, <em>have to</em> zewnętrzny obowiązek. <em>Pułapka:</em> <strong>mustn't</strong> oznacza absolutny zakaz (nie wolno!), a <strong>don't have to</strong> oznacza brak konieczności (nie musisz, ale możesz).</p>
+                    </div>
+                  </div>
+
+                  <div className="bg-slate-950 p-3.5 rounded-xl border border-slate-800 space-y-2">
+                    <h3 className="font-bold text-blue-400 text-sm">Stopniowanie Przymiotników</h3>
+                    <div className="space-y-1.5 text-slate-300">
+                      <p>Krótkie przymiotniki: stopień wyższy + <em>-er</em>, najwyższy <em>the ... -est</em>. Długie przymiotniki: <em>more</em> oraz <em>the most</em>.</p>
+                      <p><strong>Wyjątki nieregularne:</strong> <em>good ➔ better ➔ the best</em>; <em>bad ➔ worse ➔ the worst</em>; <em>far ➔ farther/further ➔ the farthest/furthest</em>.</p>
+                    </div>
+                  </div>
+
+                </div>
+              )}
+
+            </div>
+          </div>
+
+          <footer className={`w-full ${isMobileView ? 'max-w-sm' : 'max-w-5xl'} text-center py-1.5 text-[9px] text-slate-500 font-medium space-y-0.5 transition-all`}>
+            <div>Ostatnia aktualizacja kodu (plik): <span className="text-slate-400 font-semibold">{fileLastModified}</span></div>
+            <div>Angielski Master Junior 1.2 • Seria: Językowy Master</div>
+          </footer>
+        </div>
+      );
+    }
+
+    ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+  </script>
+</body>
+</html>
