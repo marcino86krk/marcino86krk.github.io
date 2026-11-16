@@ -26,11 +26,11 @@
   <script type="text/babel">
     const { useState, useEffect, useRef } = React;
 
-    // Generator 800+ przykładów i słownictwa (bez żadnych numerków w działach i treściach)
+    // Rozbudowana baza danych łącząca program klasy 5 oraz unikalne zasoby stopniowania z pliku źródłowego (bez duplikatów)
     const generateMassiveClass5Database = () => {
       const db = [];
 
-      // Szkoła i Przybory
+      // 1. Szkoła i Przybory
       const schoolVocab = [
         ["Geography", "geografia"], ["History", "historia"], ["ICT", "informatyka"], ["PE", "wychowanie fizyczne"],
         ["Maths", "matematyka"], ["Science", "przyroda"], ["Art", "plastyka"], ["Music", "muzyka"],
@@ -43,7 +43,7 @@
         db.push({ dept: 'Szkoła i Przybory', es: item[0], pl: item[1] });
       }
 
-      // Rodzina i Wygląd
+      // 2. Rodzina i Wygląd
       const familyVocab = [
         ["nephew", "siostrzeniec / bratronek"], ["niece", "siostrzenica / bratrzenica"], ["cousin", "kuzyn / kuzynka"],
         ["curly hair", "kręcone włosy"], ["straight hair", "proste włosy"], ["fair hair", "jasne włosy"],
@@ -55,7 +55,7 @@
         db.push({ dept: 'Rodzina i Wygląd', es: item[0], pl: item[1] });
       }
 
-      // Czas wolny i Hobby
+      // 3. Czas wolny i Hobby
       const hobbiesVocab = [
         ["board games", "gry planszowe"], ["hang out with friends", "spędzać czas z przyjaciółmi"],
         ["coding", "programowanie"], ["cycling", "jazda na rowerze"], ["skateboarding", "jazda na desce"],
@@ -66,7 +66,7 @@
         db.push({ dept: 'Czas wolny i Hobby', es: item[0], pl: item[1] });
       }
 
-      // Jedzenie i Zdrowie
+      // 4. Jedzenie i Zdrowie
       const healthVocab = [
         ["stomachache", "ból brzucha"], ["headache", "ból głowy"], ["toothache", "ból zęba"],
         ["temperature", "wysoka temperatura / gorączka"], ["crisps", "chipsy"], ["healthy food", "zdrowe jedzenie"],
@@ -77,7 +77,7 @@
         db.push({ dept: 'Jedzenie i Zdrowie', es: item[0], pl: item[1] });
       }
 
-      // Present Simple
+      // 5. Gramatyka - Present Simple
       const psList = [
         ["I play football on Mondays", "Gram w piłkę w poniedziałki"],
         ["She plays the piano very well", "Ona gra na pianinie bardzo dobrze"],
@@ -95,7 +95,7 @@
         db.push({ dept: 'Present Simple', es: item[0], pl: item[1] });
       }
 
-      // Present Continuous
+      // 6. Gramatyka - Present Continuous
       const pcList = [
         ["Look! Tom is running in the park", "Spójrz! Tom biega w parku"],
         ["We are reading books right now", "Czytamy książki w tej chwili"],
@@ -113,7 +113,7 @@
         db.push({ dept: 'Present Continuous', es: item[0], pl: item[1] });
       }
 
-      // Past Simple
+      // 7. Gramatyka - Past Simple
       const pastList = [
         ["I visited my grandparents yesterday", "Odwiedziłem dziadków wczoraj"],
         ["They went to London last year", "Oni pojechali do Londynu w zeszłym roku"],
@@ -131,7 +131,7 @@
         db.push({ dept: 'Past Simple', es: item[0], pl: item[1] });
       }
 
-      // Future Simple
+      // 8. Gramatyka - Future Simple
       const futList = [
         ["Tomorrow it will rain", "Jutro będzie padać deszcz"],
         ["I will help you with your bag", "Pomogę ci z torbą"],
@@ -144,7 +144,7 @@
         db.push({ dept: 'Future Simple', es: item[0], pl: item[1] });
       }
 
-      // Czasowniki Modalne
+      // 9. Gramatyka - Czasowniki Modalne
       const modList = [
         ["You must wear a seatbelt", "Musisz zapinać pas bezpieczeństwa"],
         ["You must not park here", "Nie wolno ci tutaj parkować"],
@@ -157,16 +157,107 @@
         db.push({ dept: 'Czasowniki Modalne', es: item[0], pl: item[1] });
       }
 
-      // Stopniowanie Przymiotników
-      const adjList = [
-        ["tall - taller - the tallest", "wysoki - wyższy - najwyższy"],
-        ["big - bigger - the biggest", "duży - większy - największy"],
+      // 10. Stopniowanie Przymiotników (wzbogacone o unikalne przykłady z pliku źródłowego bez duplikatów)
+      const stopniowanieList = [
         ["good - better - the best", "dobry - lepszy - najlepszy"],
         ["bad - worse - the worst", "zły - gorszy - najgorszy"],
-        ["My house is bigger than yours", "Mój dom jest większy niż twój"]
+        ["big - bigger - the biggest", "duży - większy - największy"],
+        ["happy - happier - the happiest", "szczęśliwy - szczęśliwszy - najszczęśliwszy"],
+        ["safe - safer - the safest", "bezpieczny - bezpieczniejszy - najbezpieczniejszy"],
+        ["expensive - more expensive - the most expensive", "drogi - droższy - najdroższy"],
+        ["cheap - cheaper - the cheapest", "tani - tańszy - najtańszy"],
+        ["small - smaller - the smallest", "mały - mniejszy - najmniejszy"],
+        ["hot - hotter - the hottest", "gorący - gorętszy - najgorętszy"],
+        ["cold - colder - the coldest", "zimny - zimniejszy - najzimniejszy"],
+        ["fast - faster - the fastest", "szybki - szybszy - najszybszy"],
+        ["slow - slower - the slowest", "wolny - wolniejszy - najwolniejszy"],
+        ["tall - taller - the tallest", "wysoki - wyższy - najwyższy"],
+        ["short - shorter - the shortest", "niski - niższy - najniższy"],
+        ["old - older - the oldest", "stary - starszy - najstarszy"],
+        ["young - younger - the youngest", "młody - młodszy - najmłodszy"],
+        ["long - longer - the longest", "długi - dłuższy - najdłuższy"],
+        ["nice - nicer - the nicest", "miły - milszy - najmiższy"],
+        ["large - larger - the largest", "duży - większy - największy"],
+        ["late - later - the latest", "późny - późniejszy - najpóźniejszy"],
+        ["sad - sadder - the saddest", "smutny - smutniejszy - najsmutniejszy"],
+        ["thin - thinner - the thinnest", "chudy - chudszy - najchudszy"],
+        ["fat - fatter - the fattest", "gruby - grubszy - najgrubszy"],
+        ["fit - fitter - the fittest", "w formie - w lepszej formie - w najlepszej formie"],
+        ["wet - wetter - the wettest", "mokry - mokrzejszy - najmokrzejszy"],
+        ["easy - easier - the easiest", "łatwy - łatwiejszy - najłatwiejszy"],
+        ["funny - funnier - the funniest", "zabawny - zabawniejszy - najzabawniejszy"],
+        ["noisy - noisier - the noisiest", "hałaśliwy - hałaśliwszy - najhałaśliwszy"],
+        ["dirty - dirtier - the dirtiest", "brudny - brudniejszy - najbrudniejszy"],
+        ["clean - cleaner - the cleanest", "czysty - czystszy - najczystszy"],
+        ["heavy - heavier - the heaviest", "ciężki - cięższy - najcięższy"],
+        ["early - earlier - the earliest", "wczesny - wcześniejszy - najwcześniejszy"],
+        ["busy - busier - the busiest", "zajęty - bardziej zajęty - najbardziej zajęty"],
+        ["lazy - lazier - the laziest", "leniwy - leniwszy - najleniwszy"],
+        ["modern - more modern - the most modern", "nowoczesny - nowocześniejszy - najnowocześniejszy"],
+        ["dangerous - more dangerous - the most dangerous", "niebezpieczny - bardziej niebezpieczny - najniebezpieczniejszy"],
+        ["difficult - more difficult - the most difficult", "trudny - trudniejszy - najtrudniejszy"],
+        ["interesting - more interesting - the most interesting", "ciekawy - ciekawszy - najciekawszy"],
+        ["boring - more boring - the most boring", "nudny - nudniejszy - najnudniejszy"],
+        ["popular - more popular - the most popular", "popularny - popularniejszy - najpopularniejszy"],
+        ["famous - more famous - the most famous", "sławny - sławniejszy - najsławniejszy"],
+        ["beautiful - more beautiful - the most beautiful", "piękny - piękniejszy - najpiękniejszy"],
+        ["intelligent - more intelligent - the most intelligent", "inteligentny - inteligentniejszy - najinteligentniejszy"],
+        ["comfortable - more comfortable - the most comfortable", "wygodny - wygodniejszy - najwygodniejszy"],
+        ["strong - stronger - the strongest", "silny - silniejszy - najsilniejszy"],
+        ["weak - weaker - the weakest", "słaby - słabszy - najsłabszy"],
+        ["smart - smarter - the smartest", "bystry - bystrzejszy - najbystrzejszy"],
+        ["bright - brighter - the brightest", "jasny - jaśniejszy - najjaśniejszy"],
+        ["dark - darker - the darkest", "ciemny - ciemniejszy - najciemniejszy"],
+        ["rich - richer - the richest", "bogaty - bogatszy - najbogatszy"],
+        ["poor - poorer - the poorest", "biedny - biedniejszy - najbiedniejszy"],
+        ["kind - kinder - the kindest", "uprzejmy - uprzejmiejszy - najuprzejmiejszy"],
+        ["warm - warmer - the warmest", "ciepły - cieplejszy - najcieplejszy"],
+        ["cool - cooler - the coolest", "chłodny - chłodniejszy - najchłodniejszy"],
+        ["sweet - sweeter - the sweetest", "słodki - słodszy - najsłodszy"],
+        ["sour - sourer - the sourest", "kwaśny - kwaśniejszy - najkwaśniejszy"],
+        ["soft - softer - the softest", "miękki - miększy - najmiększy"],
+        ["hard - harder - the hardest", "twardy - twardszy - najtwardszy"],
+        ["quiet - quieter - the quietest", "cichy - cichszy - najcichszy"],
+        ["loud - louder - the loudest", "głośny - głośniejszy - najgłośniejszy"],
+        ["near - nearer - the nearest", "bliski - bliższy - najbliższy"],
+        ["far - further - the furthest", "daleki - dalszy - najdalszy"],
+        ["high - higher - the highest", "wysoki - wyższy - najwyższy"],
+        ["low - lower - the lowest", "niski - niższy - najniższy"],
+        ["deep - deeper - the deepest", "głęboki - głębszy - najgłębszy"],
+        ["wide - wider - the widest", "szeroki - szerszy - najszerszy"],
+        ["narrow - narrower - the narrowest", "wąski - węższy - najwęższy"],
+        ["thick - thicker - the thickest", "gruby - grubszy - najgrubszy"],
+        ["brave - braver - the bravest", "odważny - odważniejszy - najodważniejszy"],
+        ["wise - wiser - the wisest", "mądry - mądrzejszy - najmądrzejszy"],
+        ["fine - finer - the finest", "świetny - lepszy - najlepszy"],
+        ["strange - stranger - the strangest", "dziwny - dziwniejszy - najdziwniejszy"],
+        ["rude - ruder - the rudest", "nieuprzejmy - mniej uprzejmy - najmniej uprzejmy"],
+        ["polite - politer - the politest", "kulturalny - kulturalniejszy - najkulturalniejszy"],
+        ["clever - cleverer - the cleverest", "sprytny - sprytniejszy - najsprytniejszy"],
+        ["simple - simpler - the simplest", "prosty - prostszy - najprostszy"],
+        ["gentle - gentler - the gentlest", "łagodny - łagodniejszy - najłagodniejszy"],
+        ["angry - angrier - the angriest", "wściekły - wścieklejszy - najwścieklejszy"],
+        ["thirsty - thirstier - the thirstiest", "spragniony - bardziej spragniony - najbardziej spragniony"],
+        ["hungry - hungrier - the hungriest", "głodny - głodniejszy - najgłodniejszy"],
+        ["scary - scarier - the scariest", "straszny - straszniejszy - najstraszniejszy"],
+        ["healthy - healthier - the healthiest", "zdrowy - zdrowszy - najzdrowszy"],
+        ["wealthy - wealthier - the wealthiest", "zamożny - zamożniejszy - najzamożniejszy"],
+        ["lucky - luckier - the luckiest", "szczęśliwy - szczęśliwszy - najszczęśliwszy"],
+        ["silly - sillier - the silliest", "głupiutki - głupszy - najgłupszy"],
+        ["ugly - uglier - the ugliest", "brzydki - brzydszy - najbrzydszy"],
+        ["lonely - lonelier - the loneliest", "samotny - samotniejszy - najsamotniejszy"],
+        ["important - more important - the most important", "ważny - ważniejszy - najważniejszy"],
+        ["serious - more serious - the most serious", "poważny - poważniejszy - najpoważniejszy"],
+        ["careful - more careful - the most careful", "ostrożny - ostrożniejszy - najostrożniejszy"],
+        ["useful - more useful - the most useful", "użyteczny - użyteczniejszy - najużyteczniejszy"],
+        ["helpful - more helpful - the most helpful", "pomocny - pomocniejszy - najpomocniejszy"],
+        ["exciting - more exciting - the most exciting", "ekscytujący - bardziej ekscytujący - najbardziej ekscytujący"],
+        ["tired - more tired - the most tired", "zmęczony - bardziej zmęczony - najbardziej zmęczony"],
+        ["nervous - more nervous - the most nervous", "nerwowy - bardziej nerwowy - najbardziej nerwowy"],
+        ["creative - more creative - the most creative", "kreatywny - bardziej kreatywny - najbardziej kreatywny"]
       ];
-      for(let i=0; i<60; i++) {
-        const item = adjList[i % adjList.length];
+      for(let i=0; i<stopniowanieList.length; i++) {
+        const item = stopniowanieList[i];
         db.push({ dept: 'Stopniowanie Przymiotników', es: item[0], pl: item[1] });
       }
 
@@ -223,7 +314,21 @@
       const [fileLastModified, setFileLastModified] = useState('');
       const [activeTab, setActiveTab] = useState('flashcards');
 
-      // Podział działów dla Fiszek (lista rozwijana)
+      // Zachowana wcześniejsza kolejność działów
+      const departmentsList = [
+        'Szkoła i Przybory',
+        'Rodzina i Wygląd',
+        'Czas wolny i Hobby',
+        'Jedzenie i Zdrowie',
+        'Present Simple',
+        'Present Continuous',
+        'Past Simple',
+        'Future Simple',
+        'Czasowniki Modalne',
+        'Stopniowanie Przymiotników'
+      ];
+
+      // Podział działów dla Fiszek (domyślnie pierwszy dział z zachowanej kolejności)
       const [fcDept, setFcDept] = useState('Szkoła i Przybory');
       const [shuffledCards, setShuffledCards] = useState([]);
       const [fcIndex, setFcIndex] = useState(0);
@@ -231,7 +336,7 @@
       const [direction, setDirection] = useState('random');
       const [fcIsEsToPl, setFcIsEsToPl] = useState(true);
 
-      // Podział działów dla Pisania (lista rozwijana)
+      // Podział działów dla Pisania (domyślnie pierwszy dział z zachowanej kolejności)
       const [typeDept, setTypeDept] = useState('Szkoła i Przybory');
       const [typeDirection, setTypeDirection] = useState('random');
       const [shuffledTypeItems, setShuffledTypeItems] = useState([]);
@@ -354,7 +459,6 @@
         window.speechSynthesis.speak(utterance);
       };
 
-      // Inicjalizacja fiszek dla wybranego działu
       useEffect(() => {
         const filtered = words.filter(w => w.dept === fcDept);
         if (filtered.length > 0) {
@@ -364,7 +468,6 @@
         }
       }, [fcDept, words]);
 
-      // Inicjalizacja pisania dla wybranego działu
       useEffect(() => {
         const filtered = words.filter(w => w.dept === typeDept);
         if (filtered.length > 0) {
@@ -433,19 +536,6 @@
         setTypeMatchedWord('');
         setTypeIndex(prev => prev + 1);
       };
-
-      const departmentsList = [
-        'Szkoła i Przybory',
-        'Rodzina i Wygląd',
-        'Czas wolny i Hobby',
-        'Jedzenie i Zdrowie',
-        'Present Simple',
-        'Present Continuous',
-        'Past Simple',
-        'Future Simple',
-        'Czasowniki Modalne',
-        'Stopniowanie Przymiotników'
-      ];
 
       return (
         <div className={`min-h-[100dvh] w-full bg-slate-950 flex flex-col items-center justify-between ${isMobileView ? 'p-1.5 max-w-sm mx-auto text-xs' : 'p-2 sm:p-4'} text-slate-100 transition-all`}>
@@ -616,10 +706,44 @@
                 </div>
               )}
 
-              {/* TEORIA I GRAMATYKA KLASA 5 */}
+              {/* TEORIA I GRAMATYKA KLASA 5 (Wzbogacona o pełne zasady stopniowania z załącznika) */}
               {activeTab === 'grammar' && (
                 <div className="flex-1 overflow-y-auto max-h-[380px] pr-1 space-y-3 text-xs custom-scrollbar">
                   
+                  <div className="bg-slate-950 p-3.5 rounded-xl border border-slate-800 space-y-2">
+                    <h3 className="font-bold text-blue-400 text-sm">Stopniowanie Przymiotników (Spelling Rules & Grammar)</h3>
+                    <div className="space-y-2 text-slate-300">
+                      <p>W stopniu wyższym (Comparative) porównujemy dwa obiekty (dodajemy końcówkę <strong className="text-white">-er</strong> lub <strong className="text-white">more</strong> oraz słówko <strong className="text-white">than</strong>). W stopniu najwyższym (Superlative) wskazujemy obiekt najwyższej cechy w grupie (używamy przedrostka <strong className="text-white">the</strong> oraz końcówki <strong className="text-white">-est</strong> lub <strong className="text-white">most</strong>).</p>
+                      
+                      <div className="space-y-1.5 pt-1 text-slate-400">
+                        <div className="p-2.5 bg-slate-900 rounded-lg border border-slate-800">
+                          <strong className="text-slate-200 block mb-0.5">1. Podwajanie spółgłoski (Short adjectives)</strong>
+                          W krótkich przymiotnikach zakończonych spółgłoską poprzedzoną jedną samogłoską podwajamy ostatnią literę (np. <span className="text-white font-medium">big ➔ bigger ➔ the biggest</span>, <span className="text-white font-medium">hot ➔ hotter ➔ the hottest</span>).
+                        </div>
+
+                        <div className="p-2.5 bg-slate-900 rounded-lg border border-slate-800">
+                          <strong className="text-slate-200 block mb-0.5">2. Przymiotniki na literę -y</strong>
+                          W przymiotnikach zakończonych na <span className="text-white font-medium">-y</span> zamieniamy ją na <span className="text-white font-medium">-i</span> i dodajemy końcówki <span className="text-white font-medium">-er / -est</span> (np. <span className="text-white font-medium">happy ➔ happier ➔ the happiest</span>, <span className="text-white font-medium">easy ➔ easier ➔ the easiest</span>).
+                        </div>
+
+                        <div className="p-2.5 bg-slate-900 rounded-lg border border-slate-800">
+                          <strong className="text-slate-200 block mb-0.5">3. Przymiotniki na literę -e</strong>
+                          Jeśli przymiotnik kończy się na niemime <span className="text-white font-medium">-e</span>, dodajemy tylko <span className="text-white font-medium">-r</span> oraz <span className="text-white font-medium">-st</span> (np. <span className="text-white font-medium">safe ➔ safer ➔ the safest</span>).
+                        </div>
+
+                        <div className="p-2.5 bg-slate-900 rounded-lg border border-slate-800">
+                          <strong className="text-slate-200 block mb-0.5">4. Przymiotniki długie (Long adjectives)</strong>
+                          Długie przymiotniki (dwu- i wielosylabowe) stopniujemy za pomocą <span className="text-white font-medium">more</span> oraz <span className="text-white font-medium">the most</span> (np. <span className="text-white font-medium">expensive ➔ more expensive ➔ the most expensive</span>).
+                        </div>
+
+                        <div className="p-2.5 bg-slate-900 rounded-lg border border-slate-800">
+                          <strong className="text-slate-200 block mb-0.5">5. Przymiotniki nieregularne (Irregular adjectives)</strong>
+                          Wyjątki, które zmieniają formę całkowicie i należy je zapamiętać (np. <span className="text-white font-medium">good ➔ better ➔ the best</span>, <span className="text-white font-medium">bad ➔ worse ➔ the worst</span>, <span className="text-white font-medium">far ➔ further ➔ the furthest</span>).
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
                   <div className="bg-slate-950 p-3.5 rounded-xl border border-slate-800 space-y-2">
                     <h3 className="font-bold text-blue-400 text-sm">Present Simple (Czas teraźniejszy prosty)</h3>
                     <div className="space-y-1.5 text-slate-300">
@@ -664,14 +788,6 @@
                     <div className="space-y-1.5 text-slate-300">
                       <p><strong>Can / Could:</strong> Wyrażają umiejętność. Nigdy nie przyjmują końcówki <em>-s</em> w 3. osobie l.poj. i występują z bezokolicznikiem bez <em>to</em> (np. <em>He can swim</em>).</p>
                       <p><strong>Must vs Have to:</strong> <em>Must</em> wyraża wewnętrzny nakaz, <em>have to</em> zewnętrzny obowiązek. <em>Pułapka:</em> <strong>mustn't</strong> oznacza absolutny zakaz (nie wolno!), a <strong>don't have to</strong> oznacza brak konieczności (nie musisz, ale możesz).</p>
-                    </div>
-                  </div>
-
-                  <div className="bg-slate-950 p-3.5 rounded-xl border border-slate-800 space-y-2">
-                    <h3 className="font-bold text-blue-400 text-sm">Stopniowanie Przymiotników</h3>
-                    <div className="space-y-1.5 text-slate-300">
-                      <p>Krótkie przymiotniki: stopień wyższy + <em>-er</em>, najwyższy <em>the ... -est</em>. Długie przymiotniki: <em>more</em> oraz <em>the most</em>.</p>
-                      <p><strong>Wyjątki nieregularne:</strong> <em>good ➔ better ➔ the best</em>; <em>bad ➔ worse ➔ the worst</em>; <em>far ➔ farther/further ➔ the farthest/furthest</em>.</p>
                     </div>
                   </div>
 
