@@ -1,0 +1,639 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Angielski Master Kids 1.2</title>
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <!-- React & ReactDOM -->
+  <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+  <!-- Babel -->
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <style>
+    body { background-color: #020617; color: #f8fafc; font-family: system-ui, -apple-system, sans-serif; margin: 0; padding: 0; min-height: 100dvh; overflow-x: hidden; }
+    .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+    .custom-scrollbar::-webkit-scrollbar-thumb { background-color: #334155; border-radius: 9999px; }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+
+  <script type="text/babel">
+    const { useState, useEffect, useRef } = React;
+
+    // Definicja działów wraz z dedykowanymi ikonami i kolorami dla pierwszoklasisty
+    const CATEGORIES_META = [
+      { id: 'Wszystkie działy', label: 'Wszystkie', icon: 'sparkles', color: 'text-yellow-400', bg: 'bg-yellow-500/10 border-yellow-500/40' },
+      { id: 'Kolory (Colours)', label: 'Kolory', icon: 'palette', color: 'text-pink-400', bg: 'bg-pink-500/10 border-pink-500/40' },
+      { id: 'Liczby (Numbers 1-10)', label: 'Liczby 1-10', icon: 'hash', color: 'text-cyan-400', bg: 'bg-cyan-500/10 border-cyan-500/40' },
+      { id: 'Zabawki (Toys)', label: 'Zabawki', icon: 'gamepad-2', color: 'text-purple-400', bg: 'bg-purple-500/10 border-purple-500/40' },
+      { id: 'Szkoła (School)', label: 'Szkoła', icon: 'backpack', color: 'text-amber-400', bg: 'bg-amber-500/10 border-amber-500/40' },
+      { id: 'Zwierzęta (Animals)', label: 'Zwierzęta', icon: 'paw-print', color: 'text-emerald-400', bg: 'bg-emerald-500/10 border-emerald-500/40' },
+      { id: 'Rodzina (Family)', label: 'Rodzina', icon: 'heart', color: 'text-rose-400', bg: 'bg-rose-500/10 border-rose-500/40' },
+      { id: 'Zwroty i Gramatyka (Grammar & Phrases)', label: 'Zwroty i zdania', icon: 'message-circle', color: 'text-blue-400', bg: 'bg-blue-500/10 border-blue-500/40' }
+    ];
+
+    // Kompletna baza słówek i gramatyki dla Klasy 1 Szkoły Podstawowej
+    const SCHOOL_DATABASE = [
+      { id: '1', category: 'Kolory (Colours)', es: 'red', pl: 'czerwony' },
+      { id: '2', category: 'Kolory (Colours)', es: 'blue', pl: 'niebieski' },
+      { id: '3', category: 'Kolory (Colours)', es: 'yellow', pl: 'żółty' },
+      { id: '4', category: 'Kolory (Colours)', es: 'green', pl: 'zielony' },
+      { id: '5', category: 'Kolory (Colours)', es: 'pink', pl: 'różowy' },
+      { id: '6', category: 'Kolory (Colours)', es: 'orange', pl: 'pomarańczowy' },
+      
+      { id: '7', category: 'Liczby (Numbers 1-10)', es: 'one', pl: 'jeden' },
+      { id: '8', category: 'Liczby (Numbers 1-10)', es: 'two', pl: 'dwa' },
+      { id: '9', category: 'Liczby (Numbers 1-10)', es: 'three', pl: 'trzy' },
+      { id: '10', category: 'Liczby (Numbers 1-10)', es: 'four', pl: 'cztery' },
+      { id: '11', category: 'Liczby (Numbers 1-10)', es: 'five', pl: 'pięć' },
+      { id: '12', category: 'Liczby (Numbers 1-10)', es: 'six', pl: 'sześć' },
+      { id: '13', category: 'Liczby (Numbers 1-10)', es: 'seven', pl: 'siedem' },
+      { id: '14', category: 'Liczby (Numbers 1-10)', es: 'eight', pl: 'osiem' },
+      { id: '15', category: 'Liczby (Numbers 1-10)', es: 'nine', pl: 'dziewięć' },
+      { id: '16', category: 'Liczby (Numbers 1-10)', es: 'ten', pl: 'dziesięć' },
+
+      { id: '17', category: 'Zabawki (Toys)', es: 'doll', pl: 'lalka' },
+      { id: '18', category: 'Zabawki (Toys)', es: 'ball', pl: 'piłka' },
+      { id: '19', category: 'Zabawki (Toys)', es: 'car', pl: 'samochodzik' },
+      { id: '20', category: 'Zabawki (Toys)', es: 'teddy bear', pl: 'pluszowy miś' },
+      { id: '21', category: 'Zabawki (Toys)', es: 'train', pl: 'pociąg' },
+      { id: '22', category: 'Zabawki (Toys)', es: 'kite', pl: 'latawiec' },
+
+      { id: '23', category: 'Szkoła (School)', es: 'pen', pl: 'długopis' },
+      { id: '24', category: 'Szkoła (School)', es: 'pencil', pl: 'ołówek' },
+      { id: '25', category: 'Szkoła (School)', es: 'book', pl: 'książka' },
+      { id: '26', category: 'Szkoła (School)', es: 'bag', pl: 'torba, plecak' },
+      { id: '27', category: 'Szkoła (School)', es: 'rubber', pl: 'gumka do ścierania' },
+
+      { id: '28', category: 'Zwierzęta (Animals)', es: 'cat', pl: 'kot' },
+      { id: '29', category: 'Zwierzęta (Animals)', es: 'dog', pl: 'pies' },
+      { id: '30', category: 'Zwierzęta (Animals)', es: 'bird', pl: 'ptak' },
+      { id: '31', category: 'Zwierzęta (Animals)', es: 'fish', pl: 'ryba' },
+      { id: '32', category: 'Zwierzęta (Animals)', es: 'horse', pl: 'koń' },
+
+      { id: '33', category: 'Rodzina (Family)', es: 'mum', pl: 'mama' },
+      { id: '34', category: 'Rodzina (Family)', es: 'dad', pl: 'tata' },
+      { id: '35', category: 'Rodzina (Family)', es: 'sister', pl: 'siostra' },
+      { id: '36', category: 'Rodzina (Family)', es: 'brother', pl: 'brat' },
+      { id: '37', category: 'Rodzina (Family)', es: 'grandma', pl: 'babcia' },
+      { id: '38', category: 'Rodzina (Family)', es: 'grandad', pl: 'dziadek' },
+
+      { id: '39', category: 'Zwroty i Gramatyka (Grammar & Phrases)', es: 'Hello!', pl: 'Cześć!' },
+      { id: '40', category: 'Zwroty i Gramatyka (Grammar & Phrases)', es: 'Goodbye!', pl: 'Do widzenia!' },
+      { id: '41', category: 'Zwroty i Gramatyka (Grammar & Phrases)', es: 'I can jump', pl: 'Potrafię skakać' },
+      { id: '42', category: 'Zwroty i Gramatyka (Grammar & Phrases)', es: 'I can run', pl: 'Potrafię biegać' },
+      { id: '43', category: 'Zwroty i Gramatyka (Grammar & Phrases)', es: 'I have got a ball', pl: 'Mam piłkę' },
+      { id: '44', category: 'Zwroty i Gramatyka (Grammar & Phrases)', es: 'What is your name?', pl: 'Jak masz na imię?' }
+    ];
+
+    // Zachowane pierwotne logo z książką oraz wersją
+    function Logo({ isMobileView, appVersion }) {
+      return (
+        <div className="flex items-center gap-2.5">
+          <div className={`${isMobileView ? 'w-9 h-9' : 'w-12 h-12'} rounded-xl bg-gradient-to-br from-blue-600 via-indigo-600 to-red-600 p-0.5 shadow-lg flex items-center justify-center transition-all`}>
+            <div className="w-full h-full bg-slate-950 rounded-[10px] flex items-center justify-center relative overflow-hidden">
+              <svg viewBox="0 0 100 100" className={isMobileView ? 'w-6 h-6' : 'w-9 h-9'}>
+                <path d="M 15,30 Q 35,22 50,35 Q 65,22 85,30 L 85,75 Q 65,67 50,80 Q 35,67 15,75 Z" fill="#1e293b" stroke="#3b82f6" strokeWidth="3"/>
+                <path d="M 50,35 L 50,80" stroke="#3b82f6" strokeWidth="3"/>
+                <line x1="23" y1="42" x2="41" y2="47" stroke="#94a3b8" strokeWidth="3" strokeLinecap="round"/>
+                <line x1="23" y1="52" x2="38" y2="57" stroke="#94a3b8" strokeWidth="3" strokeLinecap="round"/>
+                <line x1="59" y1="42" x2="77" y2="47" stroke="#ef4444" strokeWidth="3" strokeLinecap="round"/>
+                <line x1="59" y1="52" x2="74" y2="57" stroke="#94a3b8" strokeWidth="3" strokeLinecap="round"/>
+                <text x="50" y="30" fontFamily="system-ui" fontWeight="900" fontSize="22" fill="#3b82f6" textAnchor="middle">EN</text>
+              </svg>
+            </div>
+          </div>
+          <div>
+            <h1 className={`${isMobileView ? 'text-sm' : 'text-lg'} font-black tracking-tight text-white flex items-center gap-1.5`}>
+              ANGIELSKI MASTER KIDS <span className="text-blue-500">{appVersion}</span>
+            </h1>
+            <p className={`${isMobileView ? 'text-[9px]' : 'text-[11px]'} text-slate-400 font-medium`}>Seria: Językowy Master • Klasa 1</p>
+          </div>
+        </div>
+      );
+    }
+
+    function App() {
+      const [appVersion, setAppVersion] = useState('1.2');
+      const [selectedCategory, setSelectedCategory] = useState('Wszystkie działy');
+
+      useEffect(() => {
+        // Automatyczne pobieranie wersji z tagu <title>
+        try {
+          const titleText = document.title;
+          const match = titleText.match(/([\d\.]+)\s*$/);
+          if (match && match[1]) {
+            setAppVersion(match[1]);
+          }
+        } catch (e) {}
+      }, []);
+
+      const filteredWords = selectedCategory === 'Wszystkie działy' 
+        ? SCHOOL_DATABASE 
+        : SCHOOL_DATABASE.filter(item => item.category === selectedCategory);
+
+      const [isMobileView, setIsMobileView] = useState(() => {
+        const saved = localStorage.getItem('amk_mobile_view');
+        return saved ? JSON.parse(saved) : false;
+      });
+
+      useEffect(() => {
+        localStorage.setItem('amk_mobile_view', JSON.stringify(isMobileView));
+      }, [isMobileView]);
+
+      const [fileLastModified, setFileLastModified] = useState('');
+      const [activeTab, setActiveTab] = useState('flashcards');
+      const [searchTerm, setSearchTerm] = useState('');
+      const [direction, setDirection] = useState('random');
+
+      // Stan dla ćwiczenia pisania
+      const [typeDirection, setTypeDirection] = useState('random');
+      const [shuffledTypeItems, setShuffledTypeItems] = useState([]);
+      const [typeIndex, setTypeIndex] = useState(0);
+      const [userAnswer, setUserAnswer] = useState('');
+      const [typeResult, setTypeResult] = useState(null);
+      const [typeWidthMatched, setTypeWidthMatched] = useState('');
+      const [typeScore, setTypeScore] = useState(0);
+      const [typeIsEnToPl, setTypeIsEnToPl] = useState(true);
+
+      // Stan dla fiszek
+      const [shuffledCards, setShuffledCards] = useState([]);
+      const [fcIndex, setFcIndex] = useState(0);
+      const [isFlipped, setIsFlipped] = useState(false);
+      const [fcIsEsToPl, setFcIsEsToPl] = useState(true);
+
+      const voicesRef = useRef([]);
+
+      useEffect(() => {
+        try {
+          if (document.lastModified) {
+            const modDate = new Date(document.lastModified);
+            if (!isNaN(modDate)) {
+              setFileLastModified(modDate.toLocaleString('pl-PL', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' }));
+            }
+          }
+        } catch(e) {}
+
+        const loadVoices = () => {
+          if ('speechSynthesis' in window) {
+            voicesRef.current = window.speechSynthesis.getVoices();
+          }
+        };
+        loadVoices();
+        if ('speechSynthesis' in window) {
+          window.speechSynthesis.onvoiceschanged = loadVoices;
+        }
+      }, []);
+
+      const normalizeText = (text) => {
+        return (text || '').toLowerCase().trim();
+      };
+
+      const getLevenshteinDistance = (a, b) => {
+        if (a.length === 0) return b.length;
+        if (b.length === 0) return a.length;
+        const matrix = [];
+        for (let i = 0; i <= b.length; i++) { matrix[i] = [i]; }
+        for (let j = 0; j <= a.length; j++) { matrix[0][j] = j; }
+        for (let i = 1; i <= b.length; i++) {
+          for (let j = 1; j <= a.length; j++) {
+            if (b.charAt(i - 1) === a.charAt(j - 1)) {
+              matrix[i][j] = matrix[i - 1][j - 1];
+            } else {
+              matrix[i][j] = Math.min(
+                matrix[i - 1][j - 1] + 1,
+                Math.min(matrix[i][j - 1] + 1, matrix[i - 1][j] + 1)
+              );
+            }
+          }
+        }
+        return matrix[b.length][a.length];
+      };
+
+      const evaluateAnswer = (userText, allowedAnswersList) => {
+        const userNorm = normalizeText(userText);
+        if (!userNorm) return { status: 'incorrect', matched: '' };
+
+        for (const ans of allowedAnswersList) {
+          if (userNorm === ans) {
+            return { status: 'correct', matched: ans };
+          }
+        }
+
+        for (const ans of allowedAnswersList) {
+          const maxAllowedDist = ans.length <= 5 ? 1 : 2;
+          const dist = getLevenshteinDistance(userNorm, ans);
+          if (dist <= maxAllowedDist) {
+            return { status: 'typo', matched: ans };
+          }
+        }
+
+        return { status: 'incorrect', matched: allowedAnswersList[0] || '' };
+      };
+
+      const shuffleArray = (arr) => {
+        const copy = [...arr];
+        for (let i = copy.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [copy[i], copy[j]] = [copy[j], copy[i]];
+        }
+        return copy;
+      };
+
+      const speakText = (text, forcedLang = null) => {
+        if (!text) return;
+        const cleanText = text.split(/[\/,;]/)[0].trim();
+        let targetLang = forcedLang || 'en';
+
+        try {
+          const ttsUrl = `https://translate.google.com/translate_tts?ie=UTF-8&q=${encodeURIComponent(cleanText)}&tl=${targetLang}&client=tw-ob`;
+          const audio = new Audio(ttsUrl);
+          audio.play().catch(() => {
+            fallbackSpeak(cleanText, targetLang === 'en' ? 'en-GB' : 'pl-PL');
+          });
+        } catch (e) {
+          fallbackSpeak(cleanText, targetLang === 'en' ? 'en-GB' : 'pl-PL');
+        }
+      };
+
+      const fallbackSpeak = (text, lang) => {
+        if (!('speechSynthesis' in window)) return;
+        window.speechSynthesis.cancel();
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.lang = lang;
+        utterance.rate = 0.9;
+        const voices = voicesRef.current.length > 0 ? voicesRef.current : window.speechSynthesis.getVoices();
+        const matchingVoices = voices.filter(v => v.lang.toLowerCase().includes(lang.slice(0, 2).toLowerCase()));
+        if (matchingVoices.length > 0) {
+          utterance.voice = matchingVoices[0];
+        }
+        window.speechSynthesis.speak(utterance);
+      };
+
+      // Inicjalizacja fiszek przy zmianie działu
+      useEffect(() => {
+        if (filteredWords.length > 0) {
+          setShuffledCards(shuffleArray(filteredWords));
+          setFcIndex(0);
+          setIsFlipped(false);
+        } else {
+          setShuffledCards([]);
+        }
+      }, [selectedCategory]);
+
+      // Inicjalizacja pisania przy zmianie działu lub kierunku
+      useEffect(() => {
+        if (filteredWords.length > 0) {
+          setShuffledTypeItems(shuffleArray(filteredWords));
+          setTypeIndex(0);
+          setUserAnswer('');
+          setTypeResult(null);
+        } else {
+          setShuffledTypeItems([]);
+        }
+      }, [selectedCategory, typeDirection]);
+
+      useEffect(() => {
+        if (typeDirection === 'en-pl') setTypeIsEnToPl(true);
+        else if (typeDirection === 'pl-en') setTypeIsEnToPl(false);
+        else setTypeIsEnToPl(Math.random() < 0.5);
+      }, [typeIndex, typeDirection]);
+
+      useEffect(() => {
+        if (direction === 'es-pl') setFcIsEsToPl(true);
+        else if (direction === 'pl-es') setFcIsEsToPl(false);
+        else setFcIsEsToPl(Math.random() < 0.5);
+      }, [fcIndex, direction]);
+
+      useEffect(() => {
+        if (window.lucide) window.lucide.createIcons();
+      });
+
+      const filteredDictionary = filteredWords.filter(w => 
+        w.es.toLowerCase().includes(searchTerm.toLowerCase()) || 
+        w.pl.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+
+      const currentCard = shuffledCards.length > 0 ? shuffledCards[fcIndex % shuffledCards.length] : null;
+      const fcData = currentCard ? {
+        question: fcIsEsToPl ? currentCard.es : currentCard.pl,
+        answer: fcIsEsToPl ? currentCard.pl : currentCard.es,
+        questionLang: fcIsEsToPl ? 'en' : 'pl',
+        answerLang: fcIsEsToPl ? 'pl' : 'en'
+      } : null;
+
+      const currentTypeItem = shuffledTypeItems.length > 0 ? shuffledTypeItems[typeIndex % shuffledTypeItems.length] : null;
+      const typeData = currentTypeItem ? {
+        question: typeIsEnToPl ? currentTypeItem.es : currentTypeItem.pl,
+        allowedAnswers: typeIsEnToPl 
+          ? currentTypeItem.pl.split(/[\/,;]/).map(a => normalizeText(a))
+          : currentTypeItem.es.split(/[\/,;]/).map(a => normalizeText(a)),
+        displayAnswer: typeIsEnToPl ? currentTypeItem.pl : currentTypeItem.es,
+        audioWord: currentTypeItem.es
+      } : null;
+
+      const handleCheckTypeAnswer = (e) => {
+        e.preventDefault();
+        if (typeResult !== null || !typeData) return;
+
+        const evaluation = evaluateAnswer(userAnswer, typeData.allowedAnswers);
+        if (evaluation.status === 'correct' || evaluation.status === 'typo') {
+          setTypeResult(evaluation.status);
+          setTypeScore(prev => prev + 1);
+          if (!typeIsEnToPl) speakText(typeData.audioWord, 'en');
+        } else {
+          setTypeResult('incorrect');
+          setTypeWidthMatched(typeData.displayAnswer);
+        }
+      };
+
+      const handleNextTypeItem = () => {
+        setUserAnswer('');
+        setTypeResult(null);
+        setTypeWidthMatched('');
+        setTypeIndex(prev => prev + 1);
+      };
+
+      const currentCategoryMeta = CATEGORIES_META.find(c => c.id === selectedCategory) || CATEGORIES_META[0];
+
+      return (
+        <div className={`min-h-[100dvh] w-full bg-slate-950 flex flex-col items-center justify-between ${isMobileView ? 'p-1.5 max-w-sm mx-auto text-xs' : 'p-2 sm:p-4'} text-slate-100 transition-all`}>
+          
+          {/* ZACHOWANY POPRZEDNI WYGLĄD NAGŁÓWKA WRAZ Z LOGO I WERSJĄ */}
+          <header className={`w-full ${isMobileView ? 'max-w-sm p-2.5' : 'max-w-5xl p-4'} bg-slate-900 rounded-2xl shadow-xl border border-slate-800 mb-3 flex justify-between items-center transition-all`}>
+            <Logo isMobileView={isMobileView} appVersion={appVersion} />
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => setIsMobileView(!isMobileView)}
+                title={isMobileView ? "Wyłącz tryb mobilny" : "Włącz tryb mobilny (kompaktowy)"}
+                className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl border text-xs font-bold transition ${isMobileView ? 'bg-blue-600 text-white border-blue-500' : 'bg-slate-800 text-slate-300 border-slate-700 hover:bg-slate-700'}`}
+              >
+                <i data-lucide={isMobileView ? "smartphone" : "monitor"} className="w-3.5 h-3.5"></i>
+                <span className="hidden sm:inline">{isMobileView ? "Tryb Tel. ON" : "Tryb Tel."}</span>
+              </button>
+              <div className={`${isMobileView ? 'text-[10px]' : 'text-xs'} text-slate-400 text-right`}>
+                <div>Słówek: <span className="text-blue-400 font-bold">{filteredWords.length}</span></div>
+              </div>
+            </div>
+          </header>
+
+          <div className={`w-full ${isMobileView ? 'max-w-sm' : 'max-w-5xl'} flex-1 flex flex-col transition-all`}>
+            <div className={`bg-slate-900 ${isMobileView ? 'p-2.5' : 'p-3 sm:p-5'} rounded-2xl shadow-xl border border-slate-800 flex-1 w-full flex flex-col mb-2 transition-all`}>
+              
+              {/* MENU DZIAŁÓW Z IKONKAMI DLA PIERWSZOKLASISTY */}
+              <div className="mb-4 bg-slate-950/90 p-3 rounded-2xl border border-slate-800 space-y-2.5">
+                <div className="flex items-center justify-between">
+                  <span className="text-[11px] font-black text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
+                    <i data-lucide={currentCategoryMeta.icon} className={`w-4 h-4 ${currentCategoryMeta.color}`}></i>
+                    <span>Wybierz dział nauki:</span>
+                  </span>
+                  <span className={`text-[11px] font-extrabold px-2 py-0.5 rounded-lg border ${currentCategoryMeta.bg} ${currentCategoryMeta.color}`}>
+                    {currentCategoryMeta.label}
+                  </span>
+                </div>
+
+                {/* Przyjazne kafelki z ikonkami */}
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-1.5">
+                  {CATEGORIES_META.map((cat) => {
+                    const isSelected = selectedCategory === cat.id;
+                    return (
+                      <button
+                        key={cat.id}
+                        type="button"
+                        onClick={() => setSelectedCategory(cat.id)}
+                        className={`flex items-center gap-2 px-2.5 py-2 rounded-xl border text-left transition-all ${
+                          isSelected 
+                            ? 'bg-slate-800 border-blue-500 text-white font-black shadow-md scale-[1.02]' 
+                            : 'bg-slate-900/60 border-slate-800/80 text-slate-400 hover:bg-slate-800/70 hover:text-slate-200 font-bold'
+                        }`}
+                      >
+                        <div className={`p-1.5 rounded-lg ${isSelected ? 'bg-slate-950' : 'bg-slate-950/60'}`}>
+                          <i data-lucide={cat.icon} className={`w-4 h-4 ${cat.color}`}></i>
+                        </div>
+                        <span className="text-[11px] sm:text-xs truncate">{cat.label}</span>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* NAWIGACJA TRYBÓW NAUKI Z IKONKAMI */}
+              <nav className={`grid grid-cols-3 ${isMobileView ? 'gap-1.5 mb-3 p-1 text-xs' : 'gap-2 mb-5 p-1.5 text-xs sm:text-sm'} bg-slate-950 rounded-2xl font-extrabold border border-slate-800/80 transition-all`}>
+                <button 
+                  onClick={() => setActiveTab('flashcards')} 
+                  className={`py-2.5 rounded-xl flex items-center justify-center gap-2 transition ${activeTab === 'flashcards' ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-lg border border-blue-400/40' : 'text-slate-400 hover:text-slate-200'}`}
+                >
+                  <i data-lucide="layers" className="w-4 h-4"></i>
+                  <span>Fiszki</span>
+                </button>
+                <button 
+                  onClick={() => setActiveTab('typing')} 
+                  className={`py-2.5 rounded-xl flex items-center justify-center gap-2 transition ${activeTab === 'typing' ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-lg border border-blue-400/40' : 'text-slate-400 hover:text-slate-200'}`}
+                >
+                  <i data-lucide="edit-3" className="w-4 h-4"></i>
+                  <span>Pisanie</span>
+                </button>
+                <button 
+                  onClick={() => setActiveTab('dictionary')} 
+                  className={`py-2.5 rounded-xl flex items-center justify-center gap-2 transition ${activeTab === 'dictionary' ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-lg border border-blue-400/40' : 'text-slate-400 hover:text-slate-200'}`}
+                >
+                  <i data-lucide="book-open" className="w-4 h-4"></i>
+                  <span>Słownik</span>
+                </button>
+              </nav>
+
+              {/* FISZKI */}
+              {activeTab === 'flashcards' && (
+                <div className="flex-1 flex flex-col items-center justify-between space-y-4">
+                  <div className="flex flex-wrap items-center justify-center gap-2">
+                    <div className="flex items-center gap-1 bg-slate-950 p-1 rounded-xl text-xs font-bold border border-slate-800">
+                      <button onClick={() => setDirection('es-pl')} className={`px-3 py-1 rounded-lg transition ${direction === 'es-pl' ? 'bg-slate-800 text-blue-400' : 'text-slate-400'}`}>EN ➔ PL</button>
+                      <button onClick={() => setDirection('pl-es')} className={`px-3 py-1 rounded-lg transition ${direction === 'pl-es' ? 'bg-slate-800 text-blue-400' : 'text-slate-400'}`}>PL ➔ EN</button>
+                      <button onClick={() => setDirection('random')} className={`px-3 py-1 rounded-lg transition ${direction === 'random' ? 'bg-slate-800 text-blue-400' : 'text-slate-400'}`}>Losowo</button>
+                    </div>
+                  </div>
+
+                  {shuffledCards.length > 0 && fcData ? (
+                    <div className="w-full max-w-md flex-1 flex flex-col items-center justify-center my-2">
+                      <div 
+                        onClick={() => setIsFlipped(!isFlipped)} 
+                        className={`w-full ${isMobileView ? 'min-h-[200px] p-5' : 'min-h-[270px] p-8'} rounded-3xl bg-gradient-to-br ${isFlipped ? 'from-slate-950 to-slate-900 border-2 border-blue-500/60 text-white' : 'from-blue-600 via-indigo-600 to-purple-700 border-2 border-yellow-400/70 text-white'} shadow-2xl flex flex-col items-center justify-between cursor-pointer text-center transform hover:scale-[1.01] transition-all`}
+                      >
+                        <div className="w-full flex justify-between items-center text-xs font-bold opacity-90">
+                          <span className="bg-black/30 px-2.5 py-1 rounded-lg">{isFlipped ? 'Tłumaczenie' : 'Fiszka'}</span>
+                          <span className="bg-black/30 px-2.5 py-1 rounded-lg">{(fcIndex % shuffledCards.length) + 1} z {shuffledCards.length}</span>
+                        </div>
+                        <div className="my-auto space-y-2">
+                          <h2 className={`${isMobileView ? 'text-3xl' : 'text-4xl'} font-black tracking-tight`}>
+                            {isFlipped ? fcData.answer : fcData.question}
+                          </h2>
+                          <p className="text-xs font-semibold text-yellow-200/90">Dotknij karty, aby odwrócić</p>
+                        </div>
+                        <button 
+                          onClick={(e) => { 
+                            e.stopPropagation(); 
+                            speakText(isFlipped ? fcData.answer : fcData.question, isFlipped ? fcData.answerLang : fcData.questionLang); 
+                          }} 
+                          className="px-4 py-2 bg-black/30 hover:bg-black/50 rounded-full text-white transition flex items-center gap-2 text-xs font-bold"
+                        >
+                          <i data-lucide="volume-2" className="w-4 h-4"></i>
+                          <span>Posłuchaj wymowy</span>
+                        </button>
+                      </div>
+
+                      <div className="flex items-center gap-3 mt-5">
+                        <button onClick={() => { setIsFlipped(false); setFcIndex(prev => Math.max(0, prev - 1)); }} className="p-3 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-2xl border border-slate-700 transition">
+                          <i data-lucide="chevron-left" className="w-5 h-5"></i>
+                        </button>
+                        <button onClick={() => { setIsFlipped(false); setFcIndex(prev => prev + 1); }} className="px-6 py-3 bg-blue-600 hover:bg-blue-500 text-white rounded-2xl font-black text-sm shadow-lg transition">
+                          Następna fiszka ➔
+                        </button>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="text-slate-400 text-sm my-auto text-center font-bold">Brak słówek w wybranym dziale.</div>
+                  )}
+                </div>
+              )}
+
+              {/* ĆWICZENIE: PISANIE */}
+              {activeTab === 'typing' && (
+                <div className="flex-1 flex flex-col items-center justify-between space-y-4">
+                  <div className="w-full flex flex-wrap justify-between items-center gap-2">
+                    <div className="flex items-center gap-1 bg-slate-950 p-1 rounded-xl text-xs font-bold border border-slate-800">
+                      <button onClick={() => setTypeDirection('en-pl')} className={`px-2.5 py-1 rounded-lg transition ${typeDirection === 'en-pl' ? 'bg-slate-800 text-blue-400' : 'text-slate-400'}`}>EN ➔ PL</button>
+                      <button onClick={() => setTypeDirection('pl-en')} className={`px-2.5 py-1 rounded-lg transition ${typeDirection === 'pl-en' ? 'bg-slate-800 text-blue-400' : 'text-slate-400'}`}>PL ➔ EN</button>
+                      <button onClick={() => setTypeDirection('random')} className={`px-2.5 py-1 rounded-lg transition ${typeDirection === 'random' ? 'bg-slate-800 text-blue-400' : 'text-slate-400'}`}>Losowo</button>
+                    </div>
+                    <div className="text-xs font-extrabold text-slate-200 bg-slate-950 px-3.5 py-1.5 rounded-xl border border-slate-800 flex items-center gap-1.5">
+                      <i data-lucide="star" className="w-4 h-4 text-yellow-400"></i>
+                      <span>Punkty: <span className="text-yellow-400 text-sm">{typeScore}</span></span>
+                    </div>
+                  </div>
+
+                  {shuffledTypeItems.length > 0 && typeData ? (
+                    <div className="w-full max-w-md my-auto space-y-4">
+                      <div className="bg-slate-950/90 p-5 rounded-3xl border border-slate-800 text-center space-y-2.5 shadow-inner">
+                        <div className="text-xs text-blue-400 uppercase font-black tracking-wide">
+                          {typeIsEnToPl ? 'Wpisz tłumaczenie po polsku:' : 'Wpisz tłumaczenie po angielsku:'}
+                        </div>
+                        <h2 className="text-2xl sm:text-3xl font-black text-white flex items-center justify-center gap-2.5">
+                          <span>{typeData.question}</span>
+                          {!typeIsEnToPl && (
+                            <button onClick={() => speakText(currentTypeItem.es, 'en')} className="p-2 bg-slate-800 hover:bg-blue-600 text-slate-300 hover:text-white rounded-xl transition">
+                              <i data-lucide="volume-2" className="w-4 h-4"></i>
+                            </button>
+                          )}
+                        </h2>
+                      </div>
+
+                      <form onSubmit={handleCheckTypeAnswer} className="space-y-3">
+                        <input
+                          type="text"
+                          placeholder="Wpisz słowo..."
+                          value={userAnswer}
+                          disabled={typeResult !== null}
+                          onChange={(e) => setUserAnswer(e.target.value)}
+                          className="w-full px-4 py-3.5 bg-slate-800 border-2 border-slate-700 text-white rounded-2xl text-center text-lg font-bold focus:outline-none focus:border-blue-500"
+                        />
+
+                        {typeResult === null ? (
+                          <button type="submit" className="w-full py-3.5 bg-blue-600 hover:bg-blue-500 text-white font-black rounded-2xl text-sm sm:text-base shadow-lg transition">
+                            Sprawdź odpowiedź
+                          </button>
+                        ) : (
+                          <div className="space-y-3">
+                            {typeResult === 'correct' && (
+                              <div className="p-3.5 rounded-2xl text-center text-sm font-black bg-emerald-950 text-emerald-300 border border-emerald-700">
+                                Brawo! W pełni poprawnie!
+                              </div>
+                            )}
+                            {typeResult === 'typo' && (
+                              <div className="p-3.5 rounded-2xl text-center text-xs font-bold bg-amber-950/90 text-amber-300 border border-amber-700/60 space-y-1">
+                                <div>Zaliczone z drobną literówką!</div>
+                                <div className="text-sm text-white">Poprawnie: <span className="font-black text-yellow-400">{typeData.displayAnswer}</span></div>
+                              </div>
+                            )}
+                            {typeResult === 'incorrect' && (
+                              <div className="p-3.5 rounded-2xl text-center text-xs font-bold bg-red-950 text-red-300 border border-red-800 space-y-1">
+                                <div>Tym razem błędnie. Prawidłowa odpowiedź:</div>
+                                <div className="font-black text-white text-base">{typeWidthMatched}</div>
+                              </div>
+                            )}
+                            <button type="button" onClick={handleNextTypeItem} className="w-full py-3.5 bg-slate-800 hover:bg-slate-700 text-white font-black rounded-2xl text-sm sm:text-base border border-slate-700 transition">
+                              Następne słówko ➔
+                            </button>
+                          </div>
+                        )}
+                      </form>
+                    </div>
+                  ) : (
+                    <div className="text-slate-400 text-sm my-auto text-center font-bold">Brak słówek w wybranym dziale do ćwiczeń.</div>
+                  )}
+                </div>
+              )}
+
+              {/* SŁOWNIK */}
+              {activeTab === 'dictionary' && (
+                <div className="space-y-3 flex-1 flex flex-col max-w-2xl mx-auto w-full text-xs sm:text-sm">
+                  <div className="bg-slate-950 p-4 rounded-2xl border border-slate-800 space-y-3">
+                    <h3 className="font-black text-white flex items-center gap-2 text-sm sm:text-base">
+                      <i data-lucide={currentCategoryMeta.icon} className={`w-4 h-4 ${currentCategoryMeta.color}`}></i>
+                      <span>Słownik: {currentCategoryMeta.label} ({filteredWords.length} słówek)</span>
+                    </h3>
+                    <input
+                      type="text"
+                      placeholder="Szukaj w słowniku..."
+                      value={searchTerm}
+                      onChange={(e) => setSearchTerm(e.target.value)}
+                      className="w-full px-3.5 py-2.5 bg-slate-900 border border-slate-700 text-white rounded-xl text-xs sm:text-sm font-bold focus:outline-none focus:border-blue-500"
+                    />
+                    <div className="max-h-[260px] overflow-y-auto border border-slate-800 rounded-xl bg-slate-900/50 custom-scrollbar">
+                      <table className="w-full text-left">
+                        <thead className="bg-slate-900 border-b border-slate-800 sticky top-0 text-slate-400 uppercase font-black text-[11px]">
+                          <tr>
+                            <th className="p-3">Angielski</th>
+                            <th className="p-3">Polski</th>
+                            <th className="p-3 text-right">Wymowa</th>
+                          </tr>
+                        </thead>
+                        <tbody className="divide-y divide-slate-800 font-bold">
+                          {filteredDictionary.map((item) => (
+                            <tr key={item.id} className="hover:bg-slate-800/40 transition">
+                              <td className="p-3 text-blue-300 text-sm sm:text-base">{item.es}</td>
+                              <td className="p-3 text-slate-200">{item.pl}</td>
+                              <td className="p-3 text-right">
+                                <button onClick={() => speakText(item.es, 'en')} className="p-2 bg-slate-800 hover:bg-blue-600 text-slate-300 hover:text-white rounded-xl transition">
+                                  <i data-lucide="volume-2" className="w-4 h-4"></i>
+                                </button>
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+            </div>
+          </div>
+
+          <footer className={`w-full ${isMobileView ? 'max-w-sm' : 'max-w-5xl'} text-center py-1.5 text-[10px] text-slate-500 font-medium space-y-0.5 transition-all`}>
+            <div>Angielski Master Kids • Klasa 1 Szkoły Podstawowej</div>
+            <div>Ostatnia aktualizacja kodu (plik): <span className="text-slate-400 font-semibold">{fileLastModified || 'Dzisiaj'}</span></div>
+          </footer>
+        </div>
+      );
+    }
+
+    ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+  </script>
+</body>
+</html>
