@@ -26,11 +26,10 @@
   <script type="text/babel">
     const { useState, useEffect, useRef } = React;
 
-    // Definicja działów wraz z dedykowanymi ikonami i kolorami dla pierwszoklasisty
     const CATEGORIES_META = [
       { id: 'Wszystkie działy', label: 'Wszystkie', icon: 'sparkles', color: 'text-yellow-400', bg: 'bg-yellow-500/10 border-yellow-500/40' },
       { id: 'Kolory (Colours)', label: 'Kolory', icon: 'palette', color: 'text-pink-400', bg: 'bg-pink-500/10 border-pink-500/40' },
-      { id: 'Liczby (Numbers 1-10)', label: 'Liczby 1-10', icon: 'hash', color: 'text-cyan-400', bg: 'bg-cyan-500/10 border-cyan-500/40' },
+      { id: 'Liczby (Numbers)', label: 'Liczby', icon: 'hash', color: 'text-cyan-400', bg: 'bg-cyan-500/10 border-cyan-500/40' },
       { id: 'Zabawki (Toys)', label: 'Zabawki', icon: 'gamepad-2', color: 'text-purple-400', bg: 'bg-purple-500/10 border-purple-500/40' },
       { id: 'Szkoła (School)', label: 'Szkoła', icon: 'backpack', color: 'text-amber-400', bg: 'bg-amber-500/10 border-amber-500/40' },
       { id: 'Zwierzęta (Animals)', label: 'Zwierzęta', icon: 'paw-print', color: 'text-emerald-400', bg: 'bg-emerald-500/10 border-emerald-500/40' },
@@ -38,61 +37,126 @@
       { id: 'Zwroty i Gramatyka (Grammar & Phrases)', label: 'Zwroty i zdania', icon: 'message-circle', color: 'text-blue-400', bg: 'bg-blue-500/10 border-blue-500/40' }
     ];
 
-    // Kompletna baza słówek i gramatyki dla Klasy 1 Szkoły Podstawowej
     const SCHOOL_DATABASE = [
+      // KOLORY (COLOURS) - 12 haseł
       { id: '1', category: 'Kolory (Colours)', es: 'red', pl: 'czerwony' },
       { id: '2', category: 'Kolory (Colours)', es: 'blue', pl: 'niebieski' },
       { id: '3', category: 'Kolory (Colours)', es: 'yellow', pl: 'żółty' },
       { id: '4', category: 'Kolory (Colours)', es: 'green', pl: 'zielony' },
       { id: '5', category: 'Kolory (Colours)', es: 'pink', pl: 'różowy' },
       { id: '6', category: 'Kolory (Colours)', es: 'orange', pl: 'pomarańczowy' },
-      
-      { id: '7', category: 'Liczby (Numbers 1-10)', es: 'one', pl: 'jeden' },
-      { id: '8', category: 'Liczby (Numbers 1-10)', es: 'two', pl: 'dwa' },
-      { id: '9', category: 'Liczby (Numbers 1-10)', es: 'three', pl: 'trzy' },
-      { id: '10', category: 'Liczby (Numbers 1-10)', es: 'four', pl: 'cztery' },
-      { id: '11', category: 'Liczby (Numbers 1-10)', es: 'five', pl: 'pięć' },
-      { id: '12', category: 'Liczby (Numbers 1-10)', es: 'six', pl: 'sześć' },
-      { id: '13', category: 'Liczby (Numbers 1-10)', es: 'seven', pl: 'siedem' },
-      { id: '14', category: 'Liczby (Numbers 1-10)', es: 'eight', pl: 'osiem' },
-      { id: '15', category: 'Liczby (Numbers 1-10)', es: 'nine', pl: 'dziewięć' },
-      { id: '16', category: 'Liczby (Numbers 1-10)', es: 'ten', pl: 'dziesięć' },
+      { id: '7', category: 'Kolory (Colours)', es: 'purple', pl: 'fioletowy' },
+      { id: '8', category: 'Kolory (Colours)', es: 'black', pl: 'czarny' },
+      { id: '9', category: 'Kolory (Colours)', es: 'white', pl: 'biały' },
+      { id: '10', category: 'Kolory (Colours)', es: 'brown', pl: 'brązowy' },
+      { id: '11', category: 'Kolory (Colours)', es: 'grey', pl: 'szary' },
+      { id: '12', category: 'Kolory (Colours)', es: 'gold', pl: 'złoty' },
 
-      { id: '17', category: 'Zabawki (Toys)', es: 'doll', pl: 'lalka' },
-      { id: '18', category: 'Zabawki (Toys)', es: 'ball', pl: 'piłka' },
-      { id: '19', category: 'Zabawki (Toys)', es: 'car', pl: 'samochodzik' },
-      { id: '20', category: 'Zabawki (Toys)', es: 'teddy bear', pl: 'pluszowy miś' },
-      { id: '21', category: 'Zabawki (Toys)', es: 'train', pl: 'pociąg' },
-      { id: '22', category: 'Zabawki (Toys)', es: 'kite', pl: 'latawiec' },
+      // LICZBY (NUMBERS) - 14 haseł
+      { id: '13', category: 'Liczby (Numbers)', es: 'zero', pl: 'zero' },
+      { id: '14', category: 'Liczby (Numbers)', es: 'one', pl: 'jeden' },
+      { id: '15', category: 'Liczby (Numbers)', es: 'two', pl: 'dwa' },
+      { id: '16', category: 'Liczby (Numbers)', es: 'three', pl: 'trzy' },
+      { id: '17', category: 'Liczby (Numbers)', es: 'four', pl: 'cztery' },
+      { id: '18', category: 'Liczby (Numbers)', es: 'five', pl: 'pięć' },
+      { id: '19', category: 'Liczby (Numbers)', es: 'six', pl: 'sześć' },
+      { id: '20', category: 'Liczby (Numbers)', es: 'seven', pl: 'siedem' },
+      { id: '21', category: 'Liczby (Numbers)', es: 'eight', pl: 'osiem' },
+      { id: '22', category: 'Liczby (Numbers)', es: 'nine', pl: 'dziewięć' },
+      { id: '23', category: 'Liczby (Numbers)', es: 'ten', pl: 'dziesięć' },
+      { id: '24', category: 'Liczby (Numbers)', es: 'How old are you?', pl: 'Ile masz lat?' },
+      { id: '25', category: 'Liczby (Numbers)', es: 'I am seven', pl: 'Mam siedem lat' },
+      { id: '26', category: 'Liczby (Numbers)', es: 'I am eight', pl: 'Mam osiem lat' },
 
-      { id: '23', category: 'Szkoła (School)', es: 'pen', pl: 'długopis' },
-      { id: '24', category: 'Szkoła (School)', es: 'pencil', pl: 'ołówek' },
-      { id: '25', category: 'Szkoła (School)', es: 'book', pl: 'książka' },
-      { id: '26', category: 'Szkoła (School)', es: 'bag', pl: 'torba, plecak' },
-      { id: '27', category: 'Szkoła (School)', es: 'rubber', pl: 'gumka do ścierania' },
+      // ZABAWKI (TOYS) - 14 haseł
+      { id: '27', category: 'Zabawki (Toys)', es: 'doll', pl: 'lalka' },
+      { id: '28', category: 'Zabawki (Toys)', es: 'ball', pl: 'piłka' },
+      { id: '29', category: 'Zabawki (Toys)', es: 'car', pl: 'samochodzik' },
+      { id: '30', category: 'Zabawki (Toys)', es: 'teddy bear', pl: 'pluszowy miś' },
+      { id: '31', category: 'Zabawki (Toys)', es: 'train', pl: 'pociąg' },
+      { id: '32', category: 'Zabawki (Toys)', es: 'kite', pl: 'latawiec' },
+      { id: '33', category: 'Zabawki (Toys)', es: 'bike', pl: 'rower' },
+      { id: '34', category: 'Zabawki (Toys)', es: 'plane', pl: 'samolot' },
+      { id: '35', category: 'Zabawki (Toys)', es: 'robot', pl: 'robot' },
+      { id: '36', category: 'Zabawki (Toys)', es: 'blocks', pl: 'klocki' },
+      { id: '37', category: 'Zabawki (Toys)', es: 'puzzle', pl: 'puzzle, układanka' },
+      { id: '38', category: 'Zabawki (Toys)', es: 'scooter', pl: 'hulajnoga' },
+      { id: '39', category: 'Zabawki (Toys)', es: 'computer game', pl: 'gra komputerowa' },
+      { id: '40', category: 'Zabawki (Toys)', es: 'board game', pl: 'gra planszowa' },
 
-      { id: '28', category: 'Zwierzęta (Animals)', es: 'cat', pl: 'kot' },
-      { id: '29', category: 'Zwierzęta (Animals)', es: 'dog', pl: 'pies' },
-      { id: '30', category: 'Zwierzęta (Animals)', es: 'bird', pl: 'ptak' },
-      { id: '31', category: 'Zwierzęta (Animals)', es: 'fish', pl: 'ryba' },
-      { id: '32', category: 'Zwierzęta (Animals)', es: 'horse', pl: 'koń' },
+      // SZKOŁA (SCHOOL) - 14 haseł
+      { id: '41', category: 'Szkoła (School)', es: 'pen', pl: 'długopis' },
+      { id: '42', category: 'Szkoła (School)', es: 'pencil', pl: 'ołówek' },
+      { id: '43', category: 'Szkoła (School)', es: 'book', pl: 'książka' },
+      { id: '44', category: 'Szkoła (School)', es: 'bag', pl: 'torba, plecak' },
+      { id: '45', category: 'Szkoła (School)', es: 'rubber', pl: 'gumka do ścierania' },
+      { id: '46', category: 'Szkoła (School)', es: 'ruler', pl: 'linijka' },
+      { id: '47', category: 'Szkoła (School)', es: 'pencil case', pl: 'piórnik' },
+      { id: '48', category: 'Szkoła (School)', es: 'sharpener', pl: 'temperówka' },
+      { id: '49', category: 'Szkoła (School)', es: 'crayon', pl: 'kredka świecowa' },
+      { id: '50', category: 'Szkoła (School)', es: 'scissors', pl: 'nożyczki' },
+      { id: '51', category: 'Szkoła (School)', es: 'glue', pl: 'klej' },
+      { id: '52', category: 'Szkoła (School)', es: 'desk', pl: 'ławka szkolna, biurko' },
+      { id: '53', category: 'Szkoła (School)', es: 'chair', pl: 'krzesło' },
+      { id: '54', category: 'Szkoła (School)', es: 'board', pl: 'tablica' },
 
-      { id: '33', category: 'Rodzina (Family)', es: 'mum', pl: 'mama' },
-      { id: '34', category: 'Rodzina (Family)', es: 'dad', pl: 'tata' },
-      { id: '35', category: 'Rodzina (Family)', es: 'sister', pl: 'siostra' },
-      { id: '36', category: 'Rodzina (Family)', es: 'brother', pl: 'brat' },
-      { id: '37', category: 'Rodzina (Family)', es: 'grandma', pl: 'babcia' },
-      { id: '38', category: 'Rodzina (Family)', es: 'grandad', pl: 'dziadek' },
+      // ZWIERZĘTA (ANIMALS) - 16 haseł
+      { id: '55', category: 'Zwierzęta (Animals)', es: 'cat', pl: 'kot' },
+      { id: '56', category: 'Zwierzęta (Animals)', es: 'dog', pl: 'pies' },
+      { id: '57', category: 'Zwierzęta (Animals)', es: 'bird', pl: 'ptak' },
+      { id: '58', category: 'Zwierzęta (Animals)', es: 'fish', pl: 'ryba' },
+      { id: '59', category: 'Zwierzęta (Animals)', es: 'horse', pl: 'koń' },
+      { id: '60', category: 'Zwierzęta (Animals)', es: 'rabbit', pl: 'królik' },
+      { id: '61', category: 'Zwierzęta (Animals)', es: 'hamster', pl: 'chomik' },
+      { id: '62', category: 'Zwierzęta (Animals)', es: 'mouse', pl: 'mysz' },
+      { id: '63', category: 'Zwierzęta (Animals)', es: 'duck', pl: 'kaczka' },
+      { id: '64', category: 'Zwierzęta (Animals)', es: 'pig', pl: 'świnka' },
+      { id: '65', category: 'Zwierzęta (Animals)', es: 'cow', pl: 'krowa' },
+      { id: '66', category: 'Zwierzęta (Animals)', es: 'sheep', pl: 'owca' },
+      { id: '67', category: 'Zwierzęta (Animals)', es: 'frog', pl: 'żaba' },
+      { id: '68', category: 'Zwierzęta (Animals)', es: 'spider', pl: 'pająk' },
+      { id: '69', category: 'Zwierzęta (Animals)', es: 'butterfly', pl: 'motyl' },
+      { id: '70', category: 'Zwierzęta (Animals)', es: 'turtle', pl: 'żółw' },
 
-      { id: '39', category: 'Zwroty i Gramatyka (Grammar & Phrases)', es: 'Hello!', pl: 'Cześć!' },
-      { id: '40', category: 'Zwroty i Gramatyka (Grammar & Phrases)', es: 'Goodbye!', pl: 'Do widzenia!' },
-      { id: '41', category: 'Zwroty i Gramatyka (Grammar & Phrases)', es: 'I can jump', pl: 'Potrafię skakać' },
-      { id: '42', category: 'Zwroty i Gramatyka (Grammar & Phrases)', es: 'I can run', pl: 'Potrafię biegać' },
-      { id: '43', category: 'Zwroty i Gramatyka (Grammar & Phrases)', es: 'I have got a ball', pl: 'Mam piłkę' },
-      { id: '44', category: 'Zwroty i Gramatyka (Grammar & Phrases)', es: 'What is your name?', pl: 'Jak masz na imię?' }
+      // RODZINA (FAMILY) - 14 haseł
+      { id: '71', category: 'Rodzina (Family)', es: 'mum', pl: 'mama' },
+      { id: '72', category: 'Rodzina (Family)', es: 'dad', pl: 'tata' },
+      { id: '73', category: 'Rodzina (Family)', es: 'sister', pl: 'siostra' },
+      { id: '74', category: 'Rodzina (Family)', es: 'brother', pl: 'brat' },
+      { id: '75', category: 'Rodzina (Family)', es: 'grandma', pl: 'babcia' },
+      { id: '76', category: 'Rodzina (Family)', es: 'grandad', pl: 'dziadek' },
+      { id: '77', category: 'Rodzina (Family)', es: 'baby', pl: 'dzidziuś, niemowlę' },
+      { id: '78', category: 'Rodzina (Family)', es: 'family', pl: 'rodzina' },
+      { id: '79', category: 'Rodzina (Family)', es: 'friend', pl: 'przyjaciel, kolega' },
+      { id: '80', category: 'Rodzina (Family)', es: 'boy', pl: 'chłopiec' },
+      { id: '81', category: 'Rodzina (Family)', es: 'girl', pl: 'dziewczynka' },
+      { id: '82', category: 'Rodzina (Family)', es: 'twins', pl: 'bliźniaki' },
+      { id: '83', category: 'Rodzina (Family)', es: 'This is my mum', pl: 'To jest moja mama' },
+      { id: '84', category: 'Rodzina (Family)', es: 'This is my dad', pl: 'To jest mój tata' },
+
+      // ZWROTY I GRAMATYKA (GRAMMAR & PHRASES) - 20 haseł
+      { id: '85', category: 'Zwroty i Gramatyka (Grammar & Phrases)', es: 'Hello!', pl: 'Cześć!' },
+      { id: '86', category: 'Zwroty i Gramatyka (Grammar & Phrases)', es: 'Goodbye!', pl: 'Do widzenia!' },
+      { id: '87', category: 'Zwroty i Gramatyka (Grammar & Phrases)', es: 'Please', pl: 'Proszę' },
+      { id: '88', category: 'Zwroty i Gramatyka (Grammar & Phrases)', es: 'Thank you', pl: 'Dziękuję' },
+      { id: '89', category: 'Zwroty i Gramatyka (Grammar & Phrases)', es: 'Sorry', pl: 'Przepraszam' },
+      { id: '90', category: 'Zwroty i Gramatyka (Grammar & Phrases)', es: 'Yes, it is', pl: 'Tak, to jest' },
+      { id: '91', category: 'Zwroty i Gramatyka (Grammar & Phrases)', es: 'No, it isn\'t', pl: 'Nie, to nie jest' },
+      { id: '92', category: 'Zwroty i Gramatyka (Grammar & Phrases)', es: 'What is your name?', pl: 'Jak masz na imię?' },
+      { id: '93', category: 'Zwroty i Gramatyka (Grammar & Phrases)', es: 'My name is...', pl: 'Mam na imię...' },
+      { id: '94', category: 'Zwroty i Gramatyka (Grammar & Phrases)', es: 'What\'s this?', pl: 'Co to jest?' },
+      { id: '95', category: 'Zwroty i Gramatyka (Grammar & Phrases)', es: 'It\'s a pen', pl: 'To jest długopis' },
+      { id: '96', category: 'Zwroty i Gramatyka (Grammar & Phrases)', es: 'I have got a ball', pl: 'Mam piłkę' },
+      { id: '97', category: 'Zwroty i Gramatyka (Grammar & Phrases)', es: 'I haven\'t got a bike', pl: 'Nie mam roweru' },
+      { id: '98', category: 'Zwroty i Gramatyka (Grammar & Phrases)', es: 'I can jump', pl: 'Potrafię skakać' },
+      { id: '99', category: 'Zwroty i Gramatyka (Grammar & Phrases)', es: 'I can run', pl: 'Potrafię biegać' },
+      { id: '100', category: 'Zwroty i Gramatyka (Grammar & Phrases)', es: 'I can swim', pl: 'Potrafię pływać' },
+      { id: '101', category: 'Zwroty i Gramatyka (Grammar & Phrases)', es: 'I like cats', pl: 'Lubię koty' },
+      { id: '102', category: 'Zwroty i Gramatyka (Grammar & Phrases)', es: 'Sit down, please', pl: 'Usiądź, proszę' },
+      { id: '103', category: 'Zwroty i Gramatyka (Grammar & Phrases)', es: 'Stand up, please', pl: 'Wstań, proszę' },
+      { id: '104', category: 'Zwroty i Gramatyka (Grammar & Phrases)', es: 'Open your book', pl: 'Otwórz książkę' }
     ];
 
-    // Zachowane pierwotne logo z książką oraz wersją
     function Logo({ isMobileView, appVersion }) {
       return (
         <div className="flex items-center gap-2.5">
@@ -110,8 +174,8 @@
             </div>
           </div>
           <div>
-            <h1 className={`${isMobileView ? 'text-sm' : 'text-lg'} font-black tracking-tight text-white flex items-center gap-1.5`}>
-              ANGIELSKI MASTER KIDS <span className="text-blue-500">{appVersion}</span>
+            <h1 className={`${isMobileView ? 'text-sm' : 'text-lg'} font-black tracking-tight text-white flex items-center gap-1`}>
+              ANGIELSKI <span className="text-blue-500">MASTER KIDS {appVersion}</span>
             </h1>
             <p className={`${isMobileView ? 'text-[9px]' : 'text-[11px]'} text-slate-400 font-medium`}>Seria: Językowy Master • Klasa 1</p>
           </div>
@@ -124,7 +188,6 @@
       const [selectedCategory, setSelectedCategory] = useState('Wszystkie działy');
 
       useEffect(() => {
-        // Automatyczne pobieranie wersji z tagu <title>
         try {
           const titleText = document.title;
           const match = titleText.match(/([\d\.]+)\s*$/);
@@ -152,7 +215,6 @@
       const [searchTerm, setSearchTerm] = useState('');
       const [direction, setDirection] = useState('random');
 
-      // Stan dla ćwiczenia pisania
       const [typeDirection, setTypeDirection] = useState('random');
       const [shuffledTypeItems, setShuffledTypeItems] = useState([]);
       const [typeIndex, setTypeIndex] = useState(0);
@@ -162,7 +224,6 @@
       const [typeScore, setTypeScore] = useState(0);
       const [typeIsEnToPl, setTypeIsEnToPl] = useState(true);
 
-      // Stan dla fiszek
       const [shuffledCards, setShuffledCards] = useState([]);
       const [fcIndex, setFcIndex] = useState(0);
       const [isFlipped, setIsFlipped] = useState(false);
@@ -248,7 +309,7 @@
 
       const speakText = (text, forcedLang = null) => {
         if (!text) return;
-        const cleanText = text.split(/[\/,;]/)[0].trim();
+        const cleanText = text.split(/[\/,;]/)[0].replace(/\.\.\./g, '').trim();
         let targetLang = forcedLang || 'en';
 
         try {
@@ -276,7 +337,6 @@
         window.speechSynthesis.speak(utterance);
       };
 
-      // Inicjalizacja fiszek przy zmianie działu
       useEffect(() => {
         if (filteredWords.length > 0) {
           setShuffledCards(shuffleArray(filteredWords));
@@ -287,7 +347,6 @@
         }
       }, [selectedCategory]);
 
-      // Inicjalizacja pisania przy zmianie działu lub kierunku
       useEffect(() => {
         if (filteredWords.length > 0) {
           setShuffledTypeItems(shuffleArray(filteredWords));
@@ -365,7 +424,6 @@
       return (
         <div className={`min-h-[100dvh] w-full bg-slate-950 flex flex-col items-center justify-between ${isMobileView ? 'p-1.5 max-w-sm mx-auto text-xs' : 'p-2 sm:p-4'} text-slate-100 transition-all`}>
           
-          {/* ZACHOWANY POPRZEDNI WYGLĄD NAGŁÓWKA WRAZ Z LOGO I WERSJĄ */}
           <header className={`w-full ${isMobileView ? 'max-w-sm p-2.5' : 'max-w-5xl p-4'} bg-slate-900 rounded-2xl shadow-xl border border-slate-800 mb-3 flex justify-between items-center transition-all`}>
             <Logo isMobileView={isMobileView} appVersion={appVersion} />
             <div className="flex items-center gap-2">
@@ -386,7 +444,6 @@
           <div className={`w-full ${isMobileView ? 'max-w-sm' : 'max-w-5xl'} flex-1 flex flex-col transition-all`}>
             <div className={`bg-slate-900 ${isMobileView ? 'p-2.5' : 'p-3 sm:p-5'} rounded-2xl shadow-xl border border-slate-800 flex-1 w-full flex flex-col mb-2 transition-all`}>
               
-              {/* MENU DZIAŁÓW Z IKONKAMI DLA PIERWSZOKLASISTY */}
               <div className="mb-4 bg-slate-950/90 p-3 rounded-2xl border border-slate-800 space-y-2.5">
                 <div className="flex items-center justify-between">
                   <span className="text-[11px] font-black text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
@@ -394,11 +451,10 @@
                     <span>Wybierz dział nauki:</span>
                   </span>
                   <span className={`text-[11px] font-extrabold px-2 py-0.5 rounded-lg border ${currentCategoryMeta.bg} ${currentCategoryMeta.color}`}>
-                    {currentCategoryMeta.label}
+                    {currentCategoryMeta.label} ({filteredWords.length})
                   </span>
                 </div>
 
-                {/* Przyjazne kafelki z ikonkami */}
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-1.5">
                   {CATEGORIES_META.map((cat) => {
                     const isSelected = selectedCategory === cat.id;
@@ -423,7 +479,6 @@
                 </div>
               </div>
 
-              {/* NAWIGACJA TRYBÓW NAUKI Z IKONKAMI */}
               <nav className={`grid grid-cols-3 ${isMobileView ? 'gap-1.5 mb-3 p-1 text-xs' : 'gap-2 mb-5 p-1.5 text-xs sm:text-sm'} bg-slate-950 rounded-2xl font-extrabold border border-slate-800/80 transition-all`}>
                 <button 
                   onClick={() => setActiveTab('flashcards')} 
@@ -448,7 +503,6 @@
                 </button>
               </nav>
 
-              {/* FISZKI */}
               {activeTab === 'flashcards' && (
                 <div className="flex-1 flex flex-col items-center justify-between space-y-4">
                   <div className="flex flex-wrap items-center justify-center gap-2">
@@ -470,7 +524,7 @@
                           <span className="bg-black/30 px-2.5 py-1 rounded-lg">{(fcIndex % shuffledCards.length) + 1} z {shuffledCards.length}</span>
                         </div>
                         <div className="my-auto space-y-2">
-                          <h2 className={`${isMobileView ? 'text-3xl' : 'text-4xl'} font-black tracking-tight`}>
+                          <h2 className={`${isMobileView ? 'text-2xl' : 'text-3xl sm:text-4xl'} font-black tracking-tight`}>
                             {isFlipped ? fcData.answer : fcData.question}
                           </h2>
                           <p className="text-xs font-semibold text-yellow-200/90">Dotknij karty, aby odwrócić</p>
@@ -502,7 +556,6 @@
                 </div>
               )}
 
-              {/* ĆWICZENIE: PISANIE */}
               {activeTab === 'typing' && (
                 <div className="flex-1 flex flex-col items-center justify-between space-y-4">
                   <div className="w-full flex flex-wrap justify-between items-center gap-2">
@@ -579,7 +632,6 @@
                 </div>
               )}
 
-              {/* SŁOWNIK */}
               {activeTab === 'dictionary' && (
                 <div className="space-y-3 flex-1 flex flex-col max-w-2xl mx-auto w-full text-xs sm:text-sm">
                   <div className="bg-slate-950 p-4 rounded-2xl border border-slate-800 space-y-3">

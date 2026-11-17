@@ -26,7 +26,7 @@
   <script type="text/babel">
     const { useState, useEffect, useRef } = React;
 
-    // Rozbudowana baza danych łącząca program klasy 5 oraz unikalne zasoby stopniowania z pliku źródłowego (bez duplikatów)
+    // Rozbudowana baza danych zawierająca słownictwo, gramatykę, stopniowanie oraz nowe zdania z as...as i than
     const generateMassiveClass5Database = () => {
       const db = [];
 
@@ -157,8 +157,9 @@
         db.push({ dept: 'Czasowniki Modalne', es: item[0], pl: item[1] });
       }
 
-      // 10. Stopniowanie Przymiotników (wzbogacone o unikalne przykłady z pliku źródłowego bez duplikatów)
+      // 10. Stopniowanie Przymiotników (wzbogacone o przymiotniki oraz po 30 zdań z as...as oraz than)
       const stopniowanieList = [
+        // Podstawowe formy przymiotników
         ["good - better - the best", "dobry - lepszy - najlepszy"],
         ["bad - worse - the worst", "zły - gorszy - najgorszy"],
         ["big - bigger - the biggest", "duży - większy - największy"],
@@ -224,7 +225,7 @@
         ["high - higher - the highest", "wysoki - wyższy - najwyższy"],
         ["low - lower - the lowest", "niski - niższy - najniższy"],
         ["deep - deeper - the deepest", "głęboki - głębszy - najgłębszy"],
-        ["wide - wider - the widest", "szeroki - szerszy - najszerszy"],
+        ["wide - wider - the widest", "szeroki - szerszy - najszerzy"],
         ["narrow - narrower - the narrowest", "wąski - węższy - najwęższy"],
         ["thick - thicker - the thickest", "gruby - grubszy - najgrubszy"],
         ["brave - braver - the bravest", "odważny - odważniejszy - najodważniejszy"],
@@ -254,8 +255,73 @@
         ["exciting - more exciting - the most exciting", "ekscytujący - bardziej ekscytujący - najbardziej ekscytujący"],
         ["tired - more tired - the most tired", "zmęczony - bardziej zmęczony - najbardziej zmęczony"],
         ["nervous - more nervous - the most nervous", "nerwowy - bardziej nerwowy - najbardziej nerwowy"],
-        ["creative - more creative - the most creative", "kreatywny - bardziej kreatywny - najbardziej kreatywny"]
+        ["creative - more creative - the most creative", "kreatywny - bardziej kreatywny - najbardziej kreatywny"],
+
+        // 30 zdań z as ... as
+        ["My car is as fast as yours", "Mój samochód jest tak szybki jak twój"],
+        ["She is as clever as her brother", "Ona jest tak bystra jak jej brat"],
+        ["This book is as interesting as that one", "Ta książka jest tak ciekawa jak tamta"],
+        ["He is as tall as his father", "On jest tak wysoki jak jego ojciec"],
+        ["Today is as hot as yesterday", "Dzisiaj jest tak gorąco jak wczoraj"],
+        ["English is as important as Maths", "Angielski jest tak ważny jak matematyka"],
+        ["My dog is as friendly as yours", "Mój pies jest tak przyjazny jak twój"],
+        ["This box is as heavy as that one", "To pudełko jest tak ciężkie jak tamto"],
+        ["Lions are as dangerous as tigers", "Lwy są tak niebezpieczne jak tygrysy"],
+        ["Your room is as clean as mine", "Twój pokój jest tak czysty jak mój"],
+        ["This exercise is as easy as the previous one", "To ćwiczenie jest tak łatwe jak poprzednie"],
+        ["Summer is as nice as spring", "Lato jest tak miłe jak wiosna"],
+        ["His house is as big as ours", "Jego dom jest tak duży jak nasz"],
+        ["This computer is as modern as that one", "Ten komputer jest tak nowoczesny jak tamten"],
+        ["She is as happy as a child", "Ona jest tak szczęśliwa jak dziecko"],
+        ["Water is as cold as ice", "Woda jest tak zimna jak lód"],
+        ["This pen is as cheap as that one", "Ten długopis jest tak tani jak tamten"],
+        ["This film is as boring as the other one", "Ten film jest tak nudny jak tamten"],
+        ["Her hair is as long as mine", "Jej włosy są tak długie jak moje"],
+        ["Your bag is as nice as hers", "Twoja torba jest tak ładna jak jej"],
+        ["This test is as difficult as the last one", "Ten test jest tak trudny jak ostatni"],
+        ["Peter is as strong as Paul", "Piotr jest tak silny jak Paweł"],
+        ["The soup is as hot as tea", "Zupa jest tak gorąca jak herbata"],
+        ["My phone is as good as new", "Mój telefon jest tak dobry jak nowy"],
+        ["That city is as old as Rome", "To miasto jest tak stare jak Rzym"],
+        ["The night is as dark as coal", "Noc jest tak ciemna jak węgiel"],
+        ["This street is as wide as that one", "Ta ulica jest tak szeroka jak tamta"],
+        ["His bike is as clean as new", "Jego rower jest tak czysty jak nowy"],
+        ["She is as quiet as a mouse", "Ona jest cicha jak mysz"],
+        ["The coffee is as sweet as honey", "Kawa jest tak słodka jak miód"],
+
+        // 30 zdań z than
+        ["Tom is taller than Peter", "Tom jest wyższy niż Piotr"],
+        ["My car is faster than yours", "Mój samochód jest szybszy niż twój"],
+        ["This book is more interesting than that one", "Ta książka jest ciekawsza niż tamta"],
+        ["She is happier than before", "Ona jest szczęśliwsza niż wcześniej"],
+        ["Today is hotter than yesterday", "Dzisiaj jest goręcej niż wczoraj"],
+        ["Maths is harder than Art", "Matematyka jest trudniejsza niż plastyka"],
+        ["An elephant is bigger than a dog", "Słoń jest większy niż pies"],
+        ["Gold is more expensive than silver", "Złoto jest droższe niż srebro"],
+        ["A mouse is smaller than a cat", "Mysz jest mniejsza niż kot"],
+        ["Winter is colder than autumn", "Zima jest zimniejsza niż jesień"],
+        ["My brother is older than me", "Mój brat jest starszy ode mnie"],
+        ["This exercise is easier than the last one", "To ćwiczenie jest łatwiejsze niż ostatnie"],
+        ["Lions are more dangerous than cats", "Lwy są bardziej niebezpieczne niż koty"],
+        ["His bike is cleaner than mine", "Jego rower jest czystszy niż mój"],
+        ["Planes are faster than trains", "Samoloty są szybsze niż pociągi"],
+        ["English is easier than Chinese", "Angielski jest łatwiejszy niż chiński"],
+        ["This computer is newer than that one", "Ten komputer jest nowszy niż tamten"],
+        ["Your room is tidier than mine", "Twój pokój jest porządniejszy niż mój"],
+        ["The blue whale is heavier than an elephant", "Płetwal błękitny jest cięższy niż słoń"],
+        ["Mount Everest is higher than Mont Blanc", "Mount Everest jest wyższy niż Mont Blanc"],
+        ["A cheetah is faster than a lion", "Gepard jest szybszy niż lew"],
+        ["Iron is stronger than wood", "Żelazo jest silniejsze niż drewno"],
+        ["This test is worse than the previous one", "Ten test jest gorszy niż poprzedni"],
+        ["Her bag is nicer than mine", "Jej torba jest ładniejsza niż moja"],
+        ["My tea is sweeter than yours", "Moja herbata jest słodsza niż twoja"],
+        ["The sun is bigger than the moon", "Słońce jest większe niż księżyc"],
+        ["A river is deeper than a puddle", "Rzeka jest głębsza niż kałuża"],
+        ["This film is better than that one", "Ten film jest lepszy niż tamten"],
+        ["Tokyo is bigger than Warsaw", "Tokio jest większe niż Warszawa"],
+        ["Steel is stronger than iron", "Stal jest mocniejsza niż żelazo"]
       ];
+
       for(let i=0; i<stopniowanieList.length; i++) {
         const item = stopniowanieList[i];
         db.push({ dept: 'Stopniowanie Przymiotników', es: item[0], pl: item[1] });
@@ -282,7 +348,7 @@
           </div>
           <div>
             <h1 className={`${isMobileView ? 'text-xs' : 'text-base'} font-black tracking-tight text-white flex items-center gap-1`}>
-              ANGLIELSKI MASTER JUNIOR <span className="text-blue-500">{appVersion}</span>
+              ANGLIELSKI <span className="text-blue-500">MASTER KIDS {appVersion}</span>
             </h1>
             <p className={`${isMobileView ? 'text-[9px]' : 'text-[11px]'} text-slate-400 font-medium`}>Seria: Językowy Master</p>
           </div>
@@ -314,7 +380,6 @@
       const [fileLastModified, setFileLastModified] = useState('');
       const [activeTab, setActiveTab] = useState('flashcards');
 
-      // Zachowana wcześniejsza kolejność działów
       const departmentsList = [
         'Szkoła i Przybory',
         'Rodzina i Wygląd',
@@ -328,7 +393,7 @@
         'Stopniowanie Przymiotników'
       ];
 
-      // Podział działów dla Fiszek (domyślnie pierwszy dział z zachowanej kolejności)
+      // Podział działów dla Fiszek
       const [fcDept, setFcDept] = useState('Szkoła i Przybory');
       const [shuffledCards, setShuffledCards] = useState([]);
       const [fcIndex, setFcIndex] = useState(0);
@@ -336,7 +401,7 @@
       const [direction, setDirection] = useState('random');
       const [fcIsEsToPl, setFcIsEsToPl] = useState(true);
 
-      // Podział działów dla Pisania (domyślnie pierwszy dział z zachowanej kolejności)
+      // Podział działów dla Pisania
       const [typeDept, setTypeDept] = useState('Szkoła i Przybory');
       const [typeDirection, setTypeDirection] = useState('random');
       const [shuffledTypeItems, setShuffledTypeItems] = useState([]);
@@ -706,7 +771,7 @@
                 </div>
               )}
 
-              {/* TEORIA I GRAMATYKA KLASA 5 (Wzbogacona o pełne zasady stopniowania z załącznika) */}
+              {/* TEORIA I GRAMATYKA KLASA 5 */}
               {activeTab === 'grammar' && (
                 <div className="flex-1 overflow-y-auto max-h-[380px] pr-1 space-y-3 text-xs custom-scrollbar">
                   
