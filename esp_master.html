@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Hiszpański Master 1.10</title>
+  <title>Hiszpański Master 1.11</title>
 
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -46,6 +46,110 @@
       { id: '10', es: 'decir', pl: 'powiedzieć', isVerb: true, isManual: false },
       { id: '11', es: 'hola', pl: 'cześć', isVerb: false, isManual: false },
       { id: '12', es: 'gracias', pl: 'dziękuję', isVerb: false, isManual: false }
+    ];
+
+    // Lista 100 bazowych rzeczowników z poprawnymi, zweryfikowanymi rodzajnikami (uwzględniając wyjątki typu el agua, el día, el problema itp.)
+    const BASE_100_NOUNS = [
+      { es: 'agua', article: 'el', pl: 'woda' }, 
+      { es: 'tiempo', article: 'el', pl: 'czas / pogoda' }, 
+      { es: 'día', article: 'el', pl: 'dzień' }, 
+      { es: 'año', article: 'el', pl: 'rok' },
+      { es: 'hombre', article: 'el', pl: 'mężczyzna' }, 
+      { es: 'mujer', article: 'la', pl: 'kobieta' }, 
+      { es: 'niño', article: 'el', pl: 'chłopiec / dziecko' }, 
+      { es: 'niña', article: 'la', pl: 'dziewczynka' },
+      { es: 'casa', article: 'la', pl: 'dom' }, 
+      { es: 'trabajo', article: 'el', pl: 'praca' }, 
+      { es: 'vida', article: 'la', pl: 'życie' }, 
+      { es: 'mano', article: 'la', pl: 'ręka' },
+      { es: 'parte', article: 'la', pl: 'część' }, 
+      { es: 'lugar', article: 'el', pl: 'miejsce' }, 
+      { es: 'ojo', article: 'el', pl: 'oko' }, 
+      { es: 'país', article: 'el', pl: 'kraj' },
+      { es: 'hora', article: 'la', pl: 'godziny / godzina' }, 
+      { es: 'mundo', article: 'el', pl: 'świat' }, 
+      { es: 'padre', article: 'el', pl: 'ojciec' }, 
+      { es: 'madre', article: 'la', pl: 'matka' },
+      { es: 'amigo', article: 'el', pl: 'przyjaciel' }, 
+      { es: 'amiga', article: 'la', pl: 'przyjaciółka' }, 
+      { es: 'familia', article: 'la', pl: 'rodzina' }, 
+      { es: 'hermano', article: 'el', pl: 'brat' },
+      { es: 'hermana', article: 'la', pl: 'siostra' }, 
+      { es: 'ciudad', article: 'la', pl: 'miasto' }, 
+      { es: 'calle', article: 'la', pl: 'ulica' }, 
+      { es: 'escuela', article: 'la', pl: 'szkoła' },
+      { es: 'libro', article: 'el', pl: 'książka' }, 
+      { es: 'mesa', article: 'la', pl: 'stół' }, 
+      { es: 'silla', article: 'la', pl: 'krzesło' }, 
+      { es: 'puerta', article: 'la', pl: 'drzwi' },
+      { es: 'ventana', article: 'la', pl: 'okno' }, 
+      { es: 'coche', article: 'el', pl: 'samochód' }, 
+      { es: 'tren', article: 'el', pl: 'pociąg' }, 
+      { es: 'avión', article: 'el', pl: 'samolot' },
+      { es: 'perro', article: 'el', pl: 'pies' }, 
+      { es: 'gato', article: 'el', pl: 'kot' }, 
+      { es: 'comida', article: 'la', pl: 'jedzenie' }, 
+      { es: 'pan', article: 'el', pl: 'chleb' },
+      { es: 'carne', article: 'la', pl: 'mięso' }, 
+      { es: 'pescado', article: 'el', pl: 'ryba' }, 
+      { es: 'leche', article: 'la', pl: 'mleko' }, 
+      { es: 'café', article: 'el', pl: 'kawa' },
+      { es: 'té', article: 'el', pl: 'herbata' }, 
+      { es: 'fruta', article: 'la', pl: 'owoc' }, 
+      { es: 'manzana', article: 'la', pl: 'jabłko' }, 
+      { es: 'plátano', article: 'el', pl: 'banan' },
+      { es: 'dinero', article: 'el', pl: 'pieniądze' }, 
+      { es: 'banco', article: 'el', pl: 'bank' }, 
+      { es: 'tienda', article: 'la', pl: 'sklep' }, 
+      { es: 'precio', article: 'el', pl: 'cena' },
+      { es: 'camisa', article: 'la', pl: 'koszula' }, 
+      { es: 'zapatos', article: 'los', pl: 'buty' }, 
+      { es: 'sombrero', article: 'el', pl: 'kapelusz' }, 
+      { es: 'vestido', article: 'el', pl: 'sukienka' },
+      { es: 'sol', article: 'el', pl: 'słońce' }, 
+      { es: 'luna', article: 'la', pl: 'księżyc' }, 
+      { es: 'cielo', article: 'el', pl: 'niebo' }, 
+      { es: 'tierra', article: 'la', pl: 'ziemia' },
+      { es: 'mar', article: 'el', pl: 'morze' }, 
+      { es: 'río', article: 'el', pl: 'rzeka' }, 
+      { es: 'montaña', article: 'la', pl: 'góra' }, 
+      { es: 'flor', article: 'la', pl: 'kwiat' },
+      { es: 'árbol', article: 'el', pl: 'drzewo' }, 
+      { es: 'fuego', article: 'el', pl: 'ogień' }, 
+      { es: 'papel', article: 'el', pl: 'papier' }, 
+      { es: 'pluma', article: 'la', pl: 'pióro' },
+      { es: 'lápiz', article: 'el', pl: 'ołówek' }, 
+      { es: 'carta', article: 'la', pl: 'list' }, 
+      { es: 'palabra', article: 'la', pl: 'słowo' }, 
+      { es: 'idioma', article: 'el', pl: 'język' },
+      { es: 'historia', article: 'la', pl: 'historia' }, 
+      { es: 'música', article: 'la', pl: 'muzyka' }, 
+      { es: 'película', article: 'la', pl: 'film' }, 
+      { es: 'arte', article: 'el', pl: 'sztuka' },
+      { es: 'juego', article: 'el', pl: 'gra' }, 
+      { es: 'partido', article: 'el', pl: 'mecz' }, 
+      { es: 'equipo', article: 'el', pl: 'drużyna' }, 
+      { es: 'problema', article: 'el', pl: 'problem' },
+      { es: 'pregunta', article: 'la', pl: 'pytanie' }, 
+      { es: 'respuesta', article: 'la', pl: 'odpowiedź' }, 
+      { es: 'verdad', article: 'la', pl: 'prawda' }, 
+      { es: 'mentira', article: 'la', pl: 'kłamstwo' },
+      { es: 'razón', article: 'la', pl: 'powód / racja' }, 
+      { es: 'idea', article: 'la', pl: 'pomysł' }, 
+      { es: 'camino', article: 'el', pl: 'droga' }, 
+      { es: 'viaje', article: 'el', pl: 'podróż' },
+      { es: 'hotel', article: 'el', pl: 'hotel' }, 
+      { es: 'habitación', article: 'la', pl: 'pokój' }, 
+      { es: 'cama', article: 'la', pl: 'łóżko' }, 
+      { es: 'reloj', article: 'el', pl: 'zegarek' },
+      { es: 'teléfono', article: 'el', pl: 'telefon' }, 
+      { es: 'ordenador', article: 'el', pl: 'komputer' }, 
+      { es: 'foto', article: 'la', pl: 'zdjęcie' }, 
+      { es: 'médico', article: 'el', pl: 'lekarz' },
+      { es: 'hospital', article: 'el', pl: 'szpital' }, 
+      { es: 'medicina', article: 'la', pl: 'lekarstwo' }, 
+      { es: 'salud', article: 'la', pl: 'zdrowie' }, 
+      { es: 'cuerpo', article: 'el', pl: 'ciało' }
     ];
 
     const PERSON_LABELS = {
@@ -96,7 +200,7 @@
           </div>
           <div>
             <h1 className={`${isMobileView ? 'text-sm' : 'text-lg'} font-black tracking-tight text-white flex items-center gap-1`}>
-              HISZPAŃSKI <span className="text-red-500">MASTER 1.10</span>
+              HISZPAŃSKI <span className="text-red-500">MASTER 1.11</span>
             </h1>
             <p className={`${isMobileView ? 'text-[9px]' : 'text-[11px]'} text-slate-400 font-medium`}>Seria: Językowy Master</p>
           </div>
@@ -425,23 +529,17 @@
       }, [conjugationTable]);
 
       const initArticleQueue = () => {
-        const nounPool = words.filter(w => !w.isVerb && w.es.trim().length > 0);
-        const processed = nounPool.map(item => {
+        // Mapujemy rzeczowniki z listy wzorcowej BASE_100_NOUNS
+        const processed = BASE_100_NOUNS.map(item => {
           let cleanEs = item.es.toLowerCase().trim();
           cleanEs = cleanEs.replace(/^(el|la|los|las)\s+/, '');
-          
-          let correctArticle = 'el';
-          if (cleanEs.endsWith('a') || cleanEs.endsWith('dad') || cleanEs.endsWith('tad') || cleanEs.endsWith('cion') || cleanEs.endsWith('sión')) {
-            correctArticle = 'la';
-          } else if (cleanEs.endsWith('s') || cleanEs.endsWith('es')) {
-            correctArticle = cleanEs.endsWith('as') ? 'las' : 'los';
-          }
           return {
             ...item,
             cleanEs,
-            correctArticle
+            correctArticle: item.article
           };
         });
+
         setArticleQueue(shuffleArray(processed));
         setArticleIndex(0);
         setArticleSelected(null);
@@ -785,7 +883,7 @@
         docTest.setFont("helvetica", "normal");
         docTest.setFontSize(9);
         docTest.setTextColor(100, 116, 139);
-        docTest.text(fixPolish("Seria: Jezykowy Master 1.10"), 105, 29, { align: "center" });
+        docTest.text(fixPolish("Seria: Jezykowy Master 1.11"), 105, 29, { align: "center" });
 
         docTest.setDrawColor(203, 213, 225);
         docTest.setFillColor(248, 250, 252);
@@ -873,10 +971,10 @@
           docTest.setFont("helvetica", "italic");
           docTest.setFontSize(8);
           docTest.setTextColor(148, 163, 184);
-          docTest.text(fixPolish(`Strona ${i} z ${pageCount} — Hiszpanski Master 1.10`), 105, 292, { align: "center" });
+          docTest.text(fixPolish(`Strona ${i} z ${pageCount} — Hiszpanski Master 1.11`), 105, 292, { align: "center" });
         }
 
-        docTest.save("test_hiszpanski_v1.10.pdf");
+        docTest.save("test_hiszpanski_v1.11.pdf");
 
         // --- PDF 2: KLUCZ ODPOWIEDZI ---
         const docKey = new jsPDF();
@@ -959,10 +1057,10 @@
           docKey.setFont("helvetica", "italic");
           docKey.setFontSize(8);
           docKey.setTextColor(148, 163, 184);
-          docKey.text(fixPolish(`Strona ${i} z ${keyPageCount} — Klucz Odpowiedzi Hiszpanski Master 1.10`), 105, 292, { align: "center" });
+          docKey.text(fixPolish(`Strona ${i} z ${keyPageCount} — Klucz Odpowiedzi Hiszpanski Master 1.11`), 105, 292, { align: "center" });
         }
 
-        docKey.save("klucz_odpowiedzi_v1.10.pdf");
+        docKey.save("klucz_odpowiedzi_v1.11.pdf");
 
         setTestGenMessage("Pomyślnie wygenerowano test oraz klucz odpowiedzi w plikach PDF!");
         setTimeout(() => setTestGenMessage(''), 5000);
@@ -1337,7 +1435,7 @@
                   <i data-lucide="zap" className={`${isMobileView ? 'w-3 h-3' : 'w-4 h-4'}`}></i><span>Szybki</span>
                 </button>
                 <button onClick={() => { setActiveTab('articles'); }} className={`py-1.5 rounded-lg flex flex-col sm:flex-row items-center justify-center gap-0.5 sm:gap-1 ${activeTab === 'articles' ? 'bg-slate-800 text-red-400 font-bold border border-slate-700' : 'text-slate-400'}`}>
-                  <i data-lucide="book-mark" className={`${isMobileView ? 'w-3 h-3' : 'w-4 h-4'}`}></i><span>Rodzajniki</span>
+                  <i data-lucide="users" className={`${isMobileView ? 'w-3 h-3' : 'w-4 h-4'}`}></i><span>Rodzaj.</span>
                 </button>
                 <button onClick={() => { setActiveTab('verbs'); }} className={`py-1.5 rounded-lg flex flex-col sm:flex-row items-center justify-center gap-0.5 sm:gap-1 ${activeTab === 'verbs' ? 'bg-slate-800 text-red-400 font-bold border border-slate-700' : 'text-slate-400'}`}>
                   <i data-lucide="book-open" className={`${isMobileView ? 'w-3 h-3' : 'w-4 h-4'}`}></i><span>Czas.</span>
@@ -1539,18 +1637,18 @@
                 </div>
               )}
 
-              {/* 3. RODZAJNIKI (el, la, los, las) */}
+              {/* 3. RODZAJNIKI (100 bazowych rzeczowników z poprawnymi rodzajnikami) */}
               {activeTab === 'articles' && (
                 <div className="flex-1 flex flex-col items-center justify-between space-y-4 max-w-md mx-auto w-full my-auto">
                   {articleQueue.length > 0 && currentArticleItem ? (
                     <div className="w-full space-y-4">
                       <div className="flex justify-between items-center text-xs text-slate-400 font-semibold px-1">
-                        <span>Ćwiczenie rodzajników (el / la / los / las)</span>
+                        <span>Rodzajniki (z 100 bazowych rzeczowników)</span>
                         <span>Wynik: <span className="text-red-400 font-bold">{articleScore}</span></span>
                       </div>
 
                       <div className="bg-slate-950/90 p-5 rounded-2xl border border-slate-800 text-center space-y-2">
-                        <div className="text-[11px] text-amber-400 uppercase font-bold">Wybierz właściwy rodzajnik:</div>
+                        <div className="text-[11px] text-amber-400 uppercase font-bold">Wybierz właściwy rodzajnik dla rzeczownika:</div>
                         <div className="text-2xl font-black text-white tracking-wide py-2">
                           [ <span className="text-red-500 underline decoration-2 underline-offset-4">____</span> ] {currentArticleItem.cleanEs}
                         </div>
@@ -1604,7 +1702,7 @@
                       )}
                     </div>
                   ) : (
-                    <div className="text-slate-500 text-sm my-auto text-center">Brak słówek rzeczownikowych w bazie do ćwiczenia rodzajników.</div>
+                    <div className="text-slate-500 text-sm my-auto text-center">Brak rzeczowników w bazie.</div>
                   )}
                 </div>
               )}
