@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Hiszpański Master 1.12</title>
+  <title>Hiszpański Master 1.13</title>
 
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -32,122 +32,123 @@
 
     const SPANISH_CHARS = ['á', 'é', 'í', 'ó', 'ú', 'ñ', 'ü', '¿', '¡'];
     const DATABASE_URL = 'https://marcino86krk.github.io/baza_esp.ods';
+    const VERBS_CATEGORY = 'Czasowniki';
 
     const INITIAL_WORDS = [
-      { id: '1', es: 'ser', pl: 'być', isVerb: true, isManual: false },
-      { id: '2', es: 'estar', pl: 'być / znajdować się', isVerb: true, isManual: false },
-      { id: '3', es: 'hablar', pl: 'mówić', isVerb: true, isManual: false },
-      { id: '4', es: 'tener', pl: 'mieć', isVerb: true, isManual: false },
-      { id: '5', es: 'ir', pl: 'iść / jechać', isVerb: true, isManual: false },
-      { id: '6', es: 'comer', pl: 'jeść', isVerb: true, isManual: false },
-      { id: '7', es: 'vivir', pl: 'mieszkać', isVerb: true, isManual: false },
-      { id: '8', es: 'hacer', pl: 'robić', isVerb: true, isManual: false },
-      { id: '9', es: 'poder', pl: 'móc', isVerb: true, isManual: false },
-      { id: '10', es: 'decir', pl: 'powiedzieć', isVerb: true, isManual: false },
-      { id: '11', es: 'hola', pl: 'cześć', isVerb: false, isManual: false },
-      { id: '12', es: 'gracias', pl: 'dziękuję', isVerb: false, isManual: false }
+      { id: '1', es: 'ser', pl: 'być', isVerb: true, isManual: false, category: VERBS_CATEGORY },
+      { id: '2', es: 'estar', pl: 'być / znajdować się', isVerb: true, isManual: false, category: VERBS_CATEGORY },
+      { id: '3', es: 'hablar', pl: 'mówić', isVerb: true, isManual: false, category: VERBS_CATEGORY },
+      { id: '4', es: 'tener', pl: 'mieć', isVerb: true, isManual: false, category: VERBS_CATEGORY },
+      { id: '5', es: 'ir', pl: 'iść / jechać', isVerb: true, isManual: false, category: VERBS_CATEGORY },
+      { id: '6', es: 'comer', pl: 'jeść', isVerb: true, isManual: false, category: VERBS_CATEGORY },
+      { id: '7', es: 'vivir', pl: 'mieszkać', isVerb: true, isManual: false, category: VERBS_CATEGORY },
+      { id: '8', es: 'hacer', pl: 'robić', isVerb: true, isManual: false, category: VERBS_CATEGORY },
+      { id: '9', es: 'poder', pl: 'móc', isVerb: true, isManual: false, category: VERBS_CATEGORY },
+      { id: '10', es: 'decir', pl: 'powiedzieć', isVerb: true, isManual: false, category: VERBS_CATEGORY },
+      { id: '11', es: 'hola', pl: 'cześć', isVerb: false, isManual: false, category: 'Zwroty' },
+      { id: '12', es: 'gracias', pl: 'dziękuję', isVerb: false, isManual: false, category: 'Zwroty' }
     ];
 
     const BASE_100_NOUNS = [
-      { es: 'agua', article: 'el', pl: 'woda' }, 
-      { es: 'tiempo', article: 'el', pl: 'czas / pogoda' }, 
-      { es: 'día', article: 'el', pl: 'dzień' }, 
+      { es: 'agua', article: 'el', pl: 'woda' },
+      { es: 'tiempo', article: 'el', pl: 'czas / pogoda' },
+      { es: 'día', article: 'el', pl: 'dzień' },
       { es: 'año', article: 'el', pl: 'rok' },
-      { es: 'hombre', article: 'el', pl: 'mężczyzna' }, 
-      { es: 'mujer', article: 'la', pl: 'kobieta' }, 
-      { es: 'niño', article: 'el', pl: 'chłopiec / dziecko' }, 
+      { es: 'hombre', article: 'el', pl: 'mężczyzna' },
+      { es: 'mujer', article: 'la', pl: 'kobieta' },
+      { es: 'niño', article: 'el', pl: 'chłopiec / dziecko' },
       { es: 'niña', article: 'la', pl: 'dziewczynka' },
-      { es: 'casa', article: 'la', pl: 'dom' }, 
-      { es: 'trabajo', article: 'el', pl: 'praca' }, 
-      { es: 'vida', article: 'la', pl: 'życie' }, 
+      { es: 'casa', article: 'la', pl: 'dom' },
+      { es: 'trabajo', article: 'el', pl: 'praca' },
+      { es: 'vida', article: 'la', pl: 'życie' },
       { es: 'mano', article: 'la', pl: 'ręka' },
-      { es: 'parte', article: 'la', pl: 'część' }, 
-      { es: 'lugar', article: 'el', pl: 'miejsce' }, 
-      { es: 'ojo', article: 'el', pl: 'oko' }, 
+      { es: 'parte', article: 'la', pl: 'część' },
+      { es: 'lugar', article: 'el', pl: 'miejsce' },
+      { es: 'ojo', article: 'el', pl: 'oko' },
       { es: 'país', article: 'el', pl: 'kraj' },
-      { es: 'hora', article: 'la', pl: 'godziny / godzina' }, 
-      { es: 'mundo', article: 'el', pl: 'świat' }, 
-      { es: 'padre', article: 'el', pl: 'ojciec' }, 
+      { es: 'hora', article: 'la', pl: 'godziny / godzina' },
+      { es: 'mundo', article: 'el', pl: 'świat' },
+      { es: 'padre', article: 'el', pl: 'ojciec' },
       { es: 'madre', article: 'la', pl: 'matka' },
-      { es: 'amigo', article: 'el', pl: 'przyjaciel' }, 
-      { es: 'amiga', article: 'la', pl: 'przyjaciółka' }, 
-      { es: 'familia', article: 'la', pl: 'rodzina' }, 
+      { es: 'amigo', article: 'el', pl: 'przyjaciel' },
+      { es: 'amiga', article: 'la', pl: 'przyjaciółka' },
+      { es: 'familia', article: 'la', pl: 'rodzina' },
       { es: 'hermano', article: 'el', pl: 'brat' },
-      { es: 'hermana', article: 'la', pl: 'siostra' }, 
-      { es: 'ciudad', article: 'la', pl: 'miasto' }, 
-      { es: 'calle', article: 'la', pl: 'ulica' }, 
+      { es: 'hermana', article: 'la', pl: 'siostra' },
+      { es: 'ciudad', article: 'la', pl: 'miasto' },
+      { es: 'calle', article: 'la', pl: 'ulica' },
       { es: 'escuela', article: 'la', pl: 'szkoła' },
-      { es: 'libro', article: 'el', pl: 'książka' }, 
-      { es: 'mesa', article: 'la', pl: 'stół' }, 
-      { es: 'silla', article: 'la', pl: 'krzesło' }, 
+      { es: 'libro', article: 'el', pl: 'książka' },
+      { es: 'mesa', article: 'la', pl: 'stół' },
+      { es: 'silla', article: 'la', pl: 'krzesło' },
       { es: 'puerta', article: 'la', pl: 'drzwi' },
-      { es: 'ventana', article: 'la', pl: 'okno' }, 
-      { es: 'coche', article: 'el', pl: 'samochód' }, 
-      { es: 'tren', article: 'el', pl: 'pociąg' }, 
+      { es: 'ventana', article: 'la', pl: 'okno' },
+      { es: 'coche', article: 'el', pl: 'samochód' },
+      { es: 'tren', article: 'el', pl: 'pociąg' },
       { es: 'avión', article: 'el', pl: 'samolot' },
-      { es: 'perro', article: 'el', pl: 'pies' }, 
-      { es: 'gato', article: 'el', pl: 'kot' }, 
-      { es: 'comida', article: 'la', pl: 'jedzenie' }, 
+      { es: 'perro', article: 'el', pl: 'pies' },
+      { es: 'gato', article: 'el', pl: 'kot' },
+      { es: 'comida', article: 'la', pl: 'jedzenie' },
       { es: 'pan', article: 'el', pl: 'chleb' },
-      { es: 'carne', article: 'la', pl: 'mięso' }, 
-      { es: 'pescado', article: 'el', pl: 'ryba' }, 
-      { es: 'leche', article: 'la', pl: 'mleko' }, 
+      { es: 'carne', article: 'la', pl: 'mięso' },
+      { es: 'pescado', article: 'el', pl: 'ryba' },
+      { es: 'leche', article: 'la', pl: 'mleko' },
       { es: 'café', article: 'el', pl: 'kawa' },
-      { es: 'té', article: 'el', pl: 'herbata' }, 
-      { es: 'fruta', article: 'la', pl: 'owoc' }, 
-      { es: 'manzana', article: 'la', pl: 'jabłko' }, 
+      { es: 'té', article: 'el', pl: 'herbata' },
+      { es: 'fruta', article: 'la', pl: 'owoc' },
+      { es: 'manzana', article: 'la', pl: 'jabłko' },
       { es: 'plátano', article: 'el', pl: 'banan' },
-      { es: 'dinero', article: 'el', pl: 'pieniądze' }, 
-      { es: 'banco', article: 'el', pl: 'bank' }, 
-      { es: 'tienda', article: 'la', pl: 'sklep' }, 
+      { es: 'dinero', article: 'el', pl: 'pieniądze' },
+      { es: 'banco', article: 'el', pl: 'bank' },
+      { es: 'tienda', article: 'la', pl: 'sklep' },
       { es: 'precio', article: 'el', pl: 'cena' },
-      { es: 'camisa', article: 'la', pl: 'koszula' }, 
-      { es: 'zapatos', article: 'los', pl: 'buty' }, 
-      { es: 'sombrero', article: 'el', pl: 'kapelusz' }, 
+      { es: 'camisa', article: 'la', pl: 'koszula' },
+      { es: 'zapatos', article: 'los', pl: 'buty' },
+      { es: 'sombrero', article: 'el', pl: 'kapelusz' },
       { es: 'vestido', article: 'el', pl: 'sukienka' },
-      { es: 'sol', article: 'el', pl: 'słońce' }, 
-      { es: 'luna', article: 'la', pl: 'księżyc' }, 
-      { es: 'cielo', article: 'el', pl: 'niebo' }, 
+      { es: 'sol', article: 'el', pl: 'słońce' },
+      { es: 'luna', article: 'la', pl: 'księżyc' },
+      { es: 'cielo', article: 'el', pl: 'niebo' },
       { es: 'tierra', article: 'la', pl: 'ziemia' },
-      { es: 'mar', article: 'el', pl: 'morze' }, 
-      { es: 'río', article: 'el', pl: 'rzeka' }, 
-      { es: 'montaña', article: 'la', pl: 'góra' }, 
+      { es: 'mar', article: 'el', pl: 'morze' },
+      { es: 'río', article: 'el', pl: 'rzeka' },
+      { es: 'montaña', article: 'la', pl: 'góra' },
       { es: 'flor', article: 'la', pl: 'kwiat' },
-      { es: 'árbol', article: 'el', pl: 'drzewo' }, 
-      { es: 'fuego', article: 'el', pl: 'ogień' }, 
-      { es: 'papel', article: 'el', pl: 'papier' }, 
+      { es: 'árbol', article: 'el', pl: 'drzewo' },
+      { es: 'fuego', article: 'el', pl: 'ogień' },
+      { es: 'papel', article: 'el', pl: 'papier' },
       { es: 'pluma', article: 'la', pl: 'pióro' },
-      { es: 'lápiz', article: 'el', pl: 'ołówek' }, 
-      { es: 'carta', article: 'la', pl: 'list' }, 
-      { es: 'palabra', article: 'la', pl: 'słowo' }, 
+      { es: 'lápiz', article: 'el', pl: 'ołówek' },
+      { es: 'carta', article: 'la', pl: 'list' },
+      { es: 'palabra', article: 'la', pl: 'słowo' },
       { es: 'idioma', article: 'el', pl: 'język' },
-      { es: 'historia', article: 'la', pl: 'historia' }, 
-      { es: 'música', article: 'la', pl: 'muzyka' }, 
-      { es: 'película', article: 'la', pl: 'film' }, 
+      { es: 'historia', article: 'la', pl: 'historia' },
+      { es: 'música', article: 'la', pl: 'muzyka' },
+      { es: 'película', article: 'la', pl: 'film' },
       { es: 'arte', article: 'el', pl: 'sztuka' },
-      { es: 'juego', article: 'el', pl: 'gra' }, 
-      { es: 'partido', article: 'el', pl: 'mecz' }, 
-      { es: 'equipo', article: 'el', pl: 'drużyna' }, 
+      { es: 'juego', article: 'el', pl: 'gra' },
+      { es: 'partido', article: 'el', pl: 'mecz' },
+      { es: 'equipo', article: 'el', pl: 'drużyna' },
       { es: 'problema', article: 'el', pl: 'problem' },
-      { es: 'pregunta', article: 'la', pl: 'pytanie' }, 
-      { es: 'respuesta', article: 'la', pl: 'odpowiedź' }, 
-      { es: 'verdad', article: 'la', pl: 'prawda' }, 
+      { es: 'pregunta', article: 'la', pl: 'pytanie' },
+      { es: 'respuesta', article: 'la', pl: 'odpowiedź' },
+      { es: 'verdad', article: 'la', pl: 'prawda' },
       { es: 'mentira', article: 'la', pl: 'kłamstwo' },
-      { es: 'razón', article: 'la', pl: 'powód / racja' }, 
-      { es: 'idea', article: 'la', pl: 'pomysł' }, 
-      { es: 'camino', article: 'el', pl: 'droga' }, 
+      { es: 'razón', article: 'la', pl: 'powód / racja' },
+      { es: 'idea', article: 'la', pl: 'pomysł' },
+      { es: 'camino', article: 'el', pl: 'droga' },
       { es: 'viaje', article: 'el', pl: 'podróż' },
-      { es: 'hotel', article: 'el', pl: 'hotel' }, 
-      { es: 'habitación', article: 'la', pl: 'pokój' }, 
-      { es: 'cama', article: 'la', pl: 'łóżko' }, 
+      { es: 'hotel', article: 'el', pl: 'hotel' },
+      { es: 'habitación', article: 'la', pl: 'pokój' },
+      { es: 'cama', article: 'la', pl: 'łóżko' },
       { es: 'reloj', article: 'el', pl: 'zegarek' },
-      { es: 'teléfono', article: 'el', pl: 'telefon' }, 
-      { es: 'ordenador', article: 'el', pl: 'komputer' }, 
-      { es: 'foto', article: 'la', pl: 'zdjęcie' }, 
+      { es: 'teléfono', article: 'el', pl: 'telefon' },
+      { es: 'ordenador', article: 'el', pl: 'komputer' },
+      { es: 'foto', article: 'la', pl: 'zdjęcie' },
       { es: 'médico', article: 'el', pl: 'lekarz' },
-      { es: 'hospital', article: 'el', pl: 'szpital' }, 
-      { es: 'medicina', article: 'la', pl: 'lekarstwo' }, 
-      { es: 'salud', article: 'la', pl: 'zdrowie' }, 
+      { es: 'hospital', article: 'el', pl: 'szpital' },
+      { es: 'medicina', article: 'la', pl: 'lekarstwo' },
+      { es: 'salud', article: 'la', pl: 'zdrowie' },
       { es: 'cuerpo', article: 'el', pl: 'ciało' }
     ];
 
@@ -158,6 +159,12 @@
       nosotros: 'nosotros / nosotras (my)',
       vosotros: 'vosotros / vosotras (wy)',
       ellos: 'ellos / ellas / ustedes (oni / one / Państwo)'
+    };
+
+    const getEffectiveCategory = (w) => {
+      if (!w) return 'Ogólne';
+      if (w.isVerb) return VERBS_CATEGORY;
+      return (w.category && w.category.trim()) ? w.category.trim() : 'Ogólne';
     };
 
     function SpanishCharBar({ onInsertChar, className = "", isMobileView = false }) {
@@ -199,7 +206,7 @@
           </div>
           <div>
             <h1 className={`${isMobileView ? 'text-sm' : 'text-lg'} font-black tracking-tight text-white flex items-center gap-1`}>
-              HISZPAŃSKI <span className="text-red-500">MASTER 1.12</span>
+              HISZPAŃSKI <span className="text-red-500">MASTER 1.13</span>
             </h1>
             <p className={`${isMobileView ? 'text-[9px]' : 'text-[11px]'} text-slate-400 font-medium`}>Seria: Językowy Master</p>
           </div>
@@ -213,7 +220,9 @@
         if (saved) {
           try {
             const parsed = JSON.parse(saved);
-            if (parsed && parsed.length > 0) return parsed;
+            if (parsed && parsed.length > 0) {
+              return parsed.map(w => ({ ...w, category: w.isVerb ? VERBS_CATEGORY : (w.category || 'Ogólne') }));
+            }
           } catch(e) {}
         }
         return INITIAL_WORDS;
@@ -238,33 +247,14 @@
 
       const [dbLastModified, setDbLastModified] = useState('Brak danych');
       const [fileLastModified, setFileLastModified] = useState('');
-      const [loading, setLoading] = useState(false);
-      const [loadMessage, setLoadMessage] = useState(null);
       const [activeTab, setActiveTab] = useState('flashcards');
       const [searchTerm, setSearchTerm] = useState('');
+      const [selectedCategory, setSelectedCategory] = useState('ALL');
+      const [fcCategory, setFcCategory] = useState('ALL');
+      const [quizCategory, setQuizCategory] = useState('ALL');
       const [direction, setDirection] = useState('random');
       const [quizDirection, setQuizDirection] = useState('random');
       const [activeVerbField, setActiveVerbField] = useState('yo');
-
-      const [fcOnlyVerbs, setFcOnlyVerbs] = useState(false);
-      const [quizOnlyVerbs, setQuizOnlyVerbs] = useState(false);
-
-      const [newEs, setNewEs] = useState('');
-      const [newPl, setNewPl] = useState('');
-      const [newIsVerb, setNewIsVerb] = useState(false);
-      const [editingId, setEditingId] = useState(null);
-
-      const [newManualConjs, setNewManualConjs] = useState({
-        presente: { yo: '', tu: '', el: '', nosotros: '', vosotros: '', me: '', ellos: '' },
-        pasado: { yo: '', tu: '', el: '', nosotros: '', vosotros: '', ellos: '' },
-        imperfecto: { yo: '', tu: '', el: '', nosotros: '', vosotros: '', ellos: '' },
-        futuro: { yo: '', tu: '', el: '', nosotros: '', vosotros: '', me: '', ellos: '' }
-      });
-      const [activeManualTense, setActiveManualTense] = useState('presente');
-
-      const [eraseModalOpen, setEraseModalOpen] = useState(false);
-      const [erasePassword, setErasePassword] = useState('');
-      const [eraseError, setEraseError] = useState(false);
 
       const [testTenses, setTestTenses] = useState({
         presente: true,
@@ -308,7 +298,6 @@
       const [articleScore, setArticleScore] = useState(0);
 
       const inputRefs = useRef({});
-      const fileInputRef = useRef(null);
       const audioCtxRef = useRef(null);
       const voicesRef = useRef([]);
 
@@ -342,8 +331,56 @@
           .toLowerCase()
           .trim()
           .normalize("NFD")
-          .replace(/[̀-ͯ]/g, "");
+          .replace(/[\u0300-\u036f]/g, "");
       };
+
+      const generateConjugation = (verbObj, tense, customTable = conjugationTable) => {
+        if (!verbObj) return { yo: '', tu: '', el: '', nosotros: '', vosotros: '', ellos: '' };
+        const vKey = normalizeText(verbObj.es);
+        let tKey = normalizeText(tense);
+        if (tKey === 'pasado') tKey = 'indefinido';
+
+        if (customTable[vKey]) {
+          const tensesObj = customTable[vKey];
+          for (const k of Object.keys(tensesObj)) {
+            if (normalizeText(k) === tKey || normalizeText(k).includes(tKey)) {
+              if (tensesObj[k]) return tensesObj[k];
+            }
+          }
+        }
+
+        for (const key of Object.keys(customTable)) {
+          if (vKey.includes(key) || key.includes(vKey)) {
+            const tensesObj = customTable[key];
+            for (const k of Object.keys(tensesObj)) {
+              if (normalizeText(k) === tKey || normalizeText(k).includes(tKey)) {
+                if (tensesObj[k]) return tensesObj[k];
+              }
+            }
+          }
+        }
+
+        let stem = verbObj.es.slice(0, -2);
+        let ending = verbObj.es.slice(-2).toLowerCase();
+
+        if (ending === 'ar') {
+          if (tKey === 'presente') return { yo: stem + 'o', tu: stem + 'as', el: stem + 'a', nosotros: stem + 'amos', vosotros: stem + 'áis', ellos: stem + 'an' };
+          if (tKey === 'pasado' || tKey === 'indefinido') return { yo: stem + 'é', tu: stem + 'aste', el: stem + 'ó', nosotros: stem + 'amos', vosotros: stem + 'asteis', ellos: stem + 'aron' };
+          if (tKey === 'imperfecto') return { yo: stem + 'aba', tu: stem + 'abas', el: stem + 'aba', nosotros: stem + 'ábamos', vosotros: stem + 'abais', ellos: stem + 'aban' };
+          if (tKey === 'futuro') return { yo: verbObj.es + 'é', tu: verbObj.es + 'ás', el: verbObj.es + 'á', nosotros: verbObj.es + 'emos', vosotros: verbObj.es + 'éis', ellos: verbObj.es + 'án' };
+        } else if (ending === 'er' || ending === 'ir') {
+          if (tKey === 'presente') return { yo: stem + 'o', tu: stem + 'es', el: stem + 'e', nosotros: stem + 'emos', vosotros: stem + 'éis', ellos: stem + 'en' };
+          if (tKey === 'pasado' || tKey === 'indefinido') return { yo: stem + 'í', tu: stem + 'iste', el: stem + 'ió', nosotros: stem + 'imos', vosotros: stem + 'isteis', ellos: stem + 'ieron' };
+          if (tKey === 'imperfecto') return { yo: stem + 'ía', tu: stem + 'ías', el: stem + 'ía', nosotros: stem + 'íamos', vosotros: stem + 'íais', ellos: stem + 'ían' };
+          if (tKey === 'futuro') return { yo: verbObj.es + 'é', tu: verbObj.es + 'ás', el: verbObj.es + 'á', nosotros: verbObj.es + 'emos', vosotros: verbObj.es + 'éis', ellos: verbObj.es + 'án' };
+        }
+
+        return { yo: stem + 'o', tu: stem + 'as', el: stem + 'a', nosotros: stem + 'amos', vosotros: stem + 'áis', ellos: stem + 'an' };
+      };
+
+      const availableCategories = Array.from(
+        new Set(words.map(w => getEffectiveCategory(w)).filter(Boolean))
+      ).sort((a, b) => a.localeCompare(b, 'pl'));
 
       const getLevenshteinDistance = (a, b) => {
         if (a.length === 0) return b.length;
@@ -414,7 +451,7 @@
 
       const speakText = (text, forcedLang = null) => {
         if (!text) return;
-        const cleanText = text.split(/[\/,;]/)[0].trim();
+        const cleanText = text.replace(/[«»]/g, '').split(/[\/,;]/)[0].trim();
         let targetLang = forcedLang;
         if (!targetLang) {
           const hasSpanishChars = /[áéíóúñü¿¡]/i.test(cleanText);
@@ -549,7 +586,6 @@
         initArticleQueue();
       }, [words]);
 
-      // Inicjalizacja kolejki czasowników dla modułu "Czasowniki"
       useEffect(() => {
         const verbList = words.filter(w => w.isVerb);
         if (verbList.length > 0) {
@@ -566,13 +602,15 @@
         const rowsBaza = XLSX.utils.sheet_to_json(wsBaza, { header: 1 });
 
         const wordMap = new Map();
-        rowsBaza.forEach(row => {
+        rowsBaza.slice(1).forEach(row => {
           if (row && row[0] && row[1]) {
             const es = String(row[0]).trim();
             const pl = String(row[1]).trim();
             const colC = row[2] ? String(row[2]).trim().toUpperCase() : '';
+            const rawCategory = row[3] && String(row[3]).trim() ? String(row[3]).trim() : 'Ogólne';
 
             const isVerb = (colC === 'TAK' || colC === 'YES' || colC === 'TRUE' || colC === '1' || colC === 'CZASOWNIK');
+            const category = isVerb ? VERBS_CATEGORY : rawCategory;
             const key = normalizeText(es);
 
             if (wordMap.has(key)) {
@@ -581,9 +619,14 @@
               if (!existingVars.includes(normalizeText(pl))) {
                 item.pl = `${item.pl} / ${pl}`;
               }
-              if (isVerb) item.isVerb = true;
+              if (isVerb) {
+                item.isVerb = true;
+                item.category = VERBS_CATEGORY;
+              } else if (!item.isVerb && category !== 'Ogólne' && item.category === 'Ogólne') {
+                item.category = category;
+              }
             } else {
-              wordMap.set(key, { es, pl, isVerb, isManual: false });
+              wordMap.set(key, { es, pl, isVerb, isManual: false, category });
             }
           }
         });
@@ -594,13 +637,16 @@
           newWords.push({ id: (idCounter++).toString(), ...val });
         });
 
-        let odmianaSheetName = workbook.SheetNames.find(name => normalizeText(name).includes('odmiana') || normalizeText(name).includes('conjugation'));
+        let odmianaSheetName = workbook.SheetNames.find(name => {
+          const n = normalizeText(name);
+          return n.includes('odmiana') || n.includes('czasownik') || n.includes('conjugation');
+        });
         const newConjugations = {};
 
         if (odmianaSheetName) {
           const wsOdmiana = workbook.Sheets[odmianaSheetName];
           const rowsOdmiana = XLSX.utils.sheet_to_json(wsOdmiana, { header: 1 });
-          
+
           rowsOdmiana.forEach(row => {
             if (row && row.length >= 8) {
               const verb = normalizeText(row[0]);
@@ -674,160 +720,6 @@
         autoUpdateDatabase();
       }, []);
 
-      const handleDownloadAndSaveDatabase = async () => {
-        setLoading(true);
-        setLoadMessage("Pobieranie pliku bazy z serwera...");
-
-        const urlsToTry = [
-          DATABASE_URL,
-          'https://api.allorigins.win/raw?url=' + encodeURIComponent(DATABASE_URL)
-        ];
-
-        let blob = null;
-        let lastModHeader = null;
-
-        for (const url of urlsToTry) {
-          try {
-            const response = await fetch(url);
-            if (!response.ok) continue;
-            lastModHeader = response.headers.get('Last-Modified');
-            blob = await response.blob();
-            break;
-          } catch (e) {}
-        }
-
-        if (lastModHeader) {
-          try {
-            const dateObj = new Date(lastModHeader);
-            if (!isNaN(dateObj)) {
-              setDbLastModified(dateObj.toLocaleString('pl-PL', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' }));
-            }
-          } catch(e) {}
-        }
-
-        if (!blob) {
-          setLoading(false);
-          setLoadMessage("Nie udało się pobrać pliku z serwera.");
-          setTimeout(() => setLoadMessage(null), 5000);
-          return;
-        }
-
-        const downloadUrl = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = downloadUrl;
-        a.download = 'baza_esp.ods';
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        URL.revokeObjectURL(downloadUrl);
-
-        try {
-          const arrayBuffer = await blob.arrayBuffer();
-          const workbook = XLSX.read(arrayBuffer, { type: 'array' });
-          const { words: newWords, conjugations: newConjugations } = parseWorkbookData(workbook);
-
-          if (newWords.length > 0) {
-            const existingManual = words.filter(w => w.isManual);
-            setWords([...existingManual, ...newWords]);
-            setLoadMessage(`Zamontowano pomyślnie ${newWords.length} słówek.`);
-          }
-          if (Object.keys(newConjugations).length > 0) {
-            setConjugationTable(prev => ({ ...prev, ...newConjugations }));
-          }
-        } catch (err) {}
-
-        setLoading(false);
-        setTimeout(() => setLoadMessage(null), 5000);
-      };
-
-      const handleLoadLocalDatabase = (e) => {
-        const file = e.target.files[0];
-        if (!file) return;
-        
-        if (file.lastModified) {
-          try {
-            const dateObj = new Date(file.lastModified);
-            if (!isNaN(dateObj)) {
-              setDbLastModified(dateObj.toLocaleString('pl-PL', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' }) + ' (lokalny)');
-            }
-          } catch(e) {}
-        }
-
-        const reader = new FileReader();
-        reader.onload = (evt) => {
-          try {
-            const data = new Uint8Array(evt.target.result);
-            const workbook = XLSX.read(data, { type: 'array' });
-            const { words: newWords, conjugations: newConjugations } = parseWorkbookData(workbook);
-
-            if (newWords.length > 0) {
-              const existingManual = words.filter(w => w.isManual);
-              setWords([...existingManual, ...newWords]);
-              setLoadMessage(`Zamontowano pomyślnie ${newWords.length} słówek z dysku lokalnego!`);
-            }
-            if (Object.keys(newConjugations).length > 0) {
-              setConjugationTable(prev => ({ ...prev, ...newConjugations }));
-            }
-          } catch (err) {}
-          setTimeout(() => setLoadMessage(null), 4000);
-        };
-        reader.readAsArrayBuffer(file);
-      };
-
-      const handleSaveManualWordsToDisk = () => {
-        const manualWords = words.filter(w => w.isManual);
-        if (manualWords.length === 0) {
-          setLoadMessage("Brak ręcznie wpisanych słówek do zapisu.");
-          setTimeout(() => setLoadMessage(null), 4000);
-          return;
-        }
-
-        const sheetDataBaza = [
-          ["Hiszpański", "Polski", "Czy czasownik (TAK/NIE)"],
-          ...manualWords.map(w => [w.es, w.pl, w.isVerb ? "TAK" : "NIE"])
-        ];
-        const wsBaza = XLSX.utils.aoa_to_sheet(sheetDataBaza);
-
-        const sheetDataOdmiana = [
-          ["Czasownik", "Czas", "Yo", "Tu", "El", "Nosotros", "Vosotros", "Ellos"]
-        ];
-        manualWords.filter(w => w.isVerb).forEach(w => {
-          const vKey = normalizeText(w.es);
-          const tenses = conjugationTable[vKey];
-          if (tenses) {
-            Object.keys(tenses).forEach(t => {
-              const conj = tenses[t];
-              sheetDataOdmiana.push([w.es, t, conj.yo, conj.tu, conj.el, conj.nosotros, conj.vosotros, conj.ellos]);
-            });
-          }
-        });
-        const wsOdmiana = XLSX.utils.aoa_to_sheet(sheetDataOdmiana);
-
-        const wb = XLSX.utils.book_new();
-        XLSX.utils.book_append_sheet(wb, wsBaza, "baza");
-        XLSX.utils.book_append_sheet(wb, wsOdmiana, "odmiana");
-        XLSX.writeFile(wb, "baza_esp_ręcznie.ods");
-        setLoadMessage("Pomyślnie zapisano wpisane słówka i odmiany do pliku baza_esp_ręcznie.ods!");
-        setTimeout(() => setLoadMessage(null), 4000);
-      };
-
-      const handleEraseDatabase = (e) => {
-        e.preventDefault();
-        if (erasePassword.trim().toLowerCase() === 'erase') {
-          setWords([]);
-          setConjugationTable({});
-          localStorage.removeItem('hm_words');
-          localStorage.removeItem('hm_conjugations');
-          setErasePassword('');
-          setEraseError(false);
-          setEraseModalOpen(false);
-          setLoadMessage("Baza została wyczyszczona.");
-          setTimeout(() => setLoadMessage(null), 3000);
-        } else {
-          setEraseError(true);
-        }
-      };
-
       const fixPolish = (str) => {
         if (!str) return "";
         return String(str)
@@ -859,7 +751,7 @@
         const shuffledWordsEsPl = shuffleArray(words).slice(0, 10);
         const shuffledWordsPlEs = shuffleArray(words).slice(0, 10);
 
-        const irregularKeys = ['ser', 'estar', 'tener', 'ir', 'hacer', 'decir', 'poder', 'venir', 'tener', 'poner'];
+        const irregularKeys = ['ser', 'estar', 'tener', 'ir', 'hacer', 'decir', 'poder', 'venir', 'poner'];
         const irregs = verbsPool.filter(v => irregularKeys.includes(normalizeText(v.es)));
         const regs = verbsPool.filter(v => !irregularKeys.includes(normalizeText(v.es)));
 
@@ -890,7 +782,7 @@
         docTest.setFont("helvetica", "normal");
         docTest.setFontSize(9);
         docTest.setTextColor(100, 116, 139);
-        docTest.text(fixPolish("Seria: Jezykowy Master 1.12"), 105, 29, { align: "center" });
+        docTest.text(fixPolish("Seria: Jezykowy Master 1.13"), 105, 29, { align: "center" });
 
         docTest.setDrawColor(203, 213, 225);
         docTest.setFillColor(248, 250, 252);
@@ -933,6 +825,7 @@
         shuffledWordsPlEs.forEach((item, idx) => {
           docTest.text(`${idx + 1}. ${fixPolish(item.pl)}`, 18, y);
           docTest.setLineDash([1, 1], 0);
+          docTest.setDrawColor(203, 213, 225);
           docTest.line(65, y, 195, y);
           y += 7;
         });
@@ -977,10 +870,10 @@
           docTest.setFont("helvetica", "italic");
           docTest.setFontSize(8);
           docTest.setTextColor(148, 163, 184);
-          docTest.text(fixPolish(`Strona ${i} z ${pageCount} — Hiszpanski Master 1.12`), 105, 292, { align: "center" });
+          docTest.text(fixPolish(`Strona ${i} z ${pageCount} — Hiszpanski Master 1.13`), 105, 292, { align: "center" });
         }
 
-        docTest.save("test_hiszpanski_v1.12.pdf");
+        docTest.save("test_hiszpanski_v1.13.pdf");
 
         const docKey = new jsPDF();
         docKey.setFillColor(15, 23, 42);
@@ -1061,86 +954,13 @@
           docKey.setFont("helvetica", "italic");
           docKey.setFontSize(8);
           docKey.setTextColor(148, 163, 184);
-          docKey.text(fixPolish(`Strona ${i} z ${keyPageCount} — Klucz Odpowiedzi Hiszpanski Master 1.12`), 105, 292, { align: "center" });
+          docKey.text(fixPolish(`Strona ${i} z ${keyPageCount} — Klucz Odpowiedzi Hiszpanski Master 1.13`), 105, 292, { align: "center" });
         }
 
-        docKey.save("klucz_odpowiedzi_v1.12.pdf");
+        docKey.save("klucz_odpowiedzi_v1.13.pdf");
 
         setTestGenMessage("Pomyślnie wygenerowano test oraz klucz odpowiedzi w plikach PDF!");
         setTimeout(() => setTestGenMessage(''), 5000);
-      };
-
-      const handleSaveWordForm = (e) => {
-        e.preventDefault();
-        if (!newEs.trim() || !newPl.trim()) return;
-
-        if (editingId) {
-          setWords(words.map(w => {
-            if (w.id === editingId) {
-              return { ...w, es: newEs.trim(), pl: newPl.trim(), isVerb: newIsVerb };
-            }
-            return w;
-          }));
-          if (newIsVerb) {
-            const vKey = normalizeText(newEs);
-            setConjugationTable(prev => ({
-              ...prev,
-              [vKey]: { ...newManualConjs }
-            }));
-          }
-          setLoadMessage(`Zaktualizowano słówko: "${newEs.trim()}".`);
-        } else {
-          const newItem = {
-            id: Date.now().toString(),
-            es: newEs.trim(),
-            pl: newPl.trim(),
-            isVerb: newIsVerb,
-            isManual: true
-          };
-
-          if (newIsVerb) {
-            const vKey = normalizeText(newEs);
-            setConjugationTable(prev => ({
-              ...prev,
-              [vKey]: { ...newManualConjs }
-            }));
-          }
-
-          setWords([newItem, ...words]);
-          setLoadMessage(`Dodano nowe słówko: "${newItem.es}".`);
-        }
-
-        setNewEs('');
-        setNewPl('');
-        setNewIsVerb(false);
-        setEditingId(null);
-        setNewManualConjs({
-          presente: { yo: '', tu: '', el: '', nosotros: '', vosotros: '', me: '', ellos: '' },
-          pasado: { yo: '', tu: '', el: '', nosotros: '', vosotros: '', ellos: '' },
-          imperfecto: { yo: '', tu: '', el: '', nosotros: '', vosotros: '', ellos: '' },
-          futuro: { yo: '', tu: '', el: '', nosotros: '', vosotros: '', me: '', ellos: '' }
-        });
-        setTimeout(() => setLoadMessage(null), 3000);
-      };
-
-      const handleEditManualWord = (item) => {
-        if (!item.isManual) return;
-        setNewEs(item.es);
-        setNewPl(item.pl);
-        setNewIsVerb(item.isVerb);
-        setEditingId(item.id);
-        if (item.isVerb) {
-          const vKey = normalizeText(item.es);
-          if (conjugationTable[vKey]) {
-            setNewManualConjs(conjugationTable[vKey]);
-          }
-        }
-      };
-
-      const handleDeleteManualWord = (id) => {
-        setWords(words.filter(w => w.id !== id));
-        setLoadMessage("Usunięto słówko wpisane ręcznie.");
-        setTimeout(() => setLoadMessage(null), 3000);
       };
 
       const startSpeedTest = (customQueue = null) => {
@@ -1216,24 +1036,34 @@
       };
 
       useEffect(() => {
-        const source = fcOnlyVerbs ? words.filter(w => w.isVerb) : words;
+        let source = words;
+        if (fcCategory !== 'ALL') {
+          source = source.filter(w => getEffectiveCategory(w) === fcCategory);
+        }
         if (source.length > 0) {
           setShuffledCards(shuffleArray(source));
           setFcIndex(0);
+          setIsFlipped(false);
         } else {
           setShuffledCards([]);
         }
-      }, [words, fcOnlyVerbs]);
+      }, [words, fcCategory]);
 
       useEffect(() => {
-        const source = quizOnlyVerbs ? words.filter(w => w.isVerb) : words;
+        let source = words;
+        if (quizCategory !== 'ALL') {
+          source = source.filter(w => getEffectiveCategory(w) === quizCategory);
+        }
         if (source.length > 0) {
           setShuffledQuiz(shuffleArray(source));
           setQIndex(0);
+          setUserAnswer('');
+          setQuizResult(null);
+          setQuizMatchedWord('');
         } else {
           setShuffledQuiz([]);
         }
-      }, [words, quizOnlyVerbs]);
+      }, [words, quizCategory]);
 
       useEffect(() => {
         if (window.lucide) window.lucide.createIcons();
@@ -1267,61 +1097,18 @@
         }
       };
 
-      const generateConjugation = (verbObj, tense) => {
-        if (!verbObj) return { yo: '', tu: '', el: '', nosotros: '', vosotros: '', ellos: '' };
-        const vKey = normalizeText(verbObj.es);
-        let tKey = normalizeText(tense);
-        if (tKey === 'pasado') tKey = 'indefinido';
-
-        // 1. Sprawdź dokładny klucz w tabeli odmian
-        if (conjugationTable[vKey]) {
-          const tensesObj = conjugationTable[vKey];
-          // Szukaj pasującego czasu w obiektach tabeli
-          for (const k of Object.keys(tensesObj)) {
-            if (normalizeText(k) === tKey || normalizeText(k).includes(tKey)) {
-              if (tensesObj[k]) return tensesObj[k];
-            }
-          }
-        }
-
-        // 2. Szukaj częściowego dopasowania czasownika w bazie odmian
-        for (const key of Object.keys(conjugationTable)) {
-          if (vKey.includes(key) || key.includes(vKey)) {
-            const tensesObj = conjugationTable[key];
-            for (const k of Object.keys(tensesObj)) {
-              if (normalizeText(k) === tKey || normalizeText(k).includes(tKey)) {
-                if (tensesObj[k]) return tensesObj[k];
-              }
-            }
-          }
-        }
-
-        // 3. Automatyczna reguła generowania odmiany (fallback)
-        let stem = verbObj.es.slice(0, -2);
-        let ending = verbObj.es.slice(-2).toLowerCase();
-
-        if (ending === 'ar') {
-          if (tKey === 'presente') return { yo: stem + 'o', tu: stem + 'as', el: stem + 'a', nosotros: stem + 'amos', vosotros: stem + 'áis', ellos: stem + 'an' };
-          if (tKey === 'pasado' || tKey === 'indefinido') return { yo: stem + 'é', tu: stem + 'aste', el: stem + 'ó', nosotros: stem + 'amos', vosotros: stem + 'asteis', ellos: stem + 'aron' };
-          if (tKey === 'imperfecto') return { yo: stem + 'aba', tu: stem + 'abas', el: stem + 'aba', nosotros: stem + 'ábamos', vosotros: stem + 'abais', ellos: stem + 'aban' };
-          if (tKey === 'futuro') return { yo: verbObj.es + 'é', tu: verbObj.es + 'ás', el: verbObj.es + 'á', nosotros: stem + 'emos', vosotros: stem + 'éis', me: stem, ellos: stem + 'án' };
-        } else if (ending === 'er' || ending === 'ir') {
-          if (tKey === 'presente') return { yo: stem + 'o', tu: stem + 'es', el: stem + 'e', nosotros: stem + 'emos', vosotros: stem + 'éis', ellos: stem + 'en' };
-          if (tKey === 'pasado' || tKey === 'indefinido') return { yo: stem + 'í', tu: stem + 'iste', el: stem + 'ió', nosotros: stem + 'imos', vosotros: stem + 'isteis', ellos: stem + 'ieron' };
-          if (tKey === 'imperfecto') return { yo: stem + 'ía', tu: stem + 'ías', el: stem + 'ía', nosotros: stem + 'íamos', vosotros: stem + 'íais', me: stem, ellos: stem + 'ían' };
-          if (tKey === 'futuro') return { yo: verbObj.es + 'é', tu: verbObj.es + 'ás', el: verbObj.es + 'á', nosotros: stem + 'emos', vosotros: stem + 'éis', me: stem, ellos: stem + 'án' };
-        }
-
-        return { yo: stem + 'o', tu: stem + 'as', el: stem + 'a', nosotros: stem + 'amos', vosotros: stem + 'áis', ellos: stem + 'an' };
-      };
-
       const currentVerb = verbQueue.length > 0 ? verbQueue[verbIndex % verbQueue.length] : null;
       const currentVerbData = currentVerb ? generateConjugation(currentVerb, selectedTense) : null;
 
-      const filteredWords = words.filter(w => 
-        w.es.toLowerCase().includes(searchTerm.toLowerCase()) || 
-        w.pl.toLowerCase().includes(searchTerm.toLowerCase())
-      );
+      const filteredWords = words.filter(w => {
+        const cat = getEffectiveCategory(w);
+        const matchesCat = selectedCategory === 'ALL' || cat === selectedCategory;
+        const matchesSearch =
+          w.es.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          w.pl.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          cat.toLowerCase().includes(searchTerm.toLowerCase());
+        return matchesCat && matchesSearch;
+      });
 
       const currentCard = shuffledCards.length > 0 ? shuffledCards[fcIndex % shuffledCards.length] : null;
       const quizItem = shuffledQuiz.length > 0 ? shuffledQuiz[qIndex % shuffledQuiz.length] : null;
@@ -1330,12 +1117,14 @@
         question: fcIsEsToPl ? currentCard.es : currentCard.pl,
         answer: fcIsEsToPl ? currentCard.pl : currentCard.es,
         questionLang: fcIsEsToPl ? 'es' : 'pl',
-        answerLang: fcIsEsToPl ? 'pl' : 'es'
+        answerLang: fcIsEsToPl ? 'pl' : 'es',
+        category: getEffectiveCategory(currentCard)
       } : null;
 
       const quizData = quizItem ? {
         question: quizIsEsToPl ? quizItem.es : quizItem.pl,
         answer: quizIsEsToPl ? quizItem.pl : quizItem.es,
+        category: getEffectiveCategory(quizItem),
         allowedAnswers: getQuizAllowedAnswers(quizItem, quizIsEsToPl)
       } : null;
 
@@ -1344,7 +1133,7 @@
       const handleCheckQuiz = (e) => {
         e.preventDefault();
         if (!quizData || quizResult !== null) return;
-        
+
         const evaluation = evaluateAnswer(userAnswer, quizData.allowedAnswers);
 
         if (evaluation.status === 'correct') {
@@ -1414,35 +1203,9 @@
             </div>
           </header>
 
-          {eraseModalOpen && (
-            <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4">
-              <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 max-w-md w-full space-y-4 shadow-2xl">
-                <h3 className="text-lg font-bold text-white flex items-center gap-2">
-                  <i data-lucide="alert-triangle" className="w-5 h-5 text-red-500"></i>
-                  <span>Usuwanie bazy danych</span>
-                </h3>
-                <p className="text-xs text-slate-300">Wpisz hasło <code className="text-red-400 font-bold">erase</code>:</p>
-                <form onSubmit={handleEraseDatabase} className="space-y-3">
-                  <input
-                    type="password"
-                    placeholder="Hasło..."
-                    value={erasePassword}
-                    onChange={(e) => setErasePassword(e.target.value)}
-                    className="w-full px-3 py-2 bg-slate-950 border border-slate-700 rounded-xl text-white text-sm"
-                  />
-                  {eraseError && <p className="text-xs text-red-400 font-semibold">Błędne hasło!</p>}
-                  <div className="flex gap-2 justify-end">
-                    <button type="button" onClick={() => setEraseModalOpen(false)} className="px-4 py-2 bg-slate-800 text-xs rounded-xl">Anuluj</button>
-                    <button type="submit" className="px-4 py-2 bg-red-600 text-xs rounded-xl">Usuń</button>
-                  </div>
-                </form>
-              </div>
-            </div>
-          )}
-
           <div className={`w-full ${isMobileView ? 'max-w-sm' : 'max-w-5xl'} flex-1 flex flex-col transition-all`}>
             <div className={`bg-slate-900 ${isMobileView ? 'p-2.5' : 'p-3 sm:p-5'} rounded-2xl shadow-xl border border-slate-800 flex-1 w-full flex flex-col mb-2 transition-all`}>
-              
+
               <nav className={`grid grid-cols-6 ${isMobileView ? 'gap-1 mb-3 p-1 text-[9px]' : 'gap-1.5 sm:gap-2 mb-6 p-1.5 text-[10px] sm:text-xs'} bg-slate-950 rounded-xl font-medium border border-slate-800/80 transition-all`}>
                 <button onClick={() => { setActiveTab('flashcards'); }} className={`py-1.5 rounded-lg flex flex-col sm:flex-row items-center justify-center gap-0.5 sm:gap-1 ${activeTab === 'flashcards' ? 'bg-slate-800 text-red-400 font-bold border border-slate-700' : 'text-slate-400'}`}>
                   <i data-lucide="layers" className={`${isMobileView ? 'w-3 h-3' : 'w-4 h-4'}`}></i><span>Fiszki</span>
@@ -1460,13 +1223,9 @@
                   <i data-lucide="book-open" className={`${isMobileView ? 'w-3 h-3' : 'w-4 h-4'}`}></i><span>Czas.</span>
                 </button>
                 <button onClick={() => { setActiveTab('admin'); }} className={`py-1.5 rounded-lg flex flex-col sm:flex-row items-center justify-center gap-0.5 sm:gap-1 ${activeTab === 'admin' ? 'bg-slate-800 text-red-400 font-bold border border-slate-700' : 'text-slate-400'}`}>
-                  <i data-lucide="settings" className={`${isMobileView ? 'w-3 h-3' : 'w-4 h-4'}`}></i><span>Admin</span>
+                  <i data-lucide="settings" className={`${isMobileView ? 'w-3 h-3' : 'w-4 h-4'}`}></i><span>Słówka</span>
                 </button>
               </nav>
-
-              {loadMessage && (
-                <div className="mb-3 p-2.5 bg-blue-950/80 border border-blue-800 text-blue-300 text-xs rounded-xl">{loadMessage}</div>
-              )}
 
               {/* 1. FISZKI */}
               {activeTab === 'flashcards' && (
@@ -1477,31 +1236,38 @@
                       <button onClick={() => setDirection('pl-es')} className={`px-2.5 py-1 rounded-lg ${direction === 'pl-es' ? 'bg-slate-800 text-red-400' : 'text-slate-400'}`}>PL ➔ ES</button>
                       <button onClick={() => setDirection('random')} className={`px-2.5 py-1 rounded-lg ${direction === 'random' ? 'bg-slate-800 text-red-400' : 'text-slate-400'}`}>Losowo</button>
                     </div>
-                    <label className="flex items-center gap-1.5 bg-slate-950 px-2.5 py-1.5 rounded-xl text-xs font-medium border border-slate-800 text-slate-300 cursor-pointer">
-                      <input type="checkbox" checked={fcOnlyVerbs} onChange={(e) => setFcOnlyVerbs(e.target.checked)} className="accent-red-600" />
-                      <span className="text-amber-400 font-bold">Tylko czasowniki</span>
-                    </label>
+                    <select
+                      value={fcCategory}
+                      onChange={(e) => setFcCategory(e.target.value)}
+                      className="bg-slate-950 px-2.5 py-1.5 rounded-xl text-xs font-semibold border border-slate-800 text-slate-200 focus:outline-none focus:border-red-500"
+                    >
+                      <option value="ALL">Kategoria: Wszystkie</option>
+                      {availableCategories.map(cat => (
+                        <option key={cat} value={cat}>{cat}</option>
+                      ))}
+                    </select>
                   </div>
 
                   {shuffledCards.length > 0 && fcData ? (
-                    <div className="w-full max-w-md flex-1 flex flex-col items-center justify-center my-2">
-                      <div onClick={() => setIsFlipped(!isFlipped)} className={`w-full ${isMobileView ? 'min-h-[190px] p-5' : 'min-h-[260px] p-8'} rounded-3xl bg-gradient-to-br ${isFlipped ? 'from-slate-950 to-slate-900 border border-slate-800 text-white' : 'from-red-600 to-amber-600 text-white'} shadow-2xl flex flex-col items-center justify-between cursor-pointer text-center transition-all`}>
+                    <div className="w-full max-w-md flex-1 flex flex-col items-center justify-center my-2 space-y-4">
+                      <div onClick={() => setIsFlipped(!isFlipped)} className={`w-full ${isMobileView ? 'min-h-[190px] p-4' : 'min-h-[240px] p-6'} rounded-3xl bg-gradient-to-br ${isFlipped ? 'from-slate-950 to-slate-900 border border-slate-800 text-white' : 'from-red-600 to-amber-600 text-white'} shadow-2xl flex flex-col items-center justify-between cursor-pointer text-center transition-all`}>
                         <div className="w-full flex justify-between items-center text-xs opacity-80">
-                          <span>{isFlipped ? 'Tłumaczenie' : 'Fiszka'}</span>
+                          <span>{isFlipped ? 'Tłumaczenie' : 'Fiszka'} • <strong className="uppercase">{fcData.category}</strong></span>
                           <span>{(fcIndex % shuffledCards.length) + 1} z {shuffledCards.length}</span>
                         </div>
                         <div className="my-auto space-y-1.5">
                           <h2 className={`${isMobileView ? 'text-2xl' : 'text-3xl'} font-extrabold`}>{isFlipped ? fcData.answer : fcData.question}</h2>
                           <p className="text-[11px] opacity-75">Kliknij, aby odwrócić</p>
                         </div>
-                        <button onClick={(e) => { 
-                          e.stopPropagation(); 
-                          speakText(isFlipped ? fcData.answer : fcData.question, isFlipped ? fcData.answerLang : fcData.questionLang); 
+                        <button onClick={(e) => {
+                          e.stopPropagation();
+                          speakText(isFlipped ? fcData.answer : fcData.question, isFlipped ? fcData.answerLang : fcData.questionLang);
                         }} className="p-2.5 bg-black/30 rounded-full text-white hover:bg-black/50 transition">
                           <i data-lucide="volume-2" className="w-4 h-4"></i>
                         </button>
                       </div>
-                      <div className="flex items-center gap-3 mt-4">
+
+                      <div className="flex items-center gap-3 pt-1">
                         <button onClick={() => { setIsFlipped(false); setFcIndex(prev => Math.max(0, prev - 1)); }} className="p-2.5 bg-slate-800 text-slate-200 rounded-xl"><i data-lucide="chevron-left" className="w-4 h-4"></i></button>
                         <button onClick={() => { setIsFlipped(false); setFcIndex(prev => prev + 1); }} className="px-5 py-2.5 bg-red-600 text-white rounded-xl font-semibold text-xs sm:text-sm">Następna ➔</button>
                       </div>
@@ -1514,23 +1280,33 @@
               {activeTab === 'quiz' && (
                 <div className="flex-1 flex flex-col items-center justify-between space-y-4">
                   <div className="w-full flex flex-wrap justify-between items-center gap-2">
-                    <div className="flex items-center gap-1 bg-slate-950 p-1 rounded-xl text-xs font-medium border border-slate-800">
-                      <button onClick={() => setQuizDirection('es-pl')} className={`px-2 py-1 rounded-lg ${quizDirection === 'es-pl' ? 'bg-slate-800 text-red-400' : 'text-slate-400'}`}>ES ➔ PL</button>
-                      <button onClick={() => setQuizDirection('pl-es')} className={`px-2 py-1 rounded-lg ${quizDirection === 'pl-es' ? 'bg-slate-800 text-red-400' : 'text-slate-400'}`}>PL ➔ ES</button>
-                      <button onClick={() => setQuizDirection('random')} className={`px-2 py-1 rounded-lg ${quizDirection === 'random' ? 'bg-slate-800 text-red-400' : 'text-slate-400'}`}>Losowo</button>
+                    <div className="flex flex-wrap items-center gap-1.5">
+                      <div className="flex items-center gap-1 bg-slate-950 p-1 rounded-xl text-xs font-medium border border-slate-800">
+                        <button onClick={() => setQuizDirection('es-pl')} className={`px-2 py-1 rounded-lg ${quizDirection === 'es-pl' ? 'bg-slate-800 text-red-400' : 'text-slate-400'}`}>ES ➔ PL</button>
+                        <button onClick={() => setQuizDirection('pl-es')} className={`px-2 py-1 rounded-lg ${quizDirection === 'pl-es' ? 'bg-slate-800 text-red-400' : 'text-slate-400'}`}>PL ➔ ES</button>
+                        <button onClick={() => setQuizDirection('random')} className={`px-2 py-1 rounded-lg ${quizDirection === 'random' ? 'bg-slate-800 text-red-400' : 'text-slate-400'}`}>Losowo</button>
+                      </div>
+                      <select
+                        value={quizCategory}
+                        onChange={(e) => setQuizCategory(e.target.value)}
+                        className="bg-slate-950 px-2.5 py-1.5 rounded-xl text-xs font-semibold border border-slate-800 text-slate-200 focus:outline-none focus:border-red-500"
+                      >
+                        <option value="ALL">Kategoria: Wszystkie</option>
+                        {availableCategories.map(cat => (
+                          <option key={cat} value={cat}>{cat}</option>
+                        ))}
+                      </select>
                     </div>
-                    <div className="flex items-center gap-2">
-                      <label className="flex items-center gap-1.5 bg-slate-950 px-2.5 py-1 rounded-xl text-xs font-medium border border-slate-800 text-slate-300 cursor-pointer">
-                        <input type="checkbox" checked={quizOnlyVerbs} onChange={(e) => setQuizOnlyVerbs(e.target.checked)} className="accent-red-600" />
-                        <span className="text-amber-400 font-bold">Czasowniki</span>
-                      </label>
-                      <div className="text-xs font-bold text-slate-300 bg-slate-950 px-2.5 py-1 rounded-lg border border-slate-800">Wynik: <span className="text-red-400">{score}</span></div>
-                    </div>
+                    <div className="text-xs font-bold text-slate-300 bg-slate-950 px-2.5 py-1 rounded-lg border border-slate-800">Wynik: <span className="text-red-400">{score}</span></div>
                   </div>
 
                   {shuffledQuiz.length > 0 && quizData ? (
                     <div className="w-full max-w-md my-auto space-y-3">
                       <div className="bg-slate-950/80 p-4 rounded-2xl border border-slate-800 text-center space-y-1.5 relative">
+                        <div className="flex justify-between items-center text-[10px] text-slate-400 uppercase font-bold">
+                          <span>Kategoria: <strong className="text-amber-400">{quizData.category}</strong></span>
+                          <span>{(qIndex % shuffledQuiz.length) + 1} z {shuffledQuiz.length}</span>
+                        </div>
                         <div className="text-[11px] text-slate-400 uppercase font-bold">{quizIsEsToPl ? 'Przetłumacz na polski:' : 'Przetłumacz na hiszpański:'}</div>
                         <h2 className="text-xl sm:text-2xl font-bold text-slate-100 flex items-center justify-center gap-2">
                           <span>{quizData.question}</span>
@@ -1645,8 +1421,8 @@
                       <p className="text-xs text-slate-300">
                         Twój wynik: <span className="text-red-400 font-bold text-base">{speedTestScore}</span> z <span className="font-bold text-base">{speedTestQueue.length}</span>
                       </p>
-                      <button 
-                        onClick={() => startSpeedTest()} 
+                      <button
+                        onClick={() => startSpeedTest()}
                         className="w-full py-2.5 bg-red-600 hover:bg-red-500 text-white font-semibold rounded-xl text-xs shadow transition"
                       >
                         Rozpocznij nowy test
@@ -1769,7 +1545,7 @@
                                 onChange={(e) => setVerbAnswers({ ...verbAnswers, [p]: e.target.value })}
                                 placeholder={verbSubmitted ? currentVerbData[p] : '...'}
                                 className={`w-full px-2.5 py-1 text-xs rounded-lg border bg-slate-800 text-white ${
-                                  verbSubmitted 
+                                  verbSubmitted
                                     ? (isFieldCorrect ? 'border-emerald-500 text-emerald-300' : 'border-red-500 text-red-300')
                                     : 'border-slate-700'
                                 }`}
@@ -1800,9 +1576,74 @@
                 </div>
               )}
 
-              {/* 5. ADMIN */}
+              {/* 5. SŁÓWKA / ADMIN (wyłącznie podgląd bazy i generator testów) */}
               {activeTab === 'admin' && (
-                <div className="space-y-4 flex-1 flex flex-col max-w-xl mx-auto w-full text-xs">
+                <div className="space-y-4 flex-1 flex flex-col max-w-2xl mx-auto w-full text-xs">
+                  <div className="bg-slate-950 p-3 rounded-xl border border-slate-800 space-y-2">
+                    <h3 className="font-bold text-white flex items-center gap-1.5">
+                      <i data-lucide="book" className="w-3.5 h-3.5 text-red-500"></i>
+                      <span>Podgląd bazy ({filteredWords.length} / {words.length} słówek)</span>
+                    </h3>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                      <input
+                        type="text"
+                        placeholder="Szukaj w bazie..."
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                        className="w-full px-2.5 py-1.5 bg-slate-900 border border-slate-700 text-white rounded-lg text-xs"
+                      />
+                      <select
+                        value={selectedCategory}
+                        onChange={(e) => setSelectedCategory(e.target.value)}
+                        className="w-full px-2.5 py-1.5 bg-slate-900 border border-slate-700 text-white rounded-lg text-xs font-semibold"
+                      >
+                        <option value="ALL">Wszystkie kategorie</option>
+                        {availableCategories.map(cat => (
+                          <option key={cat} value={cat}>{cat}</option>
+                        ))}
+                      </select>
+                    </div>
+                    <div className="max-h-[300px] overflow-y-auto border border-slate-800 rounded-lg bg-slate-900/50 custom-scrollbar">
+                      <table className="w-full text-left text-xs">
+                        <thead className="bg-slate-900 border-b border-slate-800 sticky top-0 text-slate-400 uppercase z-10">
+                          <tr>
+                            <th className="p-2">Hiszpański</th>
+                            <th className="p-2">Polski</th>
+                            <th className="p-2">Kategoria</th>
+                          </tr>
+                        </thead>
+                        <tbody className="divide-y divide-slate-800">
+                          {filteredWords.map((item) => {
+                            const cat = getEffectiveCategory(item);
+                            return (
+                              <tr key={item.id} className="hover:bg-slate-800/40">
+                                <td className="p-2 font-semibold text-slate-100 flex items-center gap-1">
+                                  <span>{item.es}</span>
+                                  <button onClick={() => speakText(item.es, 'es')} className="text-slate-500 hover:text-red-400">
+                                    <i data-lucide="volume-2" className="w-3 h-3"></i>
+                                  </button>
+                                </td>
+                                <td className="p-2 text-slate-300">
+                                  <div className="flex items-center gap-1">
+                                    <span>{item.pl}</span>
+                                    <button onClick={() => speakText(item.pl, 'pl')} className="text-slate-500 hover:text-red-400">
+                                      <i data-lucide="volume-2" className="w-3 h-3"></i>
+                                    </button>
+                                  </div>
+                                </td>
+                                <td className="p-2 text-slate-400">
+                                  <span className="px-1.5 py-0.5 bg-slate-800 border border-slate-700 rounded text-[10px] font-medium text-slate-200">
+                                    {cat}
+                                  </span>
+                                </td>
+                              </tr>
+                            );
+                          })}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+
                   <div className="bg-slate-950 p-4 rounded-xl border border-red-900/50 space-y-3 shadow-lg">
                     <h3 className="font-bold text-white flex items-center gap-2 text-sm">
                       <i data-lucide="file-text" className="w-4 h-4 text-red-500"></i>
@@ -1833,160 +1674,6 @@
                       <i data-lucide="download" className="w-4 h-4"></i>
                       <span>Generuj Test (PDF) oraz Klucz Odpowiedzi (PDF)</span>
                     </button>
-                  </div>
-
-                  <div className="bg-slate-950 p-3 rounded-xl border border-slate-800 space-y-2">
-                    <h3 className="font-bold text-white">Pobierz i zamontuj bazę z serwera</h3>
-                    <button onClick={handleDownloadAndSaveDatabase} disabled={loading} className="px-3 py-1.5 bg-blue-600 text-white rounded-lg font-semibold shadow">
-                      {loading ? 'Pobieranie...' : 'Pobierz bazę'}
-                    </button>
-                  </div>
-
-                  <div className="bg-slate-950 p-3 rounded-xl border border-slate-800 space-y-2">
-                    <h3 className="font-bold text-white">Wybierz plik z dysku (.ods)</h3>
-                    <input ref={fileInputRef} type="file" accept=".ods, .xlsx" onChange={handleLoadLocalDatabase} className="hidden" />
-                    <button onClick={() => fileInputRef.current && fileInputRef.current.click()} className="px-3 py-1.5 bg-amber-600 text-white rounded-lg font-semibold shadow">
-                      Wybierz plik
-                    </button>
-                  </div>
-
-                  <div className="bg-slate-950 p-3 rounded-xl border border-slate-800 space-y-2">
-                    <h3 className="font-bold text-white">Zapisz wpisane słówka do pliku baza_esp_ręcznie.ods</h3>
-                    <button onClick={handleSaveManualWordsToDisk} className="px-3 py-1.5 bg-emerald-600 text-white rounded-lg font-semibold shadow">
-                      Zapisz jako baza_esp_ręcznie.ods
-                    </button>
-                  </div>
-
-                  <div className="bg-slate-950 p-3 rounded-xl border border-slate-800 space-y-2">
-                    <h3 className="font-bold text-white flex items-center gap-1.5">
-                      <i data-lucide="book" className="w-3.5 h-3.5 text-red-500"></i>
-                      <span>Słownik bazy ({words.length} słówek)</span>
-                    </h3>
-                    <input
-                      type="text"
-                      placeholder="Szukaj w słowniku..."
-                      value={searchTerm}
-                      onChange={(e) => setSearchTerm(e.target.value)}
-                      className="w-full px-2.5 py-1.5 bg-slate-900 border border-slate-700 text-white rounded-lg text-xs"
-                    />
-                    <div className="max-h-[180px] overflow-y-auto border border-slate-800 rounded-lg bg-slate-900/50">
-                      <table className="w-full text-left text-xs">
-                        <thead className="bg-slate-900 border-b border-slate-800 sticky top-0 text-slate-400 uppercase">
-                          <tr>
-                            <th className="p-2">Hiszpański</th>
-                            <th className="p-2">Polski</th>
-                            <th className="p-2 text-center">Typ</th>
-                            <th className="p-2 text-right">Akcje</th>
-                          </tr>
-                        </thead>
-                        <tbody className="divide-y divide-slate-800">
-                          {filteredWords.map((item) => (
-                            <tr key={item.id} className="hover:bg-slate-800/40">
-                              <td className="p-2 font-semibold text-slate-100 flex items-center gap-1">
-                                <span>{item.es}</span>
-                                <button onClick={() => speakText(item.es, 'es')} className="text-slate-500 hover:text-red-400">
-                                  <i data-lucide="volume-2" className="w-3 h-3"></i>
-                                </button>
-                              </td>
-                              <td className="p-2 text-slate-300">
-                                <div className="flex items-center gap-1">
-                                  <span>{item.pl}</span>
-                                  <button onClick={() => speakText(item.pl, 'pl')} className="text-slate-500 hover:text-red-400">
-                                    <i data-lucide="volume-2" className="w-3 h-3"></i>
-                                  </button>
-                                </div>
-                              </td>
-                              <td className="p-2 text-center">
-                                <div className="flex items-center justify-center gap-1">
-                                  {item.isVerb && <span className="px-1 py-0.5 bg-amber-950 text-amber-400 border border-amber-800 text-[8px] font-bold rounded">CZAS.</span>}
-                                  {item.isManual && <span className="px-1 py-0.5 bg-purple-950 text-purple-300 border border-purple-800 text-[8px] font-bold rounded">RĘCZNE</span>}
-                                </div>
-                              </td>
-                              <td className="p-2 text-right">
-                                {item.isManual ? (
-                                  <div className="flex items-center justify-end gap-1">
-                                    <button onClick={() => handleEditManualWord(item)} className="px-2 py-0.5 bg-blue-900/60 hover:bg-blue-800 text-blue-200 rounded text-[9px] font-semibold">Edytuj</button>
-                                    <button onClick={() => handleDeleteManualWord(item.id)} className="px-2 py-0.5 bg-red-900/60 hover:bg-red-800 text-red-200 rounded text-[9px] font-semibold">Usuń</button>
-                                  </div>
-                                ) : (
-                                  <span className="text-[9px] text-slate-600 italic">baza</span>
-                                )}
-                              </td>
-                            </tr>
-                          ))}
-                        </tbody>
-                      </table>
-                    </div>
-                  </div>
-
-                  <form onSubmit={handleSaveWordForm} className="bg-slate-950 p-3 rounded-xl border border-slate-800 space-y-2.5">
-                    <h3 className="font-bold text-white">
-                      {editingId ? 'Edytuj słówko / czasownik' : 'Dodaj słówko / czasownik'}
-                    </h3>
-                    <input type="text" placeholder="Hiszpański" value={newEs} onChange={(e) => setNewEs(e.target.value)} className="w-full px-2.5 py-1.5 bg-slate-900 border border-slate-700 rounded-lg text-xs text-white" />
-                    <input type="text" placeholder="Polski" value={newPl} onChange={(e) => setNewPl(e.target.value)} className="w-full px-2.5 py-1.5 bg-slate-900 border border-slate-700 rounded-lg text-xs text-white" />
-                    
-                    <div className="space-y-1 pt-0.5">
-                      <label className="flex items-center gap-2 text-xs text-slate-300">
-                        <input type="checkbox" checked={newIsVerb} onChange={(e) => setNewIsVerb(e.target.checked)} />
-                        <span className="font-bold text-amber-400">Czasownik (udostępnia odmianę dla 4 czasów)</span>
-                      </label>
-                    </div>
-
-                    {newIsVerb && (
-                      <div className="space-y-2 p-2.5 bg-slate-900 rounded-xl border border-slate-800 mt-2">
-                        <div className="font-bold text-slate-300 text-[11px]">Odmiana dla 4 czasów:</div>
-                        <div className="flex gap-1">
-                          {['presente', 'pasado', 'imperfecto', 'futuro'].map(t => (
-                            <button
-                              key={t}
-                              type="button"
-                              onClick={() => setActiveManualTense(t)}
-                              className={`px-2 py-0.5 text-[10px] rounded uppercase font-semibold ${activeManualTense === t ? 'bg-red-600 text-white' : 'bg-slate-800 text-slate-400'}`}
-                            >
-                              {t}
-                            </button>
-                          ))}
-                        </div>
-                        <div className="grid grid-cols-2 gap-1.5 pt-1">
-                          {['yo', 'tu', 'el', 'nosotros', 'vosotros', 'ellos'].map(p => (
-                            <div key={p}>
-                              <label className="text-[9px] text-slate-400 uppercase block mb-0.5">{p}</label>
-                              <input
-                                type="text"
-                                placeholder={`Forma dla ${p}`}
-                                value={newManualConjs[activeManualTense][p]}
-                                onChange={(e) => {
-                                  const val = e.target.value;
-                                  setNewManualConjs(prev => ({
-                                    ...prev,
-                                    [activeManualTense]: {
-                                      ...prev[activeManualTense],
-                                      [p]: val
-                                    }
-                                  }));
-                                }}
-                                className="w-full px-2 py-1 text-xs bg-slate-950 border border-slate-700 rounded text-white"
-                              />
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                    )}
-
-                    <div className="flex justify-end gap-2 pt-1">
-                      {editingId && (
-                        <button type="button" onClick={() => { setEditingId(null); setNewEs(''); setNewPl(''); setNewIsVerb(false); }} className="px-3 py-1.5 bg-slate-800 text-white font-semibold rounded-lg text-xs">Anuluj</button>
-                      )}
-                      <button type="submit" className="px-3 py-1.5 bg-red-600 text-white font-semibold rounded-lg text-xs">
-                        {editingId ? 'Zapisz zmiany' : 'Dodaj'}
-                      </button>
-                    </div>
-                  </form>
-
-                  <div className="bg-slate-950 p-3 rounded-xl border border-red-950 space-y-2">
-                    <h3 className="font-bold text-red-400">Usuń całą bazę</h3>
-                    <button onClick={() => setEraseModalOpen(true)} className="px-3 py-1.5 bg-red-900 text-white rounded-lg font-semibold text-xs">Usuń bazę</button>
                   </div>
                 </div>
               )}
